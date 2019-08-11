@@ -45,9 +45,9 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BMF-Nd-2Pf">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BMF-Nd-2Pf" customClass="TOSegmentedControl">
                                 <rect key="frame" x="12" y="589" width="390" height="32"/>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="32" id="m9l-an-n1p"/>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="390" id="nSh-mU-Ref"/>

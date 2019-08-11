@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2229F1AE230060F5000DABD8 /* TOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2229F1AD230060F5000DABD8 /* TOSegmentedControl.m */; };
 		22DF8D8A22FF119C0051F319 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22DF8D8922FF119C0051F319 /* AppDelegate.m */; };
 		22DF8D9022FF119C0051F319 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22DF8D8F22FF119C0051F319 /* ViewController.m */; };
 		22DF8D9322FF119C0051F319 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22DF8D9122FF119C0051F319 /* Main.storyboard */; };
@@ -16,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2229F1AC230060F5000DABD8 /* TOSegmentedControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOSegmentedControl.h; sourceTree = "<group>"; };
+		2229F1AD230060F5000DABD8 /* TOSegmentedControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOSegmentedControl.m; sourceTree = "<group>"; };
 		22DF8D8522FF119C0051F319 /* TOSegmentedControlExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TOSegmentedControlExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22DF8D8822FF119C0051F319 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		22DF8D8922FF119C0051F319 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -39,9 +42,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2229F1AB230060E0000DABD8 /* TOSegmentedControl */ = {
+			isa = PBXGroup;
+			children = (
+				2229F1AC230060F5000DABD8 /* TOSegmentedControl.h */,
+				2229F1AD230060F5000DABD8 /* TOSegmentedControl.m */,
+			);
+			path = TOSegmentedControl;
+			sourceTree = "<group>";
+		};
 		22DF8D7C22FF119C0051F319 = {
 			isa = PBXGroup;
 			children = (
+				2229F1AB230060E0000DABD8 /* TOSegmentedControl */,
 				22DF8D8722FF119C0051F319 /* TOSegmentedControlExample */,
 				22DF8D8622FF119C0051F319 /* Products */,
 			);
@@ -144,6 +157,7 @@
 				22DF8D9022FF119C0051F319 /* ViewController.m in Sources */,
 				22DF8D8A22FF119C0051F319 /* AppDelegate.m in Sources */,
 				22DF8D9B22FF119D0051F319 /* main.m in Sources */,
+				2229F1AE230060F5000DABD8 /* TOSegmentedControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
