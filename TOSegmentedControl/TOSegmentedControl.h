@@ -22,6 +22,18 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /** Set the color of the thumb view. (Default is white) */
 @property (nonatomic, strong, null_resettable) UIColor *thumbColor;
 
+/** Set the color of the separator lines between each item. (Default is dark grey) */
+@property (nonatomic, strong, null_resettable) UIColor *separatorColor;
+
+/** The color of the text labels (Default is black) */
+@property (nonatomic, strong, null_resettable) UIColor *textColor;
+
+/** The font of the text items (Default is system default at 10 points) */
+@property (nonatomic, strong, null_resettable) UIFont *textFont;
+
+/** The font of the text item when it's been selected (Default is bold system default 10) */
+@property (nonatomic, strong, null_resettable) UIFont *selectedTextFont;
+
 /** The amount of insetting the thumb view is from the edge of the track (Default is 2.0f) */
 @property (nonatomic, assign) CGFloat thumbInset;
 
