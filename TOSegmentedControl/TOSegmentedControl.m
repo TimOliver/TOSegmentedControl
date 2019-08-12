@@ -50,8 +50,8 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 - (instancetype)initWithItems:(NSString *)items
 {
     if (self = [super initWithFrame:(CGRect){0.0f, 0.0f, 300.0f, 32.0f}]) {
-        _items = [items mutableCopy];
         [self commonInit];
+        _items = [items mutableCopy];
     }
 
     return self;
