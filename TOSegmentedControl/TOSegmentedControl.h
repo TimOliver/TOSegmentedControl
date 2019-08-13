@@ -13,6 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_NAME(SegmentedControl)
 IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
+/** The items currently assigned to this segmented control. (Can be a combination of strings and images) */
+@property (nonatomic, copy) NSArray *items;
+
+/** An array of BOOL values dictating which items are reversible. */
+@property (nonatomic, copy) NSArray<NSNumber *> *reversibleItems;
+
 /** A block that is called whenever a segment is tapped. */
 @property (nonatomic, copy) void (^segmentTappedHandler)(NSInteger index, BOOL reversed);
 
@@ -71,7 +77,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param image The image to set.
  @param index The index of the segment to set.
  */
-- (void)setImage:(UIImage *)image forSegmentAtIndex:(NSInteger)index;
+- (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index;
 
 /**
  Sets the content of a given segment to an image and optionally makes
@@ -81,7 +87,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param reversible Whether the item can be tapped again to indicate changing order.
  @param index The index of the segment to set.
  */
-- (void)setImage:(UIImage *)image reversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index;
+- (void)setImage:(UIImage *)image reversible:(BOOL)reversible forItemAtIndex:(NSInteger)index;
 
 /**
  Returns the image that was assigned to a specific segment.
@@ -89,7 +95,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
  @param index The index at which the image is located.
  */
-- (nullable UIImage *)imageForSegmentAtIndex:(NSInteger)index;
+- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index;
 
 /**
  Sets the content of a given segment to a text label.
@@ -97,7 +103,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param title The text to display at the segment
  @param index The index of the segment to set.
  */
-- (void)setTitle:(NSString *)title forSegmentAtIndex:(NSInteger)index;
+- (void)setTitle:(NSString *)title forItemAtIndex:(NSInteger)index;
 
 /**
  Sets the content of a given segment to a text label and optionally makes
@@ -107,7 +113,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
   @param reversible Whether the item can be tapped again to indicate changing order.
  @param index The index of the segment to set.
  */
-- (void)setTitle:(NSString *)title reversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index;
+- (void)setTitle:(NSString *)title reversible:(BOOL)reversible forItemAtIndex:(NSInteger)index;
 
 /**
 Returns the string of the title that was assigned to a specific segment.
@@ -115,7 +121,7 @@ Will return nil if the content at that segment is not a string.
 
 @param index The index at which the image is located.
 */
-- (nullable NSString *)titleForSegmentAtIndex:(NSInteger)index;
+- (nullable NSString *)titleForItemAtIndex:(NSInteger)index;
 
 /**
  Sets whether a specific segment is reverisble.
@@ -124,14 +130,14 @@ Will return nil if the content at that segment is not a string.
  @param reversible Whether the item is reversible or not.
  @param index The index of the segment we are targeting.
  */
-- (void)setReversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index;
+- (void)setReversible:(BOOL)reversible forItemAtIndex:(NSInteger)index;
 
 /**
 Returns whether a given segment is reversible.
 
 @param index The index to check.
 */
-- (BOOL)isReversibleForSegmentAtIndex:(NSInteger)index;
+- (BOOL)isReversibleForItemAtIndex:(NSInteger)index;
 
 /**
  Sets whether a specific segment is currently reversed or not.
@@ -146,7 +152,7 @@ Returns whether a given segment is currently reveresed
 
 @param index The index to check.
 */
-- (BOOL)isReversedForSegmentAtIndex:(NSInteger)index;
+- (BOOL)isReversedForItemAtIndex:(NSInteger)index;
 
 /**
  Inserts a new image item at the specified segment index.
@@ -154,7 +160,7 @@ Returns whether a given segment is currently reveresed
  @param image The image to set.
  @param index The index of the segment to which the image will be set.
  */
-- (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index;
+- (void)insertItemWithImage:(UIImage *)image atIndex:(NSInteger)index;
 
 /**
  Inserts a new image item at the specified segment index, and optionally
@@ -164,7 +170,7 @@ Returns whether a given segment is currently reveresed
  @param reversible Whether the item can be tapped again to toggle ordering.
  @param index The index of the segment to which the image will be set.
  */
-- (void)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible atIndex:(NSInteger)index;
+- (void)insertItemWithImage:(UIImage *)image reversible:(BOOL)reversible atIndex:(NSInteger)index;
 
 /**
 Inserts a new image title at the specified segment index.
@@ -172,7 +178,7 @@ Inserts a new image title at the specified segment index.
 @param title The title to set.
 @param index The index of the segment to which the image will be set.
 */
-- (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index;
+- (void)insertItemWithTitle:(NSString *)title atIndex:(NSInteger)index;
 
 /**
 Inserts a new image title at the specified segment index, and optionally
@@ -182,7 +188,7 @@ may be made reversible.
 @param reversible Whether the item can be tapped again to toggle ordering.
 @param index The index of the segment to which the image will be set.
 */
-- (void)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible atIndex:(NSInteger)index;
+- (void)insertItemWithTitle:(NSString *)title reversible:(BOOL)reversible atIndex:(NSInteger)index;
 
 /**
 Removes the item at the specified index.
@@ -194,7 +200,7 @@ Removes the item at the specified index.
 /**
  Removes all of the items from this control.
  */
-- (void)removeAllSegments;
+- (void)removeAllItems;
 
 /**
  Enables or disables the item at the specified index.
