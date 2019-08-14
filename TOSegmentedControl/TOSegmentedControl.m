@@ -17,9 +17,6 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 
 @interface TOSegmentedControl ()
 
-/** The items provided by the user, before being translated into views */
-@property (nonatomic, readwrite, copy) NSMutableArray *items;
-
 /** The background rounded "track" view */
 @property (nonatomic, strong) UIView *trackView;
 
@@ -47,11 +44,11 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 
 #pragma mark - Class Init -
 
-- (instancetype)initWithItems:(NSString *)items
+- (instancetype)initWithItems:(NSArray *)items
 {
     if (self = [super initWithFrame:(CGRect){0.0f, 0.0f, 300.0f, 32.0f}]) {
+        _items = [self sanitizedItemArrayWithItems:items];
         [self commonInit];
-        _items = [items mutableCopy];
     }
 
     return self;
@@ -103,11 +100,16 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
     #endif
     [self.trackView addSubview:self.thumbView];
 
+    // Create containers for views
+    self.itemViews = [NSMutableArray array];
+    self.separatorViews = [NSMutableArray array];
+
     // Set default resettable values
     self.backgroundColor = nil;
     self.thumbColor = nil;
     self.separatorColor = nil;
-    self.textColor = nil;
+    self.itemColor = nil;
+    self.textFont = nil;
     self.selectedTextFont = nil;
 
     // Set default values
@@ -115,10 +117,175 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
     self.thumbInset = 2.0f;
     self.thumbShadowRadius = 3.0f;
     self.thumbShadowOffset = 2.0f;
-    self.thumbShadowOpacity = 0.1f;	
+    self.thumbShadowOpacity = 0.15f;
+}
+
+#pragma mark - Item Management -
+
+- (NSMutableArray *)sanitizedItemArrayWithItems:(NSArray *)items
+{
+    // Filter the items to extract only strings and images
+    NSMutableArray *sanitizedItems = [NSMutableArray array];
+    for (id item in items) {
+        if (![item isKindOfClass:[UIImage class]] && ![item isKindOfClass:[NSString class]]) {
+            continue;
+        }
+        [sanitizedItems addObject:item];
+    }
+
+    return sanitizedItems;
+}
+
+- (void)addSubviewsForAllItems
+{
+    // This should only be called when the item views array is empty to ensure no mismatches
+    NSAssert(self.itemViews.count == 0, @"TOSegmentedControl: Item view array should be empty");
+
+    for (id object in self.items) {
+        UIView *view = [self viewForItem:object];
+        [self.itemViews addObject:view];
+        [self.trackView addSubview:view];
+    }
+}
+
+- (UIView *)viewForItem:(id)object
+{
+    // Object is an image. Create an image view
+    if ([object isKindOfClass:[UIImage class]]) {
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:object];
+        imageView.tintColor = self.itemColor;
+        return imageView;
+    }
+
+    // Object is a string. Create a label
+    UILabel *label = [[UILabel alloc] init];
+    label.text = object;
+    label.textAlignment = NSTextAlignmentCenter;
+    label.textColor = self.itemColor;
+    label.font = self.textFont;
+    label.backgroundColor = [UIColor clearColor];
+    return label;
+}
+
+- (void)updateSeparatorViewCount
+{
+    NSInteger numberOfSeparators = (self.items.count - 1);
+
+    // Add as many separators as needed
+    while (self.separatorViews.count < numberOfSeparators) {
+        UIImageView *separator = [[UIImageView alloc] initWithImage:self.separatorImage];
+        separator.tintColor = self.separatorColor;
+        [self.trackView insertSubview:separator atIndex:0];
+        [self.separatorViews addObject:separator];
+    }
+
+    // Substract as many separators as needed
+    while (self.separatorViews.count > numberOfSeparators) {
+        UIView *separator = self.separatorViews.lastObject;
+        [self.separatorViews removeLastObject];
+        [separator removeFromSuperview];
+    }
+}
+
+- (void)removeAllItems
+{
+    // Remove all item views
+    for (UIView *view in self.itemViews) {
+        [view removeFromSuperview];
+    }
+    [self.itemViews removeAllObjects];
+
+    // Remove all separators
+    for (UIView *separator in self.separatorViews) {
+        [separator removeFromSuperview];
+    }
+    [self.separatorViews removeAllObjects];
+
+    // Delete the items array
+    self.items = nil;
 }
 
 #pragma mark - Accessors -
+
+// -----------------------------------------------
+// Items
+
+- (void)setItems:(NSArray *)items
+{
+    if (items == _items) { return; }
+
+    // Remove all current items
+    [self removeAllItems];
+
+    // Set the new array
+    _items = [self sanitizedItemArrayWithItems:items];
+
+    // Update the number of separators
+    [self updateSeparatorViewCount];
+
+    // Add all content views
+    [self addSubviewsForAllItems];
+
+    // Trigger a layout update
+    [self setNeedsLayout];
+}
+
+#pragma mark - View Layout -
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+
+    NSInteger index = self.selectedSegmentIndex;
+    CGSize size = self.bounds.size;
+
+    // Work out how much width we have accounting for the inset
+    CGFloat width = size.width - (_thumbInset * 2.0f);
+
+    // Divide that to get the segment width
+    CGFloat segmentWidth = floorf(width / self.numberOfSegments);
+
+    // Lay out the thumb view
+    CGRect frame = CGRectZero;
+    frame.origin.x = _thumbInset + (segmentWidth * index);
+    frame.origin.y = _thumbInset;
+    frame.size.width = segmentWidth;
+    frame.size.height = size.height - (_thumbInset * 2.0f);
+    self.thumbView.frame = frame;
+
+    // Match the shadow path to the size of the thumb view
+    CGRect shadowFrame = (CGRect){CGPointZero, frame.size};
+    UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:shadowFrame cornerRadius:self.cornerRadius - self.thumbInset];
+    self.thumbView.layer.shadowPath = shadowPath.CGPath;
+
+    // Lay out the item views
+    NSInteger i = 0;
+    for (UIView *itemView in self.itemViews) {
+        // Size to fit
+        [itemView sizeToFit];
+
+        // Lay out the frame
+        CGFloat xOffset = _thumbInset + (i++ * segmentWidth);
+        frame = itemView.frame;
+        frame.origin.x = xOffset + ((segmentWidth - frame.size.width) * 0.5f);
+        frame.origin.y = (size.height - frame.size.height) * 0.5f;
+        itemView.frame = CGRectIntegral(frame);
+    }
+
+    // Layout the separators
+    CGFloat xOffset = (_thumbInset + segmentWidth) - 1.0f;
+    i = 0;
+    for (UIView *separatorView in self.separatorViews) {
+        frame = separatorView.frame;
+        frame.size.width = 1.0f;
+        frame.size.height = (size.height - (self.cornerRadius) * 2.0f) + 2.0f;
+        frame.origin.x = xOffset + (segmentWidth * i++);
+        frame.origin.y = (size.height - frame.size.height) * 0.5f;
+        separatorView.frame = CGRectIntegral(frame);
+
+        separatorView.alpha = (i == index || i == (index - 1)) ? 0.0f : 1.0f;
+    }
+}
 
 // -----------------------------------------------
 // Corner Radius
@@ -163,7 +330,7 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 {
     _separatorColor = separatorColor;
     if (_separatorColor == nil) {
-        _separatorColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.08f alpha:0.06666f];
+        _separatorColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.08f alpha:0.1f];
     }
 
     for (UIView *separatorView in self.separatorViews) {
@@ -172,19 +339,23 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 }
 
 // -----------------------------------------------
-// Text Color
+// Item Color
 
-- (void)setTextColor:(UIColor *)textColor
+- (void)setItemColor:(UIColor *)itemColor
 {
-    _textColor = textColor;
-    if (_textColor == nil) {
-        _textColor = [UIColor blackColor];
+    _itemColor = itemColor;
+    if (_itemColor == nil) {
+        _itemColor = [UIColor blackColor];
     }
 
-    // Set each item to the color, if they are a label
+    // Set each item to the color
     for (UIView *itemView in self.itemViews) {
-        if (![itemView isKindOfClass:[UILabel class]]) { continue; }
-        [(UILabel *)itemView setTextColor:_textColor];
+        if ([itemView isKindOfClass:[UILabel class]]) {
+            [(UILabel *)itemView setTextColor:_itemColor];
+        }
+        else {
+            itemView.tintColor = _itemColor;
+        }
     }
 }
 
@@ -195,7 +366,7 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 {
     _textFont = textFont;
     if (_textFont == nil) {
-        _textFont = [UIFont systemFontOfSize:11.0f];
+        _textFont = [UIFont systemFontOfSize:13.0f weight:UIFontWeightMedium];
     }
 
     // Set each item to the font, if they are a label
@@ -236,6 +407,11 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 
 - (void)setThumbShadowRadius:(CGFloat)thumbShadowRadius { self.thumbView.layer.shadowRadius = thumbShadowRadius; }
 - (CGFloat)thumbShadowRadius { return self.thumbView.layer.shadowRadius; }
+
+// -----------------------------------------------
+// Number of segments
+
+- (NSInteger)numberOfSegments { return self.itemViews.count; }
 
 #pragma mark - Image Creation and Management -
 

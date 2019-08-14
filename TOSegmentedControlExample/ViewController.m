@@ -7,8 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "TOSegmentedControl.h"
 
 @interface ViewController ()
+
+@property (weak, nonatomic) IBOutlet TOSegmentedControl *segmentedControl;
 
 @end
 
@@ -16,8 +19,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
 
+    self.segmentedControl.items = @[@"First", @"Second", @"Third"];
+}
 
 @end

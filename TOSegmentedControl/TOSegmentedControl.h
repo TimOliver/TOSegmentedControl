@@ -14,7 +14,7 @@ NS_SWIFT_NAME(SegmentedControl)
 IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
 /** The items currently assigned to this segmented control. (Can be a combination of strings and images) */
-@property (nonatomic, copy) NSArray *items;
+@property (nonatomic, copy, nullable) NSArray *items;
 
 /** An array of BOOL values dictating which items are reversible. */
 @property (nonatomic, copy) NSArray<NSNumber *> *reversibleItems;
@@ -43,8 +43,8 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /** Set the color of the separator lines between each item. (Default is dark grey) */
 @property (nonatomic, strong, null_resettable) UIColor *separatorColor;
 
-/** The color of the text labels (Default is black) */
-@property (nonatomic, strong, null_resettable) UIColor *textColor;
+/** The color of the text labels / images (Default is black) */
+@property (nonatomic, strong, null_resettable) UIColor *itemColor;
 
 /** The font of the text items (Default is system default at 10 points) */
 @property (nonatomic, strong, null_resettable) UIFont *textFont;
