@@ -258,15 +258,15 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
     UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:(CGRect){CGPointZero, frame.size}
                                                           cornerRadius:self.cornerRadius - self.thumbInset];
 
-    // If the segmented control animates its shape (eg, a screen rotation)
-    // perform an animation to also resize the shadow path
-    // (If no animation is present, this will null out and execute immediately)
-    if (oldShadowPath != NULL) {
+    // If the segmented control is animating its shape, to prevent the
+    // shadow from visibly snapping, perform a resize animation on it
+    CABasicAnimation *boundsAnimation = [self.layer animationForKey:@"bounds.size"];
+    if (oldShadowPath != NULL && boundsAnimation) {
         CABasicAnimation *shadowAnimation = [CABasicAnimation animationWithKeyPath:@"shadowPath"];
         shadowAnimation.fromValue = (__bridge id)oldShadowPath;
         shadowAnimation.toValue = (id)shadowPath.CGPath;
-        shadowAnimation.duration = [self.layer animationForKey:@"bounds.size"].duration;
-        shadowAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        shadowAnimation.duration = boundsAnimation.duration;
+        shadowAnimation.timingFunction = boundsAnimation.timingFunction;
         [self.thumbView.layer addAnimation:shadowAnimation forKey:@"shadowPath"];
     }
     self.thumbView.layer.shadowPath = shadowPath.CGPath;
