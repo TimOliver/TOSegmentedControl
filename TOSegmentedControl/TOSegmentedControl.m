@@ -285,7 +285,7 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
         itemView.frame = CGRectIntegral(frame);
     }
 
-    // Layout the separators
+    // Lay out the separators
     CGFloat xOffset = (_thumbInset + segmentWidth) - 1.0f;
     i = 0;
     for (UIView *separatorView in self.separatorViews) {
@@ -296,6 +296,7 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
         frame.origin.y = (size.height - frame.size.height) * 0.5f;
         separatorView.frame = CGRectIntegral(frame);
 
+        // Hide the separators on either side of the selected segment
         separatorView.alpha = (i == index || i == (index - 1)) ? 0.0f : 1.0f;
     }
 }
