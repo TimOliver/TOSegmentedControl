@@ -87,6 +87,7 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
     self.trackView = [[UIView alloc] initWithFrame:self.bounds];
     self.trackView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.trackView.layer.masksToBounds = YES;
+    self.trackView.userInteractionEnabled = NO;
     #ifdef __IPHONE_13_0
     if (@available(iOS 13.0, *)) { self.trackView.layer.cornerCurve = kCACornerCurveContinuous; }
     #endif
@@ -118,6 +119,33 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
     self.thumbShadowRadius = 3.0f;
     self.thumbShadowOffset = 2.0f;
     self.thumbShadowOpacity = 0.15f;
+    
+    // Configure view interaction
+    
+    // When the user taps down in the view
+    [self addTarget:self
+             action:@selector(didTapDown:withEvent:)
+   forControlEvents:UIControlEventTouchDown];
+    
+    // When the user drags, either inside or out of the view
+    [self addTarget:self
+             action:@selector(didDragTap:withEvent:)
+   forControlEvents:UIControlEventTouchDragInside|UIControlEventTouchDragOutside];
+    
+    // When the user's finger leaves the bounds of the view
+    [self addTarget:self
+             action:@selector(didExitTapBounds:withEvent:)
+   forControlEvents:UIControlEventTouchDragExit];
+    
+    // When the user's finger re-enters the bounds
+    [self addTarget:self
+             action:@selector(didEnterTapBounds:withEvent:)
+   forControlEvents:UIControlEventTouchDragEnter];
+    
+    // When the user taps up, either inside or out
+    [self addTarget:self
+             action:@selector(didEndTap:withEvent:)
+   forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
 }
 
 #pragma mark - Item Management -
@@ -205,31 +233,6 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
     self.items = nil;
 }
 
-#pragma mark - Accessors -
-
-// -----------------------------------------------
-// Items
-
-- (void)setItems:(NSArray *)items
-{
-    if (items == _items) { return; }
-
-    // Remove all current items
-    [self removeAllItems];
-
-    // Set the new array
-    _items = [self sanitizedItemArrayWithItems:items];
-
-    // Update the number of separators
-    [self updateSeparatorViewCount];
-
-    // Add all content views
-    [self addSubviewsForAllItems];
-
-    // Trigger a layout update
-    [self setNeedsLayout];
-}
-
 #pragma mark - View Layout -
 
 - (void)layoutSubviews
@@ -299,6 +302,58 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
         // Hide the separators on either side of the selected segment
         separatorView.alpha = (i == index || i == (index - 1)) ? 0.0f : 1.0f;
     }
+}
+
+#pragma mark - Touch Interaction -
+
+- (void)didTapDown:(UIControl *)control withEvent:(UIEvent *)event
+{
+    NSLog(@"Tap Down");
+}
+
+- (void)didDragTap:(UIControl *)control withEvent:(UIEvent *)event
+{
+    NSLog(@"Drag");
+}
+
+- (void)didExitTapBounds:(UIControl *)control withEvent:(UIEvent *)event
+{
+    NSLog(@"Did Exit");
+}
+
+- (void)didEnterTapBounds:(UIControl *)control withEvent:(UIEvent *)event
+{
+    NSLog(@"Did Enter");
+}
+
+- (void)didEndTap:(UIControl *)control withEvent:(UIEvent *)event
+{
+    NSLog(@"Did End");
+}
+
+#pragma mark - Accessors -
+
+// -----------------------------------------------
+// Items
+
+- (void)setItems:(NSArray *)items
+{
+    if (items == _items) { return; }
+
+    // Remove all current items
+    [self removeAllItems];
+
+    // Set the new array
+    _items = [self sanitizedItemArrayWithItems:items];
+
+    // Update the number of separators
+    [self updateSeparatorViewCount];
+
+    // Add all content views
+    [self addSubviewsForAllItems];
+
+    // Trigger a layout update
+    [self setNeedsLayout];
 }
 
 // -----------------------------------------------
