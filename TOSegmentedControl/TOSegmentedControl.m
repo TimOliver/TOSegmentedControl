@@ -15,7 +15,14 @@ static NSMapTable *_imageTable = nil;
 static NSString * const kTOSegmentedControlArrowImage = @"arrowIcon";
 static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 
+// When tapped the amount the focused elements will shrink / fade
+static CGFloat const kTOSegmentedControlSelectedTextAlpha = 0.7f;
+static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
+
 @interface TOSegmentedControl ()
+
+/** Keep track when the user taps explicitily on the thumb view */
+@property (nonatomic, assign) BOOL isDraggingThumbView;
 
 /** The background rounded "track" view */
 @property (nonatomic, strong) UIView *trackView;
@@ -118,10 +125,9 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
     self.thumbInset = 2.0f;
     self.thumbShadowRadius = 3.0f;
     self.thumbShadowOffset = 2.0f;
-    self.thumbShadowOpacity = 0.15f;
+    self.thumbShadowOpacity = 0.13f;
     
     // Configure view interaction
-    
     // When the user taps down in the view
     [self addTarget:self
              action:@selector(didTapDown:withEvent:)
@@ -281,13 +287,19 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
         [itemView sizeToFit];
 
         // Lay out the frame
-        CGFloat xOffset = _thumbInset + (i++ * segmentWidth);
+        CGFloat xOffset = _thumbInset + (i * segmentWidth);
         frame = itemView.frame;
         frame.origin.x = xOffset + ((segmentWidth - frame.size.width) * 0.5f);
         frame.origin.y = (size.height - frame.size.height) * 0.5f;
         itemView.frame = CGRectIntegral(frame);
+        
+        // Make sure they are all unselected
+        [self setItemAtIndex:i++ selected:NO];
     }
 
+    // Set the selected item
+    [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
+    
     // Lay out the separators
     CGFloat xOffset = (_thumbInset + segmentWidth) - 1.0f;
     i = 0;
@@ -304,31 +316,127 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
     }
 }
 
+- (NSInteger)segmentIndexForPoint:(CGPoint)point
+{
+    CGFloat segmentWidth = floorf(self.frame.size.width / self.numberOfSegments);
+    return floorf(point.x / segmentWidth);
+}
+
+- (void)setThumbViewShrunken:(BOOL)shrunken
+{
+    CGFloat scale = shrunken ? kTOSegmentedControlSelectedScale : 1.0f;
+    self.thumbView.transform = CGAffineTransformScale(CGAffineTransformIdentity,
+                                                      scale, scale);
+}
+
+- (void)setItemViewAtIndex:(NSInteger)segmentIndex shrunken:(BOOL)shrunken
+{
+    NSAssert(segmentIndex >= 0 && segmentIndex < self.itemViews.count,
+             @"Array should not be out of bounds");
+    
+    UIView *itemView = self.itemViews[segmentIndex];
+    CGFloat scale = shrunken ? kTOSegmentedControlSelectedScale : 1.0f;
+    itemView.transform = CGAffineTransformScale(CGAffineTransformIdentity,
+                                                      scale, scale);
+}
+
+- (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
+{
+    NSAssert(index >= 0 && index < self.itemViews.count,
+             @"Array should not be out of bounds");
+    
+    UIView *itemView = self.itemViews[index];
+    if (![itemView isKindOfClass:[UILabel class]]) { return; }
+    
+    UILabel *label = (UILabel *)itemView;
+    
+    // Capture its current position and scale
+    CGPoint center = label.center;
+    CGAffineTransform transform = label.transform;
+    
+    // Reset its transform so we don't mangle the frame
+    label.transform = CGAffineTransformIdentity;
+    
+    // Set the font
+    UIFont *font = selected ? self.selectedTextFont : self.textFont;
+    label.font = font;
+    
+    // Resize the frame in case the new font exceeded the bounds
+    [itemView sizeToFit];
+    
+    // Re-apply the transform and the positioning
+    itemView.transform = transform;
+    itemView.center = center;
+}
+
 #pragma mark - Touch Interaction -
 
 - (void)didTapDown:(UIControl *)control withEvent:(UIEvent *)event
 {
-    NSLog(@"Tap Down");
+    // Determine which segment the user tapped
+    CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
+    NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
+    
+    // Work out if we tapped on the thumb view, or on an un-selected segment
+    self.isDraggingThumbView = (tappedIndex == self.selectedSegmentIndex);
+    
+    // Work out which animation effects to apply
+    id animationBlock = ^{
+        if (self.isDraggingThumbView) {
+            [self setThumbViewShrunken:YES];
+            [self setItemViewAtIndex:self.selectedSegmentIndex shrunken:YES];
+        }
+        else {
+            
+        }
+    };
+    
+    // Animate the transition
+    [UIView animateWithDuration:0.3f
+                          delay:0.0f
+         usingSpringWithDamping:1.0f
+          initialSpringVelocity:2.0f
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:animationBlock
+                     completion:nil];
 }
 
 - (void)didDragTap:(UIControl *)control withEvent:(UIEvent *)event
 {
-    NSLog(@"Drag");
+    //NSLog(@"Drag");
 }
 
 - (void)didExitTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
-    NSLog(@"Did Exit");
+    //NSLog(@"Did Exit");
 }
 
 - (void)didEnterTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
-    NSLog(@"Did Enter");
+    //NSLog(@"Did Enter");
 }
 
 - (void)didEndTap:(UIControl *)control withEvent:(UIEvent *)event
 {
-    NSLog(@"Did End");
+    // Work out which animation effects to apply
+       id animationBlock = ^{
+           if (self.isDraggingThumbView) {
+               [self setThumbViewShrunken:NO];
+               [self setItemViewAtIndex:self.selectedSegmentIndex shrunken:NO];
+           }
+           else {
+               
+           }
+       };
+       
+       // Animate the t
+       [UIView animateWithDuration:0.3f
+                             delay:0.0f
+            usingSpringWithDamping:1.0f
+             initialSpringVelocity:2.0f
+                           options:UIViewAnimationOptionBeginFromCurrentState
+                        animations:animationBlock
+                        completion:nil];
 }
 
 #pragma mark - Accessors -
@@ -452,7 +560,7 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 {
     _selectedTextFont = selectedTextFont;
     if (_selectedTextFont == nil) {
-        _selectedTextFont = [UIFont boldSystemFontOfSize:11.0f];
+        _selectedTextFont = [UIFont systemFontOfSize:13.0f weight:UIFontWeightSemibold];
     }
 }
 
