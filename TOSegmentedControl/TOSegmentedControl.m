@@ -16,13 +16,16 @@ static NSString * const kTOSegmentedControlArrowImage = @"arrowIcon";
 static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 
 // When tapped the amount the focused elements will shrink / fade
-static CGFloat const kTOSegmentedControlSelectedTextAlpha = 0.7f;
+static CGFloat const kTOSegmentedControlSelectedTextAlpha = 0.3f;
 static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 @interface TOSegmentedControl ()
 
 /** Keep track when the user taps explicitily on the thumb view */
 @property (nonatomic, assign) BOOL isDraggingThumbView;
+
+/** Before we commit to a new selected index, this is the index the user has tapped over */
+@property (nonatomic, assign) NSInteger focusedIndex;
 
 /** The background rounded "track" view */
 @property (nonatomic, strong) UIView *trackView;
@@ -44,6 +47,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 /** A rounded line used as the separator line. */
 @property (nonatomic, readonly) UIImage *separatorImage;
+
+/** The width of each segment */
+@property (nonatomic, readonly) CGFloat segmentWidth;
 
 @end
 
@@ -255,11 +261,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     CGFloat segmentWidth = floorf(width / self.numberOfSegments);
 
     // Lay out the thumb view
-    CGRect frame = CGRectZero;
-    frame.origin.x = _thumbInset + (segmentWidth * index);
-    frame.origin.y = _thumbInset;
-    frame.size.width = segmentWidth;
-    frame.size.height = size.height - (_thumbInset * 2.0f);
+    CGRect frame = [self frameForItemAtSegment:self.selectedSegmentIndex];
     self.thumbView.frame = frame;
 
     // Match the shadow path to the size of the thumb view
@@ -307,13 +309,31 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         frame = separatorView.frame;
         frame.size.width = 1.0f;
         frame.size.height = (size.height - (self.cornerRadius) * 2.0f) + 2.0f;
-        frame.origin.x = xOffset + (segmentWidth * i++);
+        frame.origin.x = xOffset + (segmentWidth * i);
         frame.origin.y = (size.height - frame.size.height) * 0.5f;
         separatorView.frame = CGRectIntegral(frame);
 
         // Hide the separators on either side of the selected segment
         separatorView.alpha = (i == index || i == (index - 1)) ? 0.0f : 1.0f;
+        i++;
     }
+}
+
+- (CGFloat)segmentWidth
+{
+    return floorf(self.bounds.size.width / self.numberOfSegments) - (_thumbInset * 2.0f);
+}
+
+- (CGRect)frameForItemAtSegment:(NSInteger)index
+{
+    CGSize size = self.bounds.size;
+    
+    CGRect frame = CGRectZero;
+    frame.origin.x = _thumbInset + (self.segmentWidth * index) + ((_thumbInset * 2.0f) * index);
+    frame.origin.y = _thumbInset;
+    frame.size.width = self.segmentWidth;
+    frame.size.height = size.height - (_thumbInset * 2.0f);
+    return frame;
 }
 
 - (NSInteger)segmentIndexForPoint:(CGPoint)point
@@ -369,6 +389,13 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     itemView.center = center;
 }
 
+- (void)setItemAtIndex:(NSInteger)index faded:(BOOL)faded
+{
+    NSAssert(index >= 0 && index < self.itemViews.count,
+             @"Array should not be out of bounds");
+     UIView *itemView = self.itemViews[index];
+    itemView.alpha = faded ? kTOSegmentedControlSelectedTextAlpha : 1.0f;
+}
 #pragma mark - Touch Interaction -
 
 - (void)didTapDown:(UIControl *)control withEvent:(UIEvent *)event
@@ -380,22 +407,27 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     // Work out if we tapped on the thumb view, or on an un-selected segment
     self.isDraggingThumbView = (tappedIndex == self.selectedSegmentIndex);
     
+    // Capture the index we are focussing on
+    self.focusedIndex = tappedIndex;
+    
     // Work out which animation effects to apply
+    if (!self.isDraggingThumbView) {
+        [UIView animateWithDuration:0.45f animations:^{
+            [self setItemAtIndex:tappedIndex faded:YES];
+        }];
+        return;
+    }
+    
     id animationBlock = ^{
-        if (self.isDraggingThumbView) {
-            [self setThumbViewShrunken:YES];
-            [self setItemViewAtIndex:self.selectedSegmentIndex shrunken:YES];
-        }
-        else {
-            
-        }
+        [self setThumbViewShrunken:YES];
+        [self setItemViewAtIndex:self.selectedSegmentIndex shrunken:YES];
     };
     
     // Animate the transition
     [UIView animateWithDuration:0.3f
                           delay:0.0f
          usingSpringWithDamping:1.0f
-          initialSpringVelocity:2.0f
+          initialSpringVelocity:0.1f
                         options:UIViewAnimationOptionBeginFromCurrentState
                      animations:animationBlock
                      completion:nil];
@@ -403,40 +435,118 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)didDragTap:(UIControl *)control withEvent:(UIEvent *)event
 {
-    //NSLog(@"Drag");
+    CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
+    NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
+    
+    if (tappedIndex == self.focusedIndex) { return; }
+    
+    // Handle transitioning bet
+    if (!self.isDraggingThumbView) {
+        // If we dragged out of the bounds, disregard
+        if (self.focusedIndex < 0) { return; }
+        
+        id animationBlock = ^{
+            // Deselect the current item
+            [self setItemAtIndex:self.focusedIndex faded:NO];
+            
+            // Fade the text if it is NOT the thumb track one
+            if (tappedIndex != self.selectedSegmentIndex) {
+                [self setItemAtIndex:tappedIndex faded:YES];
+            }
+        };
+        
+        // Perform a faster change over animation
+        [UIView animateWithDuration:0.3f
+                              delay:0.0f
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:animationBlock
+                         completion:nil];
+        
+        // Update the focused item
+        self.focusedIndex = tappedIndex;
+        return;
+    }
+    
+    
 }
 
 - (void)didExitTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
-    //NSLog(@"Did Exit");
+    // No effects needed when tracking the thumb view
+    if (self.isDraggingThumbView) { return; }
+    
+    // Un-fade the focused item
+    [UIView animateWithDuration:0.45f
+                          delay:0.0f
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{ [self setItemAtIndex:self.focusedIndex faded:NO]; }
+                     completion:nil];
+    
+    // Disable the focused index
+    self.focusedIndex = -1;
 }
 
 - (void)didEnterTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
-    //NSLog(@"Did Enter");
+    // No effects needed when tracking the thumb view
+    if (self.isDraggingThumbView) { return; }
+    
+    CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
+    self.focusedIndex = [self segmentIndexForPoint:tapPoint];
+    
+    // Un-fade the focused item
+    [UIView animateWithDuration:0.45f
+                          delay:0.0f
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{ [self setItemAtIndex:self.focusedIndex faded:YES]; }
+                     completion:nil];
 }
 
 - (void)didEndTap:(UIControl *)control withEvent:(UIEvent *)event
 {
+    // If we WEREN'T dragging the thumb view, work out where we need to move to
+    if (!self.isDraggingThumbView && self.focusedIndex >= 0) {
+        self.selectedSegmentIndex = self.focusedIndex;
+        self.focusedIndex = -1;
+        
+        id animationBlock = ^{
+            for (NSInteger i = 0; i < self.itemViews.count; i++) {
+                [self.itemViews[i] setAlpha:1.0f];
+            }
+            
+            [self setNeedsLayout];
+            [self layoutIfNeeded];
+        };
+        
+        [UIView animateWithDuration:0.45
+                              delay:0.0f
+             usingSpringWithDamping:1.0f
+              initialSpringVelocity:2.0f
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:animationBlock
+                         completion:nil];
+        
+        if (self.segmentTappedHandler) {
+            self.segmentTappedHandler(self.selectedSegmentIndex, NO);
+        }
+        
+        return;
+    }
+    
     // Work out which animation effects to apply
-       id animationBlock = ^{
-           if (self.isDraggingThumbView) {
-               [self setThumbViewShrunken:NO];
-               [self setItemViewAtIndex:self.selectedSegmentIndex shrunken:NO];
-           }
-           else {
-               
-           }
-       };
-       
-       // Animate the t
-       [UIView animateWithDuration:0.3f
-                             delay:0.0f
-            usingSpringWithDamping:1.0f
-             initialSpringVelocity:2.0f
-                           options:UIViewAnimationOptionBeginFromCurrentState
-                        animations:animationBlock
-                        completion:nil];
+    id animationBlock = ^{
+        [self setThumbViewShrunken:NO];
+        [self setItemViewAtIndex:self.selectedSegmentIndex shrunken:NO];
+    };
+
+    // Animate the transition
+    [UIView animateWithDuration:0.3f
+                         delay:0.0f
+        usingSpringWithDamping:1.0f
+         initialSpringVelocity:0.1f
+                       options:UIViewAnimationOptionBeginFromCurrentState
+                    animations:animationBlock
+                    completion:nil];
 }
 
 #pragma mark - Accessors -
