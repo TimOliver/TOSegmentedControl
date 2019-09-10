@@ -289,11 +289,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         [itemView sizeToFit];
 
         // Lay out the frame
-        CGFloat xOffset = _thumbInset + (i * segmentWidth);
-        frame = itemView.frame;
-        frame.origin.x = xOffset + ((segmentWidth - frame.size.width) * 0.5f);
-        frame.origin.y = (size.height - frame.size.height) * 0.5f;
-        itemView.frame = CGRectIntegral(frame);
+        CGRect thumbFrame = [self frameForItemAtSegment:i];
+        itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
+                                    CGRectGetMidY(thumbFrame)};
         
         // Make sure they are all unselected
         [self setItemAtIndex:i++ selected:NO];
@@ -312,11 +310,11 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         frame.origin.x = xOffset + (segmentWidth * i);
         frame.origin.y = (size.height - frame.size.height) * 0.5f;
         separatorView.frame = CGRectIntegral(frame);
-
-        // Hide the separators on either side of the selected segment
-        separatorView.alpha = (i == index || i == (index - 1)) ? 0.0f : 1.0f;
         i++;
     }
+    
+    // Update the alpha of the separator views
+    [self refreshSeparatorViewsForSelectedIndex:index];
 }
 
 - (CGFloat)segmentWidth
@@ -339,7 +337,10 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 - (NSInteger)segmentIndexForPoint:(CGPoint)point
 {
     CGFloat segmentWidth = floorf(self.frame.size.width / self.numberOfSegments);
-    return floorf(point.x / segmentWidth);
+    NSInteger segment = floorf(point.x / segmentWidth);
+    segment = MAX(segment, 0);
+    segment = MIN(segment, self.numberOfSegments-1);
+    return segment;
 }
 
 - (void)setThumbViewShrunken:(BOOL)shrunken
@@ -396,6 +397,17 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
      UIView *itemView = self.itemViews[index];
     itemView.alpha = faded ? kTOSegmentedControlSelectedTextAlpha : 1.0f;
 }
+
+- (void)refreshSeparatorViewsForSelectedIndex:(NSInteger)index
+{
+    // Hide the separators on either side of the selected segment
+    NSInteger i = 0;
+    for (UIView *separatorView in self.separatorViews) {
+        separatorView.alpha = (i == index || i == (index - 1)) ? 0.0f : 1.0f;
+        i++;
+    }
+}
+
 #pragma mark - Touch Interaction -
 
 - (void)didTapDown:(UIControl *)control withEvent:(UIEvent *)event
@@ -440,7 +452,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     
     if (tappedIndex == self.focusedIndex) { return; }
     
-    // Handle transitioning bet
+    // Handle transitioning when not dragging the thumb view
     if (!self.isDraggingThumbView) {
         // If we dragged out of the bounds, disregard
         if (self.focusedIndex < 0) { return; }
@@ -467,7 +479,39 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         return;
     }
     
+    // Get the new frame of the segment
+    CGRect frame = [self frameForItemAtSegment:tappedIndex];
     
+    // Work out the center point from the frame
+    CGPoint center = (CGPoint){CGRectGetMidX(frame), CGRectGetMidY(frame)};
+    
+    // Create the animation block
+    id animationBlock = ^{
+        self.thumbView.center = center;
+        
+        // Deselect the focused item
+        [self setItemAtIndex:self.focusedIndex selected:NO];
+        [self setItemViewAtIndex:self.focusedIndex shrunken:NO];
+        
+        // Select the new one
+        [self setItemAtIndex:tappedIndex selected:YES];
+        [self setItemViewAtIndex:tappedIndex shrunken:YES];
+        
+        // Update the separators
+        [self refreshSeparatorViewsForSelectedIndex:tappedIndex];
+    };
+    
+    // Perform the animation
+    [UIView animateWithDuration:0.45
+                          delay:0.0f
+         usingSpringWithDamping:1.0f
+          initialSpringVelocity:1.0f
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:animationBlock
+                     completion:nil];
+    
+    // Update the focused item
+    self.focusedIndex = tappedIndex;
 }
 
 - (void)didExitTapBounds:(UIControl *)control withEvent:(UIEvent *)event
@@ -547,6 +591,12 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
                        options:UIViewAnimationOptionBeginFromCurrentState
                     animations:animationBlock
                     completion:nil];
+    
+    // Update the state and alert the delegate
+    self.selectedSegmentIndex = self.focusedIndex;
+    if (self.segmentTappedHandler) {
+        self.segmentTappedHandler(self.selectedSegmentIndex, NO);
+    }
 }
 
 #pragma mark - Accessors -
