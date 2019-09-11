@@ -6,6 +6,7 @@
 //  Copyright © 2019 Tim Oliver. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -80,16 +81,6 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 - (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index;
 
 /**
- Sets the content of a given segment to an image and optionally makes
- it reversible.
-
- @param image The image to set.
- @param reversible Whether the item can be tapped again to indicate changing order.
- @param index The index of the segment to set.
- */
-- (void)setImage:(UIImage *)image reversible:(BOOL)reversible forItemAtIndex:(NSInteger)index;
-
-/**
  Returns the image that was assigned to a specific segment.
  Will return nil if the content at that segment is not an image.
 
@@ -106,53 +97,12 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 - (void)setTitle:(NSString *)title forItemAtIndex:(NSInteger)index;
 
 /**
- Sets the content of a given segment to a text label and optionally makes
- it reversible.
-
- @param title The text to display at the segment.
-  @param reversible Whether the item can be tapped again to indicate changing order.
- @param index The index of the segment to set.
- */
-- (void)setTitle:(NSString *)title reversible:(BOOL)reversible forItemAtIndex:(NSInteger)index;
-
-/**
 Returns the string of the title that was assigned to a specific segment.
 Will return nil if the content at that segment is not a string.
 
 @param index The index at which the image is located.
 */
 - (nullable NSString *)titleForItemAtIndex:(NSInteger)index;
-
-/**
- Sets whether a specific segment is reverisble.
- This will display a small arrow icon next to it.
-
- @param reversible Whether the item is reversible or not.
- @param index The index of the segment we are targeting.
- */
-- (void)setReversible:(BOOL)reversible forItemAtIndex:(NSInteger)index;
-
-/**
-Returns whether a given segment is reversible.
-
-@param index The index to check.
-*/
-- (BOOL)isReversibleForItemAtIndex:(NSInteger)index;
-
-/**
- Sets whether a specific segment is currently reversed or not.
-
- @param reversed Whether the item is currently reversed or not.
- @param index The index of the segment we are targeting.
- */
-- (void)setReversed:(BOOL)reversed forSegmentAtIndex:(NSInteger)index animated:(BOOL)animated;
-
-/**
-Returns whether a given segment is currently reveresed
-
-@param index The index to check.
-*/
-- (BOOL)isReversedForItemAtIndex:(NSInteger)index;
 
 /**
  Inserts a new image item at the specified segment index.
@@ -163,32 +113,12 @@ Returns whether a given segment is currently reveresed
 - (void)insertItemWithImage:(UIImage *)image atIndex:(NSInteger)index;
 
 /**
- Inserts a new image item at the specified segment index, and optionally
- may be made reversible.
-
- @param image The image to set.
- @param reversible Whether the item can be tapped again to toggle ordering.
- @param index The index of the segment to which the image will be set.
- */
-- (void)insertItemWithImage:(UIImage *)image reversible:(BOOL)reversible atIndex:(NSInteger)index;
-
-/**
 Inserts a new image title at the specified segment index.
 
 @param title The title to set.
 @param index The index of the segment to which the image will be set.
 */
 - (void)insertItemWithTitle:(NSString *)title atIndex:(NSInteger)index;
-
-/**
-Inserts a new image title at the specified segment index, and optionally
-may be made reversible.
-
-@param title The title to set.
-@param reversible Whether the item can be tapped again to toggle ordering.
-@param index The index of the segment to which the image will be set.
-*/
-- (void)insertItemWithTitle:(NSString *)title reversible:(BOOL)reversible atIndex:(NSInteger)index;
 
 /**
 Removes the item at the specified index.
@@ -220,3 +150,6 @@ Removes the item at the specified index.
 @end
 
 NS_ASSUME_NONNULL_END
+
+FOUNDATION_EXPORT double TOSegmentedControlFrameworkVersionNumber;
+FOUNDATION_EXPORT const unsigned char TOSegmentedControlFrameworkVersionString[];
