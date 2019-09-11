@@ -370,7 +370,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     if (![itemView isKindOfClass:[UILabel class]]) { return; }
     
     UILabel *label = (UILabel *)itemView;
-    
+
     // Capture its current position and scale
     CGPoint center = label.center;
     CGAffineTransform transform = label.transform;
@@ -383,11 +383,11 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     label.font = font;
     
     // Resize the frame in case the new font exceeded the bounds
-    [itemView sizeToFit];
+    [label sizeToFit];
     
     // Re-apply the transform and the positioning
-    itemView.transform = transform;
-    itemView.center = center;
+    label.transform = transform;
+    label.center = center;
 }
 
 - (void)setItemAtIndex:(NSInteger)index faded:(BOOL)faded
@@ -549,7 +549,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 - (void)didEndTap:(UIControl *)control withEvent:(UIEvent *)event
 {
     // If we WEREN'T dragging the thumb view, work out where we need to move to
-    if (!self.isDraggingThumbView && self.focusedIndex >= 0) {
+    if (!self.isDraggingThumbView) {
+        if (self.focusedIndex < 0) { return; }
+        
         self.selectedSegmentIndex = self.focusedIndex;
         self.focusedIndex = -1;
         
@@ -577,6 +579,12 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         return;
     }
     
+    // Update the state and alert the delegate
+    self.selectedSegmentIndex = self.focusedIndex;
+    if (self.segmentTappedHandler) {
+        self.segmentTappedHandler(self.selectedSegmentIndex, NO);
+    }
+    
     // Work out which animation effects to apply
     id animationBlock = ^{
         [self setThumbViewShrunken:NO];
@@ -591,12 +599,6 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
                        options:UIViewAnimationOptionBeginFromCurrentState
                     animations:animationBlock
                     completion:nil];
-    
-    // Update the state and alert the delegate
-    self.selectedSegmentIndex = self.focusedIndex;
-    if (self.segmentTappedHandler) {
-        self.segmentTappedHandler(self.selectedSegmentIndex, NO);
-    }
 }
 
 #pragma mark - Accessors -

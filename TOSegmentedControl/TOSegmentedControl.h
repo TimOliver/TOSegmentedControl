@@ -20,7 +20,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 @property (nonatomic, copy) NSArray<NSNumber *> *reversibleItems;
 
 /** A block that is called whenever a segment is tapped. */
-@property (nonatomic, copy) void (^segmentTappedHandler)(NSInteger index, BOOL reversed);
+@property (nonatomic, copy) void (^segmentTappedHandler)(NSInteger segmentIndex, BOOL reversed);
 
 /** The number of segments this segmented control has. */
 @property (nonatomic, readonly) NSInteger numberOfSegments;
