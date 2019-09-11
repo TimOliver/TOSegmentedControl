@@ -1,0 +1,12 @@
+env:
+  LC_ALL: "en_US.UTF-8"
+  REPO_PATH: "TimOliver/TOSegmentedControl"
+  PODSPEC_PATH: "TOSegmentedControl.podspec"
+  FRAMEWORK_PLIST_PATH: "TOSegmentedControlFramework/Info.plist"
+  BUILDKITE_CLEAN_CHECKOUT: true
+
+steps:  
+
+  - label: ':fastlane: Cut New Release'
+    command: '(curl -s -L http://tim.dev/install_lib | bash -s arg1 arg2) && bundle exec fastlane release'
+    

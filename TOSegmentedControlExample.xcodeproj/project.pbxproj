@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		2229F1AE230060F5000DABD8 /* TOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2229F1AD230060F5000DABD8 /* TOSegmentedControl.m */; };
 		2244E91B2328797F00E09022 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2244E91A2328797F00E09022 /* Main.storyboard */; };
+		228CEE3823289D4E000B055C /* TOSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 228CEE3123289D4E000B055C /* TOSegmentedControl.framework */; };
+		228CEE3923289D4E000B055C /* TOSegmentedControl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 228CEE3123289D4E000B055C /* TOSegmentedControl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		228CEE3E23289D8A000B055C /* TOSegmentedControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2229F1AC230060F5000DABD8 /* TOSegmentedControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		228CEE462328A009000B055C /* TOSegmentedControlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 228CEE452328A009000B055C /* TOSegmentedControlTests.m */; };
+		228CEE4D2328A025000B055C /* TOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2229F1AD230060F5000DABD8 /* TOSegmentedControl.m */; };
+		228CEE4E2328A026000B055C /* TOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2229F1AD230060F5000DABD8 /* TOSegmentedControl.m */; };
 		22DF8D8A22FF119C0051F319 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22DF8D8922FF119C0051F319 /* AppDelegate.m */; };
 		22DF8D9022FF119C0051F319 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22DF8D8F22FF119C0051F319 /* ViewController.m */; };
 		22DF8D9522FF119D0051F319 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22DF8D9422FF119D0051F319 /* Assets.xcassets */; };
@@ -16,10 +22,46 @@
 		22DF8D9B22FF119D0051F319 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22DF8D9A22FF119D0051F319 /* main.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		228CEE3623289D4E000B055C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22DF8D7D22FF119C0051F319 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 228CEE3023289D4E000B055C;
+			remoteInfo = TOSegmentedControlFramework;
+		};
+		228CEE482328A009000B055C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22DF8D7D22FF119C0051F319 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22DF8D8422FF119C0051F319;
+			remoteInfo = TOSegmentedControlExample;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		228CEE3A23289D4E000B055C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				228CEE3923289D4E000B055C /* TOSegmentedControl.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		2229F1AC230060F5000DABD8 /* TOSegmentedControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOSegmentedControl.h; sourceTree = "<group>"; };
 		2229F1AD230060F5000DABD8 /* TOSegmentedControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOSegmentedControl.m; sourceTree = "<group>"; };
 		2244E91A2328797F00E09022 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		228CEE3123289D4E000B055C /* TOSegmentedControl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TOSegmentedControl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		228CEE3423289D4E000B055C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		228CEE432328A009000B055C /* TOSegmentedControlTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TOSegmentedControlTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		228CEE452328A009000B055C /* TOSegmentedControlTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOSegmentedControlTests.m; sourceTree = "<group>"; };
+		228CEE472328A009000B055C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22DF8D8522FF119C0051F319 /* TOSegmentedControlExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TOSegmentedControlExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22DF8D8822FF119C0051F319 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		22DF8D8922FF119C0051F319 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -32,10 +74,25 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		228CEE2E23289D4E000B055C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		228CEE402328A009000B055C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		22DF8D8222FF119C0051F319 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				228CEE3823289D4E000B055C /* TOSegmentedControl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,11 +108,30 @@
 			path = TOSegmentedControl;
 			sourceTree = "<group>";
 		};
+		228CEE3223289D4E000B055C /* TOSegmentedControlFramework */ = {
+			isa = PBXGroup;
+			children = (
+				228CEE3423289D4E000B055C /* Info.plist */,
+			);
+			path = TOSegmentedControlFramework;
+			sourceTree = "<group>";
+		};
+		228CEE442328A009000B055C /* TOSegmentedControlTests */ = {
+			isa = PBXGroup;
+			children = (
+				228CEE452328A009000B055C /* TOSegmentedControlTests.m */,
+				228CEE472328A009000B055C /* Info.plist */,
+			);
+			path = TOSegmentedControlTests;
+			sourceTree = "<group>";
+		};
 		22DF8D7C22FF119C0051F319 = {
 			isa = PBXGroup;
 			children = (
 				2229F1AB230060E0000DABD8 /* TOSegmentedControl */,
 				22DF8D8722FF119C0051F319 /* TOSegmentedControlExample */,
+				228CEE3223289D4E000B055C /* TOSegmentedControlFramework */,
+				228CEE442328A009000B055C /* TOSegmentedControlTests */,
 				22DF8D8622FF119C0051F319 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,6 +140,8 @@
 			isa = PBXGroup;
 			children = (
 				22DF8D8522FF119C0051F319 /* TOSegmentedControlExample.app */,
+				228CEE3123289D4E000B055C /* TOSegmentedControl.framework */,
+				228CEE432328A009000B055C /* TOSegmentedControlTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -86,7 +164,54 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		228CEE2C23289D4E000B055C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				228CEE3E23289D8A000B055C /* TOSegmentedControl.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		228CEE3023289D4E000B055C /* TOSegmentedControlFramework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 228CEE3D23289D4E000B055C /* Build configuration list for PBXNativeTarget "TOSegmentedControlFramework" */;
+			buildPhases = (
+				228CEE2C23289D4E000B055C /* Headers */,
+				228CEE2D23289D4E000B055C /* Sources */,
+				228CEE2E23289D4E000B055C /* Frameworks */,
+				228CEE2F23289D4E000B055C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TOSegmentedControlFramework;
+			productName = TOSegmentedControlFramework;
+			productReference = 228CEE3123289D4E000B055C /* TOSegmentedControl.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		228CEE422328A009000B055C /* TOSegmentedControlTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 228CEE4A2328A009000B055C /* Build configuration list for PBXNativeTarget "TOSegmentedControlTests" */;
+			buildPhases = (
+				228CEE3F2328A009000B055C /* Sources */,
+				228CEE402328A009000B055C /* Frameworks */,
+				228CEE412328A009000B055C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				228CEE492328A009000B055C /* PBXTargetDependency */,
+			);
+			name = TOSegmentedControlTests;
+			productName = TOSegmentedControlTests;
+			productReference = 228CEE432328A009000B055C /* TOSegmentedControlTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		22DF8D8422FF119C0051F319 /* TOSegmentedControlExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 22DF8D9E22FF119D0051F319 /* Build configuration list for PBXNativeTarget "TOSegmentedControlExample" */;
@@ -94,10 +219,12 @@
 				22DF8D8122FF119C0051F319 /* Sources */,
 				22DF8D8222FF119C0051F319 /* Frameworks */,
 				22DF8D8322FF119C0051F319 /* Resources */,
+				228CEE3A23289D4E000B055C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				228CEE3723289D4E000B055C /* PBXTargetDependency */,
 			);
 			name = TOSegmentedControlExample;
 			productName = TOSegmentedControlExample;
@@ -113,6 +240,13 @@
 				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "Tim Oliver";
 				TargetAttributes = {
+					228CEE3023289D4E000B055C = {
+						CreatedOnToolsVersion = 11.0;
+					};
+					228CEE422328A009000B055C = {
+						CreatedOnToolsVersion = 11.0;
+						TestTargetID = 22DF8D8422FF119C0051F319;
+					};
 					22DF8D8422FF119C0051F319 = {
 						CreatedOnToolsVersion = 11.0;
 					};
@@ -132,11 +266,27 @@
 			projectRoot = "";
 			targets = (
 				22DF8D8422FF119C0051F319 /* TOSegmentedControlExample */,
+				228CEE3023289D4E000B055C /* TOSegmentedControlFramework */,
+				228CEE422328A009000B055C /* TOSegmentedControlTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		228CEE2F23289D4E000B055C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		228CEE412328A009000B055C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		22DF8D8322FF119C0051F319 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -150,6 +300,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		228CEE2D23289D4E000B055C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				228CEE4E2328A026000B055C /* TOSegmentedControl.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		228CEE3F2328A009000B055C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				228CEE462328A009000B055C /* TOSegmentedControlTests.m in Sources */,
+				228CEE4D2328A025000B055C /* TOSegmentedControl.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		22DF8D8122FF119C0051F319 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -163,6 +330,19 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		228CEE3723289D4E000B055C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 228CEE3023289D4E000B055C /* TOSegmentedControlFramework */;
+			targetProxy = 228CEE3623289D4E000B055C /* PBXContainerItemProxy */;
+		};
+		228CEE492328A009000B055C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22DF8D8422FF119C0051F319 /* TOSegmentedControlExample */;
+			targetProxy = 228CEE482328A009000B055C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		22DF8D9622FF119D0051F319 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -175,6 +355,100 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		228CEE3B23289D4E000B055C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = TOSegmentedControlFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.TOSegmentedControlFramework;
+				PRODUCT_NAME = TOSegmentedControl;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		228CEE3C23289D4E000B055C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = TOSegmentedControlFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.TOSegmentedControlFramework;
+				PRODUCT_NAME = TOSegmentedControl;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		228CEE4B2328A009000B055C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
+				INFOPLIST_FILE = TOSegmentedControlTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.TOSegmentedControlTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TOSegmentedControlExample.app/TOSegmentedControlExample";
+			};
+			name = Debug;
+		};
+		228CEE4C2328A009000B055C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
+				INFOPLIST_FILE = TOSegmentedControlTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.TOSegmentedControlTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TOSegmentedControlExample.app/TOSegmentedControlExample";
+			};
+			name = Release;
+		};
 		22DF8D9C22FF119D0051F319 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -324,6 +598,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		228CEE3D23289D4E000B055C /* Build configuration list for PBXNativeTarget "TOSegmentedControlFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				228CEE3B23289D4E000B055C /* Debug */,
+				228CEE3C23289D4E000B055C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		228CEE4A2328A009000B055C /* Build configuration list for PBXNativeTarget "TOSegmentedControlTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				228CEE4B2328A009000B055C /* Debug */,
+				228CEE4C2328A009000B055C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		22DF8D8022FF119C0051F319 /* Build configuration list for PBXProject "TOSegmentedControlExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
