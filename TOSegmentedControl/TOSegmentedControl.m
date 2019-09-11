@@ -245,6 +245,21 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     self.items = nil;
 }
 
+- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index
+{
+    // Make sure the index provided is valid
+    if (index < 0 || index >= self.items.count) { return nil; }
+
+    // Return the item only if it is an image
+    id item = self.items[index];
+    if ([item isKindOfClass:[UIImage class]]) {
+        return item;
+    }
+    
+    // Return nil if a label or anything else
+    return nil;
+}
+
 #pragma mark - View Layout -
 
 - (void)layoutSubviews
