@@ -1,12 +1,30 @@
 //
 //  TOSegmentedControl.m
-//  TOSegmentedControlExample
 //
-//  Created by Tim Oliver on 11/8/19.
-//  Copyright © 2019 Tim Oliver. All rights reserved.
+//  Copyright 2019 Timothy Oliver. All rights reserved.
 //
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to
+//  deal in the Software without restriction, including without limitation the
+//  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+//  sell copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+//  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+//  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+//  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import "TOSegmentedControl.h"
+#import "TOSegmentedControlItem.h"
+
+// ----------------------------------------------------------------
+// Static Members
 
 // A cache to hold images generated for this view that may be shared.
 static NSMapTable *_imageTable = nil;
@@ -19,12 +37,18 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 static CGFloat const kTOSegmentedControlSelectedTextAlpha = 0.3f;
 static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
+// ----------------------------------------------------------------
+// Private Members
+
 @interface TOSegmentedControl ()
+
+/** The private list of item objects, storing state and view data */
+@property (nonatomic, strong) NSMutableArray<TOSegmentedControlItem *> *_items;
 
 /** Keep track when the user taps explicitily on the thumb view */
 @property (nonatomic, assign) BOOL isDraggingThumbView;
 
-/** Before we commit to a new selected index, this is the index the user has tapped over */
+/** Before we commit to a new selected index, this is the index the user has dragged over */
 @property (nonatomic, assign) NSInteger focusedIndex;
 
 /** The background rounded "track" view */
@@ -35,9 +59,6 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 /** The separator views between each of the items */
 @property (nonatomic, strong) NSMutableArray<UIView *> *separatorViews;
-
-/** The views set up for each item. */
-@property (nonatomic, strong) NSMutableArray<UIView *> *itemViews;
 
 /** A weakly retained image table that holds cached images for us. */
 @property (nonatomic, readonly) NSMapTable *imageTable;
@@ -54,6 +75,8 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 @end
 
 @implementation TOSegmentedControl
+
+@synthesize _items = __items;
 
 #pragma mark - Class Init -
 
@@ -114,8 +137,10 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     #endif
     [self.trackView addSubview:self.thumbView];
 
+    // Create list for managing each item
+    self._items = [NSMutableArray array];
+    
     // Create containers for views
-    self.itemViews = [NSMutableArray array];
     self.separatorViews = [NSMutableArray array];
 
     // Set default resettable values
@@ -227,6 +252,76 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     }
 }
 
+#pragma mark - Public Item Access -
+
+- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index
+{
+    return [self objectForItemAtIndex:index class:UIImage.class];
+}
+
+- (nullable UILabel *)titleForItemAtIndex:(NSInteger)index
+{
+    return [self objectForItemAtIndex:index class:UILabel.class];
+}
+
+- (nullable id)objectForItemAtIndex:(NSInteger)index class:(Class)class
+{
+    // Make sure the index provided is valid
+    if (index < 0 || index >= self.items.count) { return nil; }
+
+    // Return the item only if it is an image
+    id item = self.items[index];
+    if ([item isKindOfClass:class]) {
+        return item;
+    }
+    
+    // Return nil if a label or anything else
+    return nil;
+}
+
+#pragma mark Replacing Items
+
+- (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index
+{
+    [self setObject:image forItemAtIndex:index];
+}
+
+- (void)setTitle:(NSString *)title forItemAtIndex:(NSInteger)index
+{
+    [self setObject:title forItemAtIndex:index];
+}
+
+- (void)setObject:(id)object forItemAtIndex:(NSInteger)index
+{
+    NSAssert([object isKindOfClass:UILabel.class] || [object isKindOfClass:UIImage.class],
+                @"TOSegmentedControl: Only images and strings are supported.");
+    
+    // Make sure we don't go out of bounds
+    if (index < 0 || index >= self.items.count) { return; }
+    
+    // Remove the previous item view
+    UIView *itemView = self.itemViews[index];
+    [itemView removeFromSuperview];
+    [self.itemViews removeObjectAtIndex:index];
+    
+    // Remove the item from the item list
+    NSMutableArray *items = [self.items mutableCopy];
+    [items removeObjectAtIndex:index];
+    
+    // Insert the new item into the items array
+    [items insertObject:object atIndex:index];
+    
+    // Generate a new view for it and insert
+    itemView = [self viewForItem:object];
+    [self.itemViews insertObject:itemView atIndex:index];
+    [self.trackView addSubview:itemView];
+    
+    // Re-layout the views
+    [self setNeedsLayout];
+}
+
+#pragma mark Deleting Items
+
 - (void)removeAllItems
 {
     // Remove all item views
@@ -243,21 +338,6 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
     // Delete the items array
     self.items = nil;
-}
-
-- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index
-{
-    // Make sure the index provided is valid
-    if (index < 0 || index >= self.items.count) { return nil; }
-
-    // Return the item only if it is an image
-    id item = self.items[index];
-    if ([item isKindOfClass:[UIImage class]]) {
-        return item;
-    }
-    
-    // Return nil if a label or anything else
-    return nil;
 }
 
 #pragma mark - View Layout -
@@ -368,7 +448,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 - (void)setItemViewAtIndex:(NSInteger)segmentIndex shrunken:(BOOL)shrunken
 {
     NSAssert(segmentIndex >= 0 && segmentIndex < self.itemViews.count,
-             @"Array should not be out of bounds");
+             @"TOSegmentedControl: Array should not be out of bounds");
     
     UIView *itemView = self.itemViews[segmentIndex];
     CGFloat scale = shrunken ? kTOSegmentedControlSelectedScale : 1.0f;
@@ -379,7 +459,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 - (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
 {
     NSAssert(index >= 0 && index < self.itemViews.count,
-             @"Array should not be out of bounds");
+             @"TOSegmentedControl:  Array should not be out of bounds");
     
     UIView *itemView = self.itemViews[index];
     if (![itemView isKindOfClass:[UILabel class]]) { return; }

@@ -1,24 +1,52 @@
 //
 //  TOSegmentedControl.h
-//  TOSegmentedControlExample
 //
-//  Created by Tim Oliver on 11/8/19.
-//  Copyright © 2019 Tim Oliver. All rights reserved.
+//  Copyright 2019 Timothy Oliver. All rights reserved.
 //
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to
+//  deal in the Software without restriction, including without limitation the
+//  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+//  sell copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+//  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+//  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+//  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+FOUNDATION_EXPORT double TOSegmentedControlFrameworkVersionNumber;
+FOUNDATION_EXPORT const unsigned char TOSegmentedControlFrameworkVersionString[];
+
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ A UI control that presents several
+ options to the user in a horizontal, segmented layout.
+ 
+ Only one segment may be selected at a time and, if desired,
+ may be designated as 'reversible' with an arrow icon indicating
+ its direction.
+ */
 NS_SWIFT_NAME(SegmentedControl)
 IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
 /** The items currently assigned to this segmented control. (Can be a combination of strings and images) */
 @property (nonatomic, copy, nullable) NSArray *items;
 
-/** An array of BOOL values dictating which items are reversible. */
-@property (nonatomic, copy) NSArray<NSNumber *> *reversibleItems;
+/** A set of number values dictating which items are reversible. */
+@property (nonatomic, strong) NSMutableSet<NSNumber *> *reversibleItems;
+
+/** A store tracking the current direction of reversible items */
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *reversedItems;
 
 /** A block that is called whenever a segment is tapped. */
 @property (nonatomic, copy) void (^segmentTappedHandler)(NSInteger segmentIndex, BOOL reversed);
@@ -73,7 +101,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 - (instancetype)initWithItems:(nullable NSArray *)items;
 
 /**
- Sets the content of a given segment to an image.
+ Replaces the content of an existing segment with a new image.
 
  @param image The image to set.
  @param index The index of the segment to set.
@@ -150,6 +178,3 @@ Removes the item at the specified index.
 @end
 
 NS_ASSUME_NONNULL_END
-
-FOUNDATION_EXPORT double TOSegmentedControlFrameworkVersionNumber;
-FOUNDATION_EXPORT const unsigned char TOSegmentedControlFrameworkVersionString[];
