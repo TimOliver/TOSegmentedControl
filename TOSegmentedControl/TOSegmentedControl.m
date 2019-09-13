@@ -43,7 +43,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 @interface TOSegmentedControl ()
 
 /** The private list of item objects, storing state and view data */
-@property (nonatomic, strong) NSMutableArray<TOSegmentedControlItem *> *_items;
+@property (nonatomic, strong) NSMutableArray<TOSegmentedControlItem *> *itemObjects;
 
 /** Keep track when the user taps explicitily on the thumb view */
 @property (nonatomic, assign) BOOL isDraggingThumbView;
@@ -75,8 +75,6 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 @end
 
 @implementation TOSegmentedControl
-
-@synthesize _items = __items;
 
 #pragma mark - Class Init -
 
@@ -138,7 +136,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     [self.trackView addSubview:self.thumbView];
 
     // Create list for managing each item
-    self._items = [NSMutableArray array];
+    self.itemObjects = [NSMutableArray array];
     
     // Create containers for views
     self.separatorViews = [NSMutableArray array];
@@ -199,18 +197,6 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     }
 
     return sanitizedItems;
-}
-
-- (void)addSubviewsForAllItems
-{
-    // This should only be called when the item views array is empty to ensure no mismatches
-    NSAssert(self.itemViews.count == 0, @"TOSegmentedControl: Item view array should be empty");
-
-    for (id object in self.items) {
-        UIView *view = [self viewForItem:object];
-        [self.itemViews addObject:view];
-        [self.trackView addSubview:view];
-    }
 }
 
 - (UIView *)viewForItem:(id)object
@@ -299,22 +285,16 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     // Make sure we don't go out of bounds
     if (index < 0 || index >= self.items.count) { return; }
     
-    // Remove the previous item view
-    UIView *itemView = self.itemViews[index];
-    [itemView removeFromSuperview];
-    [self.itemViews removeObjectAtIndex:index];
-    
-    // Remove the item from the item list
+    // Remove the item from the item list and insert the new one
     NSMutableArray *items = [self.items mutableCopy];
     [items removeObjectAtIndex:index];
-    
-    // Insert the new item into the items array
     [items insertObject:object atIndex:index];
+    _items = [NSArray arrayWithArray:items];
     
-    // Generate a new view for it and insert
-    itemView = [self viewForItem:object];
-    [self.itemViews insertObject:itemView atIndex:index];
-    [self.trackView addSubview:itemView];
+    // Update the item object at that point for the new item
+    TOSegmentedControlItem *item = self.itemObjects[index];
+    if ([object isKindOfClass:UILabel.class]) { item.title = object; }
+    if ([object isKindOfClass:UIImage.class]) { item.image = object; }
     
     // Re-layout the views
     [self setNeedsLayout];
@@ -324,11 +304,8 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)removeAllItems
 {
-    // Remove all item views
-    for (UIView *view in self.itemViews) {
-        [view removeFromSuperview];
-    }
-    [self.itemViews removeAllObjects];
+    // Remove all item objects
+    self.itemObjects = [NSMutableArray array];
 
     // Remove all separators
     for (UIView *separator in self.separatorViews) {
@@ -379,7 +356,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
     // Lay out the item views
     NSInteger i = 0;
-    for (UIView *itemView in self.itemViews) {
+    for (TOSegmentedControlItem *item in self.itemObjects) {
+        UIView *itemView = item.itemView;
+        
         // Size to fit
         [itemView sizeToFit];
 
@@ -447,10 +426,10 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setItemViewAtIndex:(NSInteger)segmentIndex shrunken:(BOOL)shrunken
 {
-    NSAssert(segmentIndex >= 0 && segmentIndex < self.itemViews.count,
+    NSAssert(segmentIndex >= 0 && segmentIndex < self.items.count,
              @"TOSegmentedControl: Array should not be out of bounds");
     
-    UIView *itemView = self.itemViews[segmentIndex];
+    UIView *itemView = self.itemObjects[segmentIndex].itemView;
     CGFloat scale = shrunken ? kTOSegmentedControlSelectedScale : 1.0f;
     itemView.transform = CGAffineTransformScale(CGAffineTransformIdentity,
                                                       scale, scale);
@@ -458,10 +437,10 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
 {
-    NSAssert(index >= 0 && index < self.itemViews.count,
+    NSAssert(index >= 0 && index < self.items.count,
              @"TOSegmentedControl:  Array should not be out of bounds");
     
-    UIView *itemView = self.itemViews[index];
+    UIView *itemView = self.itemObjects[index].itemView;
     if (![itemView isKindOfClass:[UILabel class]]) { return; }
     
     UILabel *label = (UILabel *)itemView;
@@ -487,9 +466,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setItemAtIndex:(NSInteger)index faded:(BOOL)faded
 {
-    NSAssert(index >= 0 && index < self.itemViews.count,
+    NSAssert(index >= 0 && index < self.items.count,
              @"Array should not be out of bounds");
-     UIView *itemView = self.itemViews[index];
+    UIView *itemView = self.itemObjects[index].itemView;
     itemView.alpha = faded ? kTOSegmentedControlSelectedTextAlpha : 1.0f;
 }
 
@@ -651,8 +630,8 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         self.focusedIndex = -1;
         
         id animationBlock = ^{
-            for (NSInteger i = 0; i < self.itemViews.count; i++) {
-                [self.itemViews[i] setAlpha:1.0f];
+            for (NSInteger i = 0; i < self.itemObjects.count; i++) {
+                [self.itemObjects[i].itemView setAlpha:1.0f];
             }
             
             [self setNeedsLayout];
@@ -711,11 +690,12 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     // Set the new array
     _items = [self sanitizedItemArrayWithItems:items];
 
+    // Create the list of item objects  to track their state
+    _itemObjects = [TOSegmentedControlItem itemsWithObjects:_items
+                                        forSegmentedControl:self].mutableCopy;
+    
     // Update the number of separators
     [self updateSeparatorViewCount];
-
-    // Add all content views
-    [self addSubviewsForAllItems];
 
     // Trigger a layout update
     [self setNeedsLayout];
@@ -783,12 +763,12 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     }
 
     // Set each item to the color
-    for (UIView *itemView in self.itemViews) {
-        if ([itemView isKindOfClass:[UILabel class]]) {
-            [(UILabel *)itemView setTextColor:_itemColor];
+    for (TOSegmentedControlItem *item in self.itemObjects) {
+        if ([item.itemView isKindOfClass:[UILabel class]]) {
+            [(UILabel *)item.itemView setTextColor:_itemColor];
         }
         else {
-            itemView.tintColor = _itemColor;
+            item.itemView.tintColor = _itemColor;
         }
     }
 }
