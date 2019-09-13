@@ -22,7 +22,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class UIView, UIImage, TOSegmentedControl;
+@class UIColor, UIView, UIImage, TOSegmentedControl;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,15 +33,27 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface TOSegmentedControlItem : NSObject
 
-/** Item properties */
+/** When item is a label, the text to display */
 @property (nonatomic, copy) NSString *title;
+
+/** When item is an image, the image to display */
 @property (nonatomic, strong) UIImage *image;
+
+/** Whether the item can be tapped to toggle direction */
 @property (nonatomic, assign) BOOL isReversible;
+
+/** Whether the item is currently reveresed or not */
 @property (nonatomic, assign) BOOL isReversed;
-@property (nonatomic, strong) UIView *itemView;
+
+/** The view (either image or label) for this item */
+@property (nonatomic, readonly) UIView *itemView;
+
+/** The color of the view and its components */
+@property (nonatomic, strong) UIColor *itemColor;
 
 // Create an array of objects given an array of strings and images
-+ (NSArray *)itemsWithObjects:(NSArray *)objects;
++ (NSArray *)itemsWithObjects:(NSArray *)objects
+          forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
 
 // Create a non-reversible item from this class
 - (instancetype)initWithTitle:(NSString *)title

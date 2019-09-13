@@ -28,6 +28,7 @@
 // Access to private properties in segmented control parent
 
 @interface TOSegmentedControl ()
+@property (nonatomic, readonly) UIView *trackView;
 @property (nonatomic, readonly) UIImage *arrowImage;
 @end
 
@@ -39,11 +40,17 @@
 // Weak reference to our parent segmented control
 @property (nonatomic, weak) TOSegmentedControl *segmentedControl;
 
+// Read-write access to the item view
+@property (nonatomic, strong, readwrite) UIView *itemView;
+
+// When made reversible, the arrow image view to show
+@property (nonatomic, strong) UIImageView *arrowImageView;
+
 @end
 
 @implementation TOSegmentedControlItem
 
-#pragma mark - Object Creation -
+#pragma mark - Object Lifecyle -
 
 - (instancetype)initWithTitle:(NSString *)title
           forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
@@ -91,6 +98,11 @@
     }
     
     return self;
+}
+
+- (void)dealloc
+{
+    [self.itemView removeFromSuperview];
 }
 
 #pragma mark - Comnvenience Initializers -
@@ -122,8 +134,53 @@
 
 - (void)commonInit
 {
+    // Capture tint color from the parent
+    self.itemColor = self.segmentedControl.itemColor;
     
+    // Create the initial image / label view
+    [self refreshItemView];
+    
+    // Refresh the reversible state
+    [self refreshReversibleView];
 }
+
+#pragma mark - Reversible Management -
+
+- (void)refreshReversibleView
+{
+    // Whether it's in memory or not, set the tint color
+    self.arrowImageView.tintColor = self.itemColor;
+    
+    // If we're no longer (Or never were) reversible,
+    // hide and exit out
+    if (!self.isReversible) {
+        self.arrowImageView.hidden = YES;
+        return;
+    }
+    
+    // Create the arrow view if we haven't done so yet
+    if (self.arrowImageView == nil) {
+        UIImage *arrow = self.segmentedControl.arrowImage;
+        self.arrowImageView = [[UIImageView alloc] initWithImage:arrow];
+    }
+    
+    // Add the arrow to the item view
+    self.itemView.clipsToBounds = NO;
+    [self.itemView addSubview:self.arrowImageView];
+    
+    // Line up the item view vertically centered next to the item view
+    self.arrowImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin |
+                                            UIViewAutoresizingFlexibleBottomMargin |
+                                            UIViewAutoresizingFlexibleLeftMargin;
+    
+    CGRect itemFrame = self.itemView.frame;
+    CGRect frame = self.arrowImageView.frame;
+    frame.origin.x = CGRectGetMaxX(itemFrame) + 2.0f;
+    frame.origin.y = (CGRectGetHeight(itemFrame) - CGRectGetHeight(frame)) * 0.5f;
+    self.arrowImageView.frame = frame;
+}
+
+#pragma mark - View Management -
 
 - (UILabel *)makeLabelForTitle:(NSString *)title
 {
@@ -147,9 +204,88 @@
     return imageView;
 }
 
-- (UIView *)itemView
+- (void)refreshItemView
 {
+    // Convenience check for whether the view is a label or image
+    UIImageView *imageView = nil;
+    if ([self.itemView isKindOfClass:UIImageView.class]) {
+        imageView = (UIImageView *)self.itemView;
+    }
     
+    UILabel *label = nil;
+    if ([self.itemView isKindOfClass:UILabel.class]) {
+        label = (UILabel *)self.itemView;
+    }
+
+    // If we didn't change the type, just update the current
+    // view with the new type
+    if (imageView && self.image) {
+        [(UIImageView *)self.itemView setImage:self.image];
+    }
+    
+    // If it's already a label, refresh the text
+    if (label && self.title) {
+        [(UILabel *)self.itemView setText:self.title];
+    }
+    
+    // If it's an image view, but the title text is set, swap them out
+    if (imageView && self.title) {
+        [imageView removeFromSuperview];
+        imageView = nil;
+        
+        self.itemView = [self makeLabelForTitle:self.title];
+        [self.segmentedControl.trackView addSubview:self.itemView];
+        
+        label = (UILabel *)self.itemView;
+    }
+    
+    // If it's a label view, but the image is set, swap them out
+    if (label && self.image) {
+        [label removeFromSuperview];
+        label = nil;
+        
+        self.itemView = [self makeImageViewForImage:self.image];
+        [self.segmentedControl.trackView addSubview:self.itemView];
+        
+        imageView = (UIImageView *)self.itemView;
+    }
+    
+    // Set the tint color of the component
+    label.textColor = self.itemColor;
+    imageView.tintColor = self.itemColor;
+}
+
+#pragma mark - Public Accessors -
+
+- (void)setTitle:(NSString *)title
+{
+    // Copy text, and regenerate the view if need be
+    _title = [title copy];
+    _image = nil;
+    [self refreshItemView];
+}
+
+- (void)setImage:(UIImage *)image
+{
+    if (_image == image) { return; }
+    _image = image;
+    _title = nil;
+    [self refreshItemView];
+}
+
+- (void)setIsReversible:(BOOL)isReversible
+{
+    if (_isReversible == isReversible) { return; }
+    _isReversible = isReversible;
+    [self refreshReversibleView];
+}
+
+- (void)setItemColor:(UIColor *)itemColor
+{
+    if (itemColor == _itemColor) { return; }
+    _itemColor = itemColor;
+    [self refreshItemView];
+    [self refreshReversibleView];
 }
 
 @end
