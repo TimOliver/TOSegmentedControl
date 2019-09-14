@@ -199,25 +199,6 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     return sanitizedItems;
 }
 
-- (UIView *)viewForItem:(id)object
-{
-    // Object is an image. Create an image view
-    if ([object isKindOfClass:[UIImage class]]) {
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:object];
-        imageView.tintColor = self.itemColor;
-        return imageView;
-    }
-
-    // Object is a string. Create a label
-    UILabel *label = [[UILabel alloc] init];
-    label.text = object;
-    label.textAlignment = NSTextAlignmentCenter;
-    label.textColor = self.itemColor;
-    label.font = self.textFont;
-    label.backgroundColor = [UIColor clearColor];
-    return label;
-}
-
 - (void)updateSeparatorViewCount
 {
     NSInteger numberOfSeparators = (self.items.count - 1);
@@ -440,10 +421,8 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     NSAssert(index >= 0 && index < self.itemObjects.count,
              @"TOSegmentedControl:  Array should not be out of bounds");
     
-    UIView *itemView = self.itemObjects[index].itemView;
-    if (![itemView isKindOfClass:[UILabel class]]) { return; }
-    
-    UILabel *label = (UILabel *)itemView;
+    UILabel *label = (UILabel *)self.itemObjects[index].label;
+    if (label == nil) { return; }
 
     // Capture its current position and scale
     CGPoint center = label.center;
@@ -764,12 +743,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
     // Set each item to the color
     for (TOSegmentedControlItem *item in self.itemObjects) {
-        if ([item.itemView isKindOfClass:[UILabel class]]) {
-            [(UILabel *)item.itemView setTextColor:_itemColor];
-        }
-        else {
-            item.itemView.tintColor = _itemColor;
-        }
+        [item refreshItemView];
     }
 }
 
