@@ -374,19 +374,24 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (CGFloat)segmentWidth
 {
-    return floorf(self.bounds.size.width / self.numberOfSegments) - (_thumbInset * 2.0f);
+    return floorf((self.bounds.size.width - (_thumbInset * 2.0f)) / self.numberOfSegments);
 }
 
 - (CGRect)frameForItemAtSegment:(NSInteger)index
 {
-    CGSize size = self.bounds.size;
+    CGSize size = self.trackView.frame.size;
     
     CGRect frame = CGRectZero;
     frame.origin.x = _thumbInset + (self.segmentWidth * index) + ((_thumbInset * 2.0f) * index);
     frame.origin.y = _thumbInset;
     frame.size.width = self.segmentWidth;
     frame.size.height = size.height - (_thumbInset * 2.0f);
-    return frame;
+    
+    // Cap the position of the frame so it won't overshoot
+    frame.origin.x = MAX(_thumbInset, frame.origin.x);
+    frame.origin.x = MIN(size.width - (self.segmentWidth + _thumbInset), frame.origin.x);
+    
+    return CGRectIntegral(frame);
 }
 
 - (NSInteger)segmentIndexForPoint:(CGPoint)point

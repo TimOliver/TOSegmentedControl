@@ -133,6 +133,20 @@ Will return nil if the content at that segment is not a string.
 - (nullable NSString *)titleForItemAtIndex:(NSInteger)index;
 
 /**
+ Adds a new text item to the end of the list.
+ 
+ @param title The title of the new item.
+ */
+- (void)addNewItemWithTitle:(NSString *)title;
+
+/**
+ Adds a new image item to the end of the list.
+ 
+ @param image The image of the new item.
+ */
+- (void)addNewItemWithImage:(UIImage *)image;
+
+/**
  Inserts a new image item at the specified segment index.
 
  @param image The image to set.
@@ -147,6 +161,11 @@ Inserts a new image title at the specified segment index.
 @param index The index of the segment to which the image will be set.
 */
 - (void)insertItemWithTitle:(NSString *)title atIndex:(NSInteger)index;
+
+/**
+ Remove the last item in the list
+ */
+- (void)removeLastItem;
 
 /**
 Removes the item at the specified index.
