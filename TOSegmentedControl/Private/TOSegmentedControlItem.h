@@ -67,6 +67,8 @@ NS_ASSUME_NONNULL_BEGIN
           forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
 
 // Create a non-reversible item from this class
+- (nullable instancetype)initWithObject:(id)object
+                    forSegmentedControl:(TOSegmentedControl *)segmentedControl;
 - (instancetype)initWithTitle:(NSString *)title
           forSegmentedControl:(TOSegmentedControl *)segmentedControl;
 - (instancetype)initWithImage:(UIImage *)image

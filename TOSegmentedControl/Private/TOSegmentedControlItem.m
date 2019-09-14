@@ -52,11 +52,33 @@
 
 #pragma mark - Object Lifecyle -
 
+- (instancetype)initWithObject:(id)object
+           forSegmentedControl:(TOSegmentedControl *)segmentedControl
+{
+    if (![object isKindOfClass:NSString.class] && ![object isKindOfClass:UIImage.class]) {
+        return nil;
+    }
+    
+    if (self = [super init]) {
+        if ([object isKindOfClass:NSString.class]) {
+            _title = (NSString *)object;
+        }
+        else {
+            _image = (UIImage *)object;
+        }
+        _segmentedControl = segmentedControl;
+        [self commonInit];
+    }
+    
+    return self;
+}
+
 - (instancetype)initWithTitle:(NSString *)title
           forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
 {
     if (self = [super init]) {
         _title = [title copy];
+        _segmentedControl = segmentedControl;
         [self commonInit];
     }
     
@@ -68,6 +90,7 @@
 {
     if (self = [super init]) {
         _image = image;
+        _segmentedControl = segmentedControl;
         [self commonInit];
     }
     
@@ -81,6 +104,7 @@
     if (self = [super init]) {
         _title = [title copy];
         _isReversible = reversible;
+        _segmentedControl = segmentedControl;
         [self commonInit];
     }
     
@@ -94,6 +118,7 @@
     if (self = [super init]) {
         _image = image;
         _isReversible = reversible;
+        _segmentedControl = segmentedControl;
         [self commonInit];
     }
     

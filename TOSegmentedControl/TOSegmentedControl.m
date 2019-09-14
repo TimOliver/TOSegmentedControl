@@ -245,6 +245,54 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     return nil;
 }
 
+#pragma mark Add New Items
+
+- (void)addNewItemWithImage:(UIImage *)image
+{
+    [self addNewObject:image];
+}
+
+- (void)addNewItemWithTitle:(NSString *)title
+{
+    [self addNewObject:title];
+}
+
+- (void)addNewObject:(id)object
+{
+    // Add item to master list
+    NSMutableArray *items = [self.items mutableCopy];
+    [items addObject:object];
+    _items = [NSArray arrayWithArray:items];
+    
+    // Add new item object to internal list
+    TOSegmentedControlItem *item = [[TOSegmentedControlItem alloc] initWithObject:object
+                                                              forSegmentedControl:self];
+    [self.itemObjects addObject:item];
+
+    // Update number of separators
+    [self updateSeparatorViewCount];
+    
+    // Perform new layout update
+    [self setNeedsLayout];
+}
+
+#pragma mark Inserting New Items
+
+- (void)insertItemWithTitle:(NSString *)title atIndex:(NSInteger)index
+{
+    [self insertItemWithObject:title atIndex:index];
+}
+
+- (void)insertItemWithImage:(UIImage *)image atIndex:(NSInteger)index
+{
+    [self insertItemWithObject:image atIndex:index];
+}
+
+- (void)insertItemWithObject:(id)object atIndex:(NSInteger)index
+{
+    
+}
+
 #pragma mark Replacing Items
 
 - (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index
