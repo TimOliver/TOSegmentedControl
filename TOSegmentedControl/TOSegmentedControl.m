@@ -242,10 +242,11 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (nullable UIImage *)imageForItemAtIndex:(NSInteger)index
 {
+    if (index < 0 || index >= self.itemObjects.count) { return nil; }
     return [self objectForItemAtIndex:index class:UIImage.class];
 }
 
-- (nullable UILabel *)titleForItemAtIndex:(NSInteger)index
+- (nullable NSString *)titleForItemAtIndex:(NSInteger)index
 {
     return [self objectForItemAtIndex:index class:UILabel.class];
 }
@@ -257,9 +258,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
     // Return the item only if it is an image
     id item = self.items[index];
-    if ([item isKindOfClass:class]) {
-        return item;
-    }
+    if ([item isKindOfClass:class]) { return item; }
     
     // Return nil if a label or anything else
     return nil;
@@ -279,7 +278,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setObject:(id)object forItemAtIndex:(NSInteger)index
 {
-    NSAssert([object isKindOfClass:UILabel.class] || [object isKindOfClass:UIImage.class],
+    NSAssert([object isKindOfClass:NSString.class] || [object isKindOfClass:UIImage.class],
                 @"TOSegmentedControl: Only images and strings are supported.");
     
     // Make sure we don't go out of bounds
@@ -358,6 +357,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     NSInteger i = 0;
     for (TOSegmentedControlItem *item in self.itemObjects) {
         UIView *itemView = item.itemView;
+        [self.trackView addSubview:itemView];
         
         // Size to fit
         [itemView sizeToFit];
@@ -437,7 +437,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
 {
-    NSAssert(index >= 0 && index < self.items.count,
+    NSAssert(index >= 0 && index < self.itemObjects.count,
              @"TOSegmentedControl:  Array should not be out of bounds");
     
     UIView *itemView = self.itemObjects[index].itemView;
@@ -466,7 +466,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setItemAtIndex:(NSInteger)index faded:(BOOL)faded
 {
-    NSAssert(index >= 0 && index < self.items.count,
+    NSAssert(index >= 0 && index < self.itemObjects.count,
              @"Array should not be out of bounds");
     UIView *itemView = self.itemObjects[index].itemView;
     itemView.alpha = faded ? kTOSegmentedControlSelectedTextAlpha : 1.0f;
@@ -783,10 +783,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         _textFont = [UIFont systemFontOfSize:13.0f weight:UIFontWeightMedium];
     }
 
-    // Set each item to the font, if they are a label
-    for (UIView *itemView in self.itemViews) {
-        if (![itemView isKindOfClass:[UILabel class]]) { continue; }
-        [(UILabel *)itemView setFont:_textFont];
+    // Set each item to adopt the new font
+    for (TOSegmentedControlItem *item in self.itemObjects) {
+        [item refreshItemView];
     }
 }
 
@@ -825,7 +824,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 // -----------------------------------------------
 // Number of segments
 
-- (NSInteger)numberOfSegments { return self.itemViews.count; }
+- (NSInteger)numberOfSegments { return self.itemObjects.count; }
 
 #pragma mark - Image Creation and Management -
 
