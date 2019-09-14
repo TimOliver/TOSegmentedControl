@@ -22,7 +22,12 @@
 
 #import <Foundation/Foundation.h>
 
-@class UIColor, UIView, UIImage, TOSegmentedControl;
+@class UIColor;
+@class UIView;
+@class UIImage;
+@class UIImageView;
+@class UILabel;
+@class TOSegmentedControl;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,8 +50,17 @@ NS_ASSUME_NONNULL_BEGIN
 /** Whether the item is currently reveresed or not */
 @property (nonatomic, assign) BOOL isReversed;
 
+/** Whether this item is enabled or disabled. */
+@property (nonatomic, assign) BOOL isDisabled;
+
 /** The view (either image or label) for this item */
 @property (nonatomic, readonly) UIView *itemView;
+
+/** If the item is a string, the subsequent label view (nil if an image) */
+@property (nonatomic, nullable, readonly) UILabel *label;
+
+/** If the item is an image, the subsequent image view (nil if a string) */
+@property (nonatomic, nullable, readonly) UIImageView *imageView;
 
 // Create an array of objects given an array of strings and images
 + (NSArray *)itemsWithObjects:(NSArray *)objects
@@ -68,6 +82,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // If the item is reversible, flip the direction
 - (void)toggleDirection;
+
+// Re-synchronize the item view when the segmented control style changes
+- (void)refreshItemView;
 
 @end
 

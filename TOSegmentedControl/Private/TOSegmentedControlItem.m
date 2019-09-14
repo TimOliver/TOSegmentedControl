@@ -115,7 +115,7 @@
     // Skip anything that isn't an image or a label
     for (id object in objects) {
         TOSegmentedControlItem *item = nil;
-        if ([object isKindOfClass:UILabel.class]) {
+        if ([object isKindOfClass:NSString.class]) {
             item = [[TOSegmentedControlItem alloc] initWithTitle:object
                                              forSegmentedControl:segmentedControl];
         }
@@ -204,15 +204,8 @@
 - (void)refreshItemView
 {
     // Convenience check for whether the view is a label or image
-    UIImageView *imageView = nil;
-    if ([self.itemView isKindOfClass:UIImageView.class]) {
-        imageView = (UIImageView *)self.itemView;
-    }
-    
-    UILabel *label = nil;
-    if ([self.itemView isKindOfClass:UILabel.class]) {
-        label = (UILabel *)self.itemView;
-    }
+    UIImageView *imageView = self.imageView;
+    UILabel *label = self.label;
 
     // If we didn't change the type, just update the current
     // view with the new type
@@ -226,7 +219,7 @@
     }
     
     // If it's an image view, but the title text is set, swap them out
-    if (imageView && self.title) {
+    if (!label && self.title) {
         [imageView removeFromSuperview];
         imageView = nil;
         
@@ -237,7 +230,7 @@
     }
     
     // If it's a label view, but the image is set, swap them out
-    if (label && self.image) {
+    if (!imageView && self.image) {
         [label removeFromSuperview];
         label = nil;
         
@@ -247,9 +240,17 @@
         imageView = (UIImageView *)self.itemView;
     }
     
-    // Set the tint color of the component
+    // Update the label view
     label.textColor = self.segmentedControl.itemColor;
+    label.font = self.segmentedControl.textFont;
+    
+    // Update the image view
     imageView.tintColor = self.segmentedControl.itemColor;
+}
+
+- (void)toggleDirection
+{
+    self.isReversed = !self.isReversed;
 }
 
 #pragma mark - Public Accessors -
@@ -275,6 +276,24 @@
     if (_isReversible == isReversible) { return; }
     _isReversible = isReversible;
     [self refreshReversibleView];
+}
+
+- (UILabel *)label
+{
+    if ([self.itemView isKindOfClass:UILabel.class]) {
+        return (UILabel *)self.itemView;
+    }
+    
+    return nil;
+}
+
+- (UIImageView *)imageView
+{
+    if ([self.itemView isKindOfClass:UIImageView.class]) {
+        return (UIImageView *)self.itemView;
+    }
+    
+    return nil;
 }
 
 @end
