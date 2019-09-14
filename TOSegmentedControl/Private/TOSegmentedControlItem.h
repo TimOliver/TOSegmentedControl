@@ -48,9 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 /** The view (either image or label) for this item */
 @property (nonatomic, readonly) UIView *itemView;
 
-/** The color of the view and its components */
-@property (nonatomic, strong) UIColor *itemColor;
-
 // Create an array of objects given an array of strings and images
 + (NSArray *)itemsWithObjects:(NSArray *)objects
           forSegmentedControl:(TOSegmentedControl *)segmentedControl;;

@@ -133,10 +133,7 @@
 #pragma mark - Set-up -
 
 - (void)commonInit
-{
-    // Capture tint color from the parent
-    self.itemColor = self.segmentedControl.itemColor;
-    
+{    
     // Create the initial image / label view
     [self refreshItemView];
     
@@ -149,7 +146,7 @@
 - (void)refreshReversibleView
 {
     // Whether it's in memory or not, set the tint color
-    self.arrowImageView.tintColor = self.itemColor;
+    self.arrowImageView.tintColor = self.segmentedControl.itemColor;
     
     // If we're no longer (Or never were) reversible,
     // hide and exit out
@@ -251,8 +248,8 @@
     }
     
     // Set the tint color of the component
-    label.textColor = self.itemColor;
-    imageView.tintColor = self.itemColor;
+    label.textColor = self.segmentedControl.itemColor;
+    imageView.tintColor = self.segmentedControl.itemColor;
 }
 
 #pragma mark - Public Accessors -
@@ -277,14 +274,6 @@
 {
     if (_isReversible == isReversible) { return; }
     _isReversible = isReversible;
-    [self refreshReversibleView];
-}
-
-- (void)setItemColor:(UIColor *)itemColor
-{
-    if (itemColor == _itemColor) { return; }
-    _itemColor = itemColor;
-    [self refreshItemView];
     [self refreshReversibleView];
 }
 
