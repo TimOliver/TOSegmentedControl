@@ -35,6 +35,7 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 
 // When tapped the amount the focused elements will shrink / fade
 static CGFloat const kTOSegmentedControlSelectedTextAlpha = 0.3f;
+static CGFloat const kTOSegmentedControlDisabledAlpha = 0.4f;
 static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 // ----------------------------------------------------------------
@@ -150,6 +151,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     self.selectedTextFont = nil;
 
     // Set default values
+    self.selectedSegmentIndex = -1;
     self.cornerRadius = 8.0f;
     self.thumbInset = 2.0f;
     self.thumbShadowRadius = 3.0f;
@@ -229,7 +231,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (nullable NSString *)titleForItemAtIndex:(NSInteger)index
 {
-    return [self objectForItemAtIndex:index class:UILabel.class];
+    return [self objectForItemAtIndex:index class:NSString.class];
 }
 
 - (nullable id)objectForItemAtIndex:(NSInteger)index class:(Class)class
@@ -259,21 +261,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)addNewObject:(id)object
 {
-    // Add item to master list
-    NSMutableArray *items = [self.items mutableCopy];
-    [items addObject:object];
-    _items = [NSArray arrayWithArray:items];
-    
-    // Add new item object to internal list
-    TOSegmentedControlItem *item = [[TOSegmentedControlItem alloc] initWithObject:object
-                                                              forSegmentedControl:self];
-    [self.itemObjects addObject:item];
-
-    // Update number of separators
-    [self updateSeparatorViewCount];
-    
-    // Perform new layout update
-    [self setNeedsLayout];
+    [self insertItemWithObject:object atIndex:self.items.count];
 }
 
 #pragma mark Inserting New Items
@@ -290,7 +278,21 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)insertItemWithObject:(id)object atIndex:(NSInteger)index
 {
-    
+    // Add item to master list
+    NSMutableArray *items = [self.items mutableCopy];
+    [items insertObject:object atIndex:index];
+    _items = [NSArray arrayWithArray:items];
+
+    // Add new item object to internal list
+   TOSegmentedControlItem *item = [[TOSegmentedControlItem alloc] initWithObject:object
+                                                             forSegmentedControl:self];
+    [self.itemObjects insertObject:item atIndex:index];
+
+   // Update number of separators
+   [self updateSeparatorViewCount];
+
+   // Perform new layout update
+   [self setNeedsLayout];
 }
 
 #pragma mark Replacing Items
@@ -321,7 +323,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     
     // Update the item object at that point for the new item
     TOSegmentedControlItem *item = self.itemObjects[index];
-    if ([object isKindOfClass:UILabel.class]) { item.title = object; }
+    if ([object isKindOfClass:NSString.class]) { item.title = object; }
     if ([object isKindOfClass:UIImage.class]) { item.image = object; }
     
     // Re-layout the views
@@ -366,26 +368,59 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     self.items = nil;
 }
 
+#pragma mark Enabled/Disabled
+
+- (void)setEnabled:(BOOL)enabled forSegmentAtIndex:(NSInteger)index
+{
+    if (index < 0 || index >= self.itemObjects.count) { return; }
+    self.itemObjects[index].isDisabled = !enabled;
+    [self setNeedsLayout];
+
+    // If we disabled the selected index, choose another one
+    if (self.selectedSegmentIndex >= 0 && !self.itemObjects[self.selectedSegmentIndex].isDisabled) {
+        return;
+    }
+
+    // Loop ahead of the selected segment index to find the next enabled one
+    for (NSInteger i = self.selectedSegmentIndex; i < self.itemObjects.count; i++) {
+        if (self.itemObjects[i].isDisabled) { continue; }
+        self.selectedSegmentIndex = i;
+        return;
+    }
+
+    // If that failed, loop forward to find an enabled one before it
+    for (NSInteger i = self.selectedSegmentIndex; i >= 0; i--) {
+        if (self.itemObjects[i].isDisabled) { continue; }
+        self.selectedSegmentIndex = i;
+        return;
+    }
+
+    // Nothing is enabled, default back to deselecting everything
+    self.selectedSegmentIndex = -1;
+}
+
+- (BOOL)isEnabledForSegmentAtIndex:(NSInteger)index
+{
+    if (index < 0 || index >= self.itemObjects.count) { return NO; }
+    return !self.itemObjects[index].isDisabled;
+}
+
 #pragma mark - View Layout -
 
-- (void)layoutSubviews
+- (void)layoutThumbView
 {
-    [super layoutSubviews];
+    // Hide the thumb view if no segments are selected
+    if (self.selectedSegmentIndex < 0 || !self.enabled) {
+        self.thumbView.hidden = YES;
+        return;
+    }
 
-    NSInteger index = self.selectedSegmentIndex;
-    CGSize size = self.bounds.size;
-
-    // Work out how much width we have accounting for the inset
-    CGFloat width = size.width - (_thumbInset * 2.0f);
-
-    // Divide that to get the segment width
-    CGFloat segmentWidth = floorf(width / self.numberOfSegments);
-
-    // Lay out the thumb view
+    // Lay-out the thumb view
     CGRect frame = [self frameForItemAtSegment:self.selectedSegmentIndex];
     self.thumbView.frame = frame;
+    self.thumbView.hidden = NO;
 
-    // Match the shadow path to the size of the thumb view
+    // Match the shadow path to the new size of the thumb view
     CGPathRef oldShadowPath = self.thumbView.layer.shadowPath;
     UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:(CGRect){CGPointZero, frame.size}
                                                           cornerRadius:self.cornerRadius - self.thumbInset];
@@ -402,43 +437,71 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         [self.thumbView.layer addAnimation:shadowAnimation forKey:@"shadowPath"];
     }
     self.thumbView.layer.shadowPath = shadowPath.CGPath;
+}
 
+- (void)layoutItemViews
+{
     // Lay out the item views
-    NSInteger i = 0;
-    for (TOSegmentedControlItem *item in self.itemObjects) {
-        UIView *itemView = item.itemView;
-        [self.trackView addSubview:itemView];
-        
-        // Size to fit
-        [itemView sizeToFit];
+      NSInteger i = 0;
+      for (TOSegmentedControlItem *item in self.itemObjects) {
+          UIView *itemView = item.itemView;
+          [self.trackView addSubview:itemView];
 
-        // Lay out the frame
-        CGRect thumbFrame = [self frameForItemAtSegment:i];
-        itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
-                                    CGRectGetMidY(thumbFrame)};
-        
-        // Make sure they are all unselected
-        [self setItemAtIndex:i++ selected:NO];
-    }
+          // Size to fit
+          [itemView sizeToFit];
 
-    // Set the selected item
-    [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
-    
-    // Lay out the separators
+          // Lay out the frame
+          CGRect thumbFrame = [self frameForItemAtSegment:i];
+          itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
+                                      CGRectGetMidY(thumbFrame)};
+
+          // Make sure they are all unselected
+          [self setItemAtIndex:i++ selected:NO];
+
+          // If the item is disabled, make it faded
+          if (!self.enabled || item.isDisabled) {
+              itemView.alpha = kTOSegmentedControlDisabledAlpha;
+          }
+      }
+
+      // Set the selected item
+      if (self.selectedSegmentIndex >= 0) {
+          [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
+      }
+}
+
+- (void)layoutSeparatorViews
+{
+    CGSize size = self.trackView.frame.size;
+    CGFloat segmentWidth = self.segmentWidth;
     CGFloat xOffset = (_thumbInset + segmentWidth) - 1.0f;
-    i = 0;
+    NSInteger i = 0;
     for (UIView *separatorView in self.separatorViews) {
-        frame = separatorView.frame;
-        frame.size.width = 1.0f;
-        frame.size.height = (size.height - (self.cornerRadius) * 2.0f) + 2.0f;
-        frame.origin.x = xOffset + (segmentWidth * i);
-        frame.origin.y = (size.height - frame.size.height) * 0.5f;
-        separatorView.frame = CGRectIntegral(frame);
-        i++;
+       CGRect frame = separatorView.frame;
+       frame.size.width = 1.0f;
+       frame.size.height = (size.height - (self.cornerRadius) * 2.0f) + 2.0f;
+       frame.origin.x = xOffset + (segmentWidth * i);
+       frame.origin.y = (size.height - frame.size.height) * 0.5f;
+       separatorView.frame = CGRectIntegral(frame);
+       i++;
     }
-    
-    // Update the alpha of the separator views
-    [self refreshSeparatorViewsForSelectedIndex:index];
+
+   // Update the alpha of the separator views
+   [self refreshSeparatorViewsForSelectedIndex:self.selectedSegmentIndex];
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+
+    // Lay-out the thumb view
+    [self layoutThumbView];
+
+    // Lay-out the item views
+    [self layoutItemViews];
+
+    // Lay-out the separator views
+    [self layoutSeparatorViews];
 }
 
 - (CGFloat)segmentWidth
@@ -530,6 +593,12 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     // Hide the separators on either side of the selected segment
     NSInteger i = 0;
     for (UIView *separatorView in self.separatorViews) {
+        // if the view is disabled, the thumb view will be hidden
+        if (!self.enabled) {
+            separatorView.alpha = 1.0f;
+            continue;
+        }
+
         separatorView.alpha = (i == index || i == (index - 1)) ? 0.0f : 1.0f;
         i++;
     }
@@ -539,9 +608,17 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)didTapDown:(UIControl *)control withEvent:(UIEvent *)event
 {
+    // Exit out if the control is disabled
+    if (!self.enabled) { return; }
+
     // Determine which segment the user tapped
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
+
+    // If the control or item is disabled, pass
+    if (self.itemObjects[tappedIndex].isDisabled) {
+        return;
+    }
     
     // Work out if we tapped on the thumb view, or on an un-selected segment
     self.isDraggingThumbView = (tappedIndex == self.selectedSegmentIndex);
@@ -574,11 +651,19 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)didDragTap:(UIControl *)control withEvent:(UIEvent *)event
 {
+    // Exit out if the control is disabled
+    if (!self.enabled) { return; }
+
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
     
     if (tappedIndex == self.focusedIndex) { return; }
-    
+
+    // If the control or item is disabled, pass
+    if (self.itemObjects[tappedIndex].isDisabled) {
+        return;
+    }
+
     // Handle transitioning when not dragging the thumb view
     if (!self.isDraggingThumbView) {
         // If we dragged out of the bounds, disregard
@@ -643,6 +728,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)didExitTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
+    // Exit out if the control is disabled
+    if (!self.enabled) { return; }
+
     // No effects needed when tracking the thumb view
     if (self.isDraggingThumbView) { return; }
     
@@ -659,6 +747,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)didEnterTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
+    // Exit out if the control is disabled
+    if (!self.enabled) { return; }
+
     // No effects needed when tracking the thumb view
     if (self.isDraggingThumbView) { return; }
     
@@ -675,13 +766,29 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)didEndTap:(UIControl *)control withEvent:(UIEvent *)event
 {
+    // Exit out if the control is disabled
+    if (!self.enabled) { return; }
+
+    // Reset the focused index flag
+    self.focusedIndex = -1;
+
+    // Work out the final place where we released
+    CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
+    NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
+
     // If we WEREN'T dragging the thumb view, work out where we need to move to
     if (!self.isDraggingThumbView) {
-        if (self.focusedIndex < 0) { return; }
-        
-        self.selectedSegmentIndex = self.focusedIndex;
-        self.focusedIndex = -1;
-        
+        if (self.itemObjects[tappedIndex].isDisabled) { return; }
+
+        // If we actually changed, update the segmented index and trigger the callbacks
+        if (self.selectedSegmentIndex != tappedIndex) {
+            // Set the new selected segment index
+            _selectedSegmentIndex = tappedIndex;
+
+            // Trigger the notification to all of the delegates
+            [self sendIndexChangedEventActions];
+        }
+
         id animationBlock = ^{
             for (NSInteger i = 0; i < self.itemObjects.count; i++) {
                 [self.itemObjects[i].itemView setAlpha:1.0f];
@@ -698,20 +805,15 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
                             options:UIViewAnimationOptionBeginFromCurrentState
                          animations:animationBlock
                          completion:nil];
-        
-        if (self.segmentTappedHandler) {
-            self.segmentTappedHandler(self.selectedSegmentIndex, NO);
-        }
-        
         return;
     }
     
     // Update the state and alert the delegate
-    self.selectedSegmentIndex = self.focusedIndex;
-    if (self.segmentTappedHandler) {
-        self.segmentTappedHandler(self.selectedSegmentIndex, NO);
+    if (self.selectedSegmentIndex != tappedIndex) {
+        _selectedSegmentIndex = tappedIndex;
+        [self sendIndexChangedEventActions];
     }
-    
+
     // Work out which animation effects to apply
     id animationBlock = ^{
         [self setThumbViewShrunken:NO];
@@ -728,7 +830,41 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
                     completion:nil];
 }
 
+- (void)sendIndexChangedEventActions
+{
+    // Trigger the action event for any targets that were
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
+
+    // Trigger the block if it is set
+    if (self.segmentTappedHandler) {
+        self.segmentTappedHandler(self.selectedSegmentIndex, NO);
+    }
+}
+
 #pragma mark - Accessors -
+
+// -----------------------------------------------
+// Selected Item Index
+
+- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex
+{
+    if (self.selectedSegmentIndex == selectedSegmentIndex) { return; }
+
+    // Set the new value
+    _selectedSegmentIndex = selectedSegmentIndex;
+
+    // Cap the value
+    _selectedSegmentIndex = MAX(selectedSegmentIndex, -1);
+    _selectedSegmentIndex = MIN(selectedSegmentIndex, self.numberOfSegments - 1);
+
+    // Send the update alert
+    if (_selectedSegmentIndex >= 0) {
+        [self sendIndexChangedEventActions];
+    }
+
+    // Trigger a view layout
+    [self setNeedsLayout];
+}
 
 // -----------------------------------------------
 // Items
@@ -752,6 +888,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
     // Trigger a layout update
     [self setNeedsLayout];
+
+    // Set the initial selected index
+    self.selectedSegmentIndex = (_items.count > 0) ? 0 : -1;
 }
 
 // -----------------------------------------------
