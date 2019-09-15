@@ -330,6 +330,27 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 #pragma mark Deleting Items
 
+- (void)removeLastItem
+{
+    [self removeItemAtIndex:self.items.count - 1];
+}
+
+- (void)removeItemAtIndex:(NSInteger)index
+{
+    if (index < 0 || index >= self.items.count) { return; }
+
+    // Remove from the item list
+    NSMutableArray *items = self.items.mutableCopy;
+    [items removeObjectAtIndex:index];
+    _items = items;
+
+    // Remove item object
+    [self.itemObjects removeObjectAtIndex:index];
+
+    // Update number of separators
+    [self updateSeparatorViewCount];
+}
+
 - (void)removeAllItems
 {
     // Remove all item objects
