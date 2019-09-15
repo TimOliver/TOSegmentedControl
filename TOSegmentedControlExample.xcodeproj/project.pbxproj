@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2244E91B2328797F00E09022 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2244E91A2328797F00E09022 /* Main.storyboard */; };
-		228CEE3823289D4E000B055C /* TOSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 228CEE3123289D4E000B055C /* TOSegmentedControl.framework */; };
-		228CEE3923289D4E000B055C /* TOSegmentedControl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 228CEE3123289D4E000B055C /* TOSegmentedControl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		228CEE462328A009000B055C /* TOSegmentedControlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 228CEE452328A009000B055C /* TOSegmentedControlTests.m */; };
 		22C93B02232AA6FF00A281CA /* TOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C93B00232AA6FF00A281CA /* TOSegmentedControl.m */; };
 		22C93B03232AA6FF00A281CA /* TOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C93B00232AA6FF00A281CA /* TOSegmentedControl.m */; };
@@ -25,13 +23,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		228CEE3623289D4E000B055C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 22DF8D7D22FF119C0051F319 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 228CEE3023289D4E000B055C;
-			remoteInfo = TOSegmentedControlFramework;
-		};
 		228CEE482328A009000B055C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 22DF8D7D22FF119C0051F319 /* Project object */;
@@ -40,20 +31,6 @@
 			remoteInfo = TOSegmentedControlExample;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		228CEE3A23289D4E000B055C /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				228CEE3923289D4E000B055C /* TOSegmentedControl.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2244E91A2328797F00E09022 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -96,7 +73,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				228CEE3823289D4E000B055C /* TOSegmentedControl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,12 +210,10 @@
 				22DF8D8122FF119C0051F319 /* Sources */,
 				22DF8D8222FF119C0051F319 /* Frameworks */,
 				22DF8D8322FF119C0051F319 /* Resources */,
-				228CEE3A23289D4E000B055C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				228CEE3723289D4E000B055C /* PBXTargetDependency */,
 			);
 			name = TOSegmentedControlExample;
 			productName = TOSegmentedControlExample;
@@ -347,11 +321,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		228CEE3723289D4E000B055C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 228CEE3023289D4E000B055C /* TOSegmentedControlFramework */;
-			targetProxy = 228CEE3623289D4E000B055C /* PBXContainerItemProxy */;
-		};
 		228CEE492328A009000B055C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 22DF8D8422FF119C0051F319 /* TOSegmentedControlExample */;
@@ -383,6 +352,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = TOSegmentedControlFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -411,6 +381,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = TOSegmentedControlFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -582,7 +553,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6LF3GMKZAB;
 				INFOPLIST_FILE = TOSegmentedControlExample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -600,7 +571,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6LF3GMKZAB;
 				INFOPLIST_FILE = TOSegmentedControlExample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
