@@ -789,11 +789,15 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
             [self sendIndexChangedEventActions];
         }
 
+        // Create an animation block that will update the position of the
+        // thumb view and restore all of the item views
         id animationBlock = ^{
+            // Un-fade all of the item views
             for (NSInteger i = 0; i < self.itemObjects.count; i++) {
-                [self.itemObjects[i].itemView setAlpha:1.0f];
+                [self setItemAtIndex:i faded:NO];
             }
-            
+
+            // Perform a re-layout of the thumb view
             [self setNeedsLayout];
             [self layoutIfNeeded];
         };
