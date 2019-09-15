@@ -23,9 +23,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-FOUNDATION_EXPORT double TOSegmentedControlFrameworkVersionNumber;
-FOUNDATION_EXPORT const unsigned char TOSegmentedControlFrameworkVersionString[];
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -98,7 +95,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
  @param items An array of either images, or strings to display
  */
-- (instancetype)initWithItems:(nullable NSArray *)items;
+- (instancetype)initWithItems:(nullable NSArray *)items NS_SWIFT_NAME(init(items:));
 
 /**
  Replaces the content of an existing segment with a new image.
@@ -106,7 +103,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param image The image to set.
  @param index The index of the segment to set.
  */
-- (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index;
+- (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:for:));
 
 /**
  Returns the image that was assigned to a specific segment.
@@ -114,7 +111,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
  @param index The index at which the image is located.
  */
-- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index;
+- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index NS_SWIFT_NAME(image(for:));
 
 /**
  Sets the content of a given segment to a text label.
@@ -122,7 +119,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param title The text to display at the segment
  @param index The index of the segment to set.
  */
-- (void)setTitle:(NSString *)title forItemAtIndex:(NSInteger)index;
+- (void)setTitle:(NSString *)title forItemAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:for:));
 
 /**
 Returns the string of the title that was assigned to a specific segment.
@@ -130,21 +127,21 @@ Will return nil if the content at that segment is not a string.
 
 @param index The index at which the image is located.
 */
-- (nullable NSString *)titleForItemAtIndex:(NSInteger)index;
+- (nullable NSString *)titleForItemAtIndex:(NSInteger)index NS_SWIFT_NAME(title(for:));
 
 /**
  Adds a new text item to the end of the list.
  
  @param title The title of the new item.
  */
-- (void)addNewItemWithTitle:(NSString *)title;
+- (void)addNewItemWithTitle:(NSString *)title NS_SWIFT_NAME(addItem(with:));
 
 /**
  Adds a new image item to the end of the list.
  
  @param image The image of the new item.
  */
-- (void)addNewItemWithImage:(UIImage *)image;
+- (void)addNewItemWithImage:(UIImage *)image NS_SWIFT_NAME(addItem(with:));
 
 /**
  Inserts a new image item at the specified segment index.
@@ -152,7 +149,7 @@ Will return nil if the content at that segment is not a string.
  @param image The image to set.
  @param index The index of the segment to which the image will be set.
  */
-- (void)insertItemWithImage:(UIImage *)image atIndex:(NSInteger)index;
+- (void)insertItemWithImage:(UIImage *)image atIndex:(NSInteger)index NS_SWIFT_NAME(insertItem(_:at:));
 
 /**
 Inserts a new image title at the specified segment index.
@@ -160,24 +157,24 @@ Inserts a new image title at the specified segment index.
 @param title The title to set.
 @param index The index of the segment to which the image will be set.
 */
-- (void)insertItemWithTitle:(NSString *)title atIndex:(NSInteger)index;
+- (void)insertItemWithTitle:(NSString *)title atIndex:(NSInteger)index NS_SWIFT_NAME(insertItem(_:at:));
 
 /**
  Remove the last item in the list
  */
-- (void)removeLastItem;
+- (void)removeLastItem NS_SWIFT_NAME(removeLastItem());
 
 /**
 Removes the item at the specified index.
 
 @param index The index of the segment to remove.
 */
-- (void)removeItemAtIndex:(NSInteger)index;
+- (void)removeItemAtIndex:(NSInteger)index NS_SWIFT_NAME(removeItem(at:));
 
 /**
  Removes all of the items from this control.
  */
-- (void)removeAllItems;
+- (void)removeAllItems NS_SWIFT_NAME(removeAllItems());
 
 /**
  Enables or disables the item at the specified index.
@@ -185,15 +182,18 @@ Removes the item at the specified index.
  @param enabled Whether the item is enabled or not.
  @param index The specific index to enable/disable.
  */
-- (void)setEnabled:(BOOL)enabled forSegmentAtIndex:(NSInteger)index;
+- (void)setEnabled:(BOOL)enabled forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setEnabled(_:at:));
 
 /**
  Returns whether the item at the specified index is currently enabled or not.
 
  @param index The index to check.
  */
-- (BOOL)isEnabledForSegmentAtIndex:(NSInteger)index;
+- (BOOL)isEnabledForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isEnabled(at:));
 
 @end
 
 NS_ASSUME_NONNULL_END
+
+FOUNDATION_EXPORT double TOSegmentedControlFrameworkVersionNumber;
+FOUNDATION_EXPORT const unsigned char TOSegmentedControlFrameworkVersionString[];
