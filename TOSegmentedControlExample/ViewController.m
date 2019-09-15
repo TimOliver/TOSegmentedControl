@@ -33,6 +33,17 @@
         NSString *title = [self nameForIndex:index];
         [weakSelf animateLabel:weakSelf.segmentedLabel title:title];
     };
+
+    // Additional options that can be tested on the control
+
+    // Adds a new item called "Fourth" on the end
+    //[self.segmentedControl addNewItemWithTitle:@"Fourth"];
+
+    // Inserts a new item called Zero to the beginning
+    //[self.segmentedControl insertItemWithTitle:@"Zero" atIndex:0];
+
+    // Removes the last item from the end
+    //[self.segmentedControl removeLastItem];
 }
 
 - (IBAction)segmentedControlUpdated:(id)sender
@@ -67,6 +78,7 @@
         case 0: return @"First Selected";
         case 1: return @"Second Selected";
         case 2: return @"Third Selected";
+        case 3: return @"Fourth Selected";
     }
     
     return nil;
