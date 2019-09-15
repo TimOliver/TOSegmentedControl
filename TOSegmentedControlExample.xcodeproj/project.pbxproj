@@ -13,7 +13,7 @@
 		228CEE462328A009000B055C /* TOSegmentedControlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 228CEE452328A009000B055C /* TOSegmentedControlTests.m */; };
 		22C93B02232AA6FF00A281CA /* TOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C93B00232AA6FF00A281CA /* TOSegmentedControl.m */; };
 		22C93B03232AA6FF00A281CA /* TOSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C93B00232AA6FF00A281CA /* TOSegmentedControl.m */; };
-		22C93B06232AA79900A281CA /* TOSegmentedControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 22C93B05232AA79900A281CA /* TOSegmentedControl.h */; };
+		22C93B06232AA79900A281CA /* TOSegmentedControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 22C93B05232AA79900A281CA /* TOSegmentedControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		22C93B09232ADBEA00A281CA /* TOSegmentedControlItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 22C93B07232ADBEA00A281CA /* TOSegmentedControlItem.h */; };
 		22C93B0E232ADFDD00A281CA /* TOSegmentedControlItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C93B0D232ADFDD00A281CA /* TOSegmentedControlItem.m */; };
 		22C93B0F232ADFDD00A281CA /* TOSegmentedControlItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C93B0D232ADFDD00A281CA /* TOSegmentedControlItem.m */; };
