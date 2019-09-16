@@ -454,6 +454,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
           CGRect thumbFrame = [self frameForItemAtSegment:i];
           itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
                                       CGRectGetMidY(thumbFrame)};
+          itemView.frame = CGRectIntegral(itemView.frame);
 
           // Make sure they are all unselected
           [self setItemAtIndex:i++ selected:NO];
@@ -558,7 +559,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     NSAssert(index >= 0 && index < self.itemObjects.count,
              @"TOSegmentedControl:  Array should not be out of bounds");
     
-    UILabel *label = (UILabel *)self.itemObjects[index].label;
+    UILabel *label = self.itemObjects[index].label;
     if (label == nil) { return; }
 
     // Capture its current position and scale
@@ -574,6 +575,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     
     // Resize the frame in case the new font exceeded the bounds
     [label sizeToFit];
+    label.frame = CGRectIntegral(label.frame);
     
     // Re-apply the transform and the positioning
     label.transform = transform;
@@ -628,7 +630,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     
     // Work out which animation effects to apply
     if (!self.isDraggingThumbView) {
-        [UIView animateWithDuration:0.45f animations:^{
+        [UIView animateWithDuration:0.35f animations:^{
             [self setItemAtIndex:tappedIndex faded:YES];
         }];
         return;
@@ -914,9 +916,29 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 - (void)setThumbColor:(UIColor *)thumbColor
 {
     self.thumbView.backgroundColor = thumbColor;
-    if (self.thumbView.backgroundColor == nil) {
-        self.thumbView.backgroundColor = [UIColor whiteColor];
+    if (self.thumbView.backgroundColor != nil) { return; }
+
+    // On iOS 12 and below, simply set the thumb view to be white
+    self.thumbView.backgroundColor = [UIColor whiteColor];
+
+    // For iOS 13 and up, create a dynamic provider that will trigger a color change
+    #ifdef __IPHONE_13_0
+    if (@available(iOS 13.0, *)) {
+        // Create the provider block that will trigger each time the trait collection changes
+        id dynamicColorProvider = ^UIColor *(UITraitCollection *traitCollection) {
+            // Dark color
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithRed:0.357f green:0.357f blue:0.376f alpha:1.0f];
+            }
+
+            // Default light color
+            return [UIColor whiteColor];
+        };
+
+        // Assign the dynamic color to the view
+        self.thumbView.backgroundColor = [UIColor colorWithDynamicProvider:dynamicColorProvider];
     }
+    #endif
 }
 - (UIColor *)thumbColor { return self.thumbView.backgroundColor; }
 
@@ -926,10 +948,34 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 - (void)setBackgroundColor:(UIColor *)backgroundColor
 {
     [super setBackgroundColor:[UIColor clearColor]];
-    self.trackView.backgroundColor = backgroundColor;
-    if (self.trackView.backgroundColor == nil) {
-        self.trackView.backgroundColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.08f alpha:0.06666f];
+    _trackView.backgroundColor = backgroundColor;
+
+    // Exit out if we don't need to reset to defaults
+    if (_trackView.backgroundColor != nil) { return; }
+
+    // Set the default color for iOS 12 and below
+    backgroundColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.08f alpha:0.06666f];
+    _trackView.backgroundColor = backgroundColor;
+
+    // For iOS 13 and up, create a dynamic provider that will trigger on trait changes
+    #ifdef __IPHONE_13_0
+    if (@available(iOS 13.0, *)) {
+
+        // Create the provider block that will trigger each time the trait collection changes
+        id dynamicColorProvider = ^UIColor *(UITraitCollection *traitCollection) {
+            // Dark color
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithRed:0.898f green:0.898f blue:1.0f alpha:0.12f];
+            }
+
+            // Default light color
+            return backgroundColor;
+        };
+
+        // Assign the dynamic color to the view
+        _trackView.backgroundColor = [UIColor colorWithDynamicProvider:dynamicColorProvider];
     }
+    #endif
 }
 - (UIColor *)backgroundColor { return self.trackView.backgroundColor; }
 
@@ -940,7 +986,29 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 {
     _separatorColor = separatorColor;
     if (_separatorColor == nil) {
-        _separatorColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.08f alpha:0.1f];
+        // Set the default color for iOS 12 and below
+        separatorColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.08f alpha:0.1f];
+
+        // On iOS 13 and up, set up a dynamic provider for dynamic light and dark colors
+        #ifdef __IPHONE_13_0
+        if (@available(iOS 13.0, *)) {
+            // Create the provider block that will trigger each time the trait collection changes
+            id dynamicColorProvider = ^UIColor *(UITraitCollection *traitCollection) {
+                // Dark color
+                if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                    return [UIColor colorWithRed:0.918f green:0.918f blue:1.0f alpha:0.16f];
+                }
+
+                // Default light color
+                return separatorColor;
+            };
+
+            // Assign the dynamic color to the view
+            separatorColor = [UIColor colorWithDynamicProvider:dynamicColorProvider];
+        }
+        #endif
+
+        _separatorColor = separatorColor;
     }
 
     for (UIView *separatorView in self.separatorViews) {
@@ -956,6 +1024,13 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     _itemColor = itemColor;
     if (_itemColor == nil) {
         _itemColor = [UIColor blackColor];
+
+        // Assign the dynamic label color on iOS 13 and up
+        #ifdef __IPHONE_13_0
+        if (@available(iOS 13.0, *)) {
+            _itemColor = [UIColor labelColor];
+        }
+        #endif
     }
 
     // Set each item to the color
