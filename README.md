@@ -18,11 +18,12 @@ As part of the visual overhaul featured in iOS 13, `UISegmentedControl` was comp
 
 * Recreates the new look of `UISegmentedControl`, making it available on previous versions of iOS.
 * Supports both text and images as segment types.
+* Support for `@IBDesignable` and `@IBInspectable`.
 * Configurable to dynamically add or remove items after its creation.
 * Written in Objective-C, but provides full compatibility with Swift.
 * Provides both a block, or `UIControlEvents` to receive when the control is tapped.
+* Light and dark mode support for iOS 13.
 * **(TODO)** A reversible mode where tapping the same item twice flips its direction.
-* **(TODO)** Light and dark mode support for iOS 13.
 
 # Sample Code
 

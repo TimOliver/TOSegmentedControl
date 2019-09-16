@@ -55,41 +55,38 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /** The index of the currently segment. (May be manually set) */
 @property (nonatomic, assign) NSInteger selectedSegmentIndex;
 
-/** Whether the selected segment is reversed or not. */
-@property (nonatomic, assign) BOOL selectedSegmentReversed;
-
 /** The amount of rounding in the corners (Default is 9.0f) */
-@property (nonatomic, assign) CGFloat cornerRadius;
+@property (nonatomic, assign) IBInspectable CGFloat cornerRadius;
 
 /** Set the background color of the track in the segmented control (Default is light grey) */
-@property (nonatomic, strong, null_resettable) UIColor *backgroundColor;
+@property (nonatomic, strong, null_resettable) IBInspectable UIColor *backgroundColor;
 
 /** Set the color of the thumb view. (Default is white) */
-@property (nonatomic, strong, null_resettable) UIColor *thumbColor;
+@property (nonatomic, strong, null_resettable) IBInspectable UIColor *thumbColor;
 
 /** Set the color of the separator lines between each item. (Default is dark grey) */
-@property (nonatomic, strong, null_resettable) UIColor *separatorColor;
+@property (nonatomic, strong, null_resettable) IBInspectable UIColor *separatorColor;
 
 /** The color of the text labels / images (Default is black) */
-@property (nonatomic, strong, null_resettable) UIColor *itemColor;
+@property (nonatomic, strong, null_resettable) IBInspectable UIColor *itemColor;
 
 /** The font of the text items (Default is system default at 10 points) */
-@property (nonatomic, strong, null_resettable) UIFont *textFont;
+@property (nonatomic, strong, null_resettable) IBInspectable UIFont *textFont;
 
 /** The font of the text item when it's been selected (Default is bold system default 10) */
-@property (nonatomic, strong, null_resettable) UIFont *selectedTextFont;
+@property (nonatomic, strong, null_resettable) IBInspectable UIFont *selectedTextFont;
 
 /** The amount of insetting the thumb view is from the edge of the track (Default is 2.0f) */
-@property (nonatomic, assign) CGFloat thumbInset;
+@property (nonatomic, assign) IBInspectable CGFloat thumbInset;
 
 /** The opacity of the shadow surrounding the thumb view*/
-@property (nonatomic, assign) CGFloat thumbShadowOpacity;
+@property (nonatomic, assign) IBInspectable CGFloat thumbShadowOpacity;
 
 /** The vertical offset of the shadow */
-@property (nonatomic, assign) CGFloat thumbShadowOffset;
+@property (nonatomic, assign) IBInspectable CGFloat thumbShadowOffset;
 
 /** The radius of the shadow */
-@property (nonatomic, assign) CGFloat thumbShadowRadius;
+@property (nonatomic, assign) IBInspectable CGFloat thumbShadowRadius;
 
 /**
  Creates a new segmented control with the provided items
