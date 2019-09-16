@@ -17,9 +17,7 @@ let package = Package(
     targets: [
         .target(
             name: "TOSegmentedControl",
-            dependencies: [],
-            path: "TOSegmentedControl",
-            publicHeadersPath: "TOSegmentedControl"),
+            path: "TOSegmentedControl"),
         .testTarget(
             name: "TOSegmentedControlTests",
             dependencies: ["TOSegmentedControl"],
