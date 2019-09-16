@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  may be designated as 'reversible' with an arrow icon indicating
  its direction.
  */
+
 NS_SWIFT_NAME(SegmentedControl)
 IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
