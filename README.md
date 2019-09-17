@@ -10,7 +10,7 @@
 [![PayPal](https://img.shields.io/badge/paypal-donate-blue.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M4RKULAVKV7K8)
 [![Twitch](https://img.shields.io/badge/twitch-timXD-6441a5.svg)](http://twitch.tv/timXD)
 
-As part of the visual overhaul featured in iOS 13, `UISegmentedControl` was completely redesigned, featuring a much rounder, cleaner, and slightly more skeuomorphic appearance.
+As part of the visual improvements featured in iOS 13, `UISegmentedControl` was completely redesigned, featuring a much rounder, cleaner, and slightly more skeuomorphic appearance.
 
 `TOSegmentedControl` is a subclass of of `UIControl` that completely re-implements the look and feel of the new `UISegmentedControl` component, allowing developers to adopt its look even in previous versions of iOS they support.
 
