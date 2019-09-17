@@ -92,7 +92,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  Creates a new segmented control with the provided items.
 
  @param items An array of either images, or strings to display
- */
+*/
 - (instancetype)initWithItems:(nullable NSArray *)items NS_SWIFT_NAME(init(items:));
 
 /**
@@ -100,7 +100,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
  @param image The image to set.
  @param index The index of the segment to set.
- */
+*/
 - (void)setImage:(UIImage *)image forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:for:));
 
 /**
@@ -110,7 +110,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param image The image to set.
  @param reversible Whether the item can be tapped multiple times to flip directions.
  @param index The index of the segment to set.
- */
+*/
 - (void)setImage:(UIImage *)image reversible:(BOOL)reversible
                               forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:reversible:for:));
 
@@ -119,7 +119,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  Will return nil if the content at that segment is not an image.
 
  @param index The index at which the image is located.
- */
+*/
 - (nullable UIImage *)imageForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(image(for:));
 
 /**
@@ -127,7 +127,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
  @param title The text to display at the segment.
  @param index The index of the segment to set.
- */
+*/
 - (void)setTitle:(NSString *)title forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:for:));
 
 /**
@@ -137,7 +137,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param title The text to display at the segment.
  @param reversible Whether the item can be tapped multiple times to flip directions.
  @param index The index of the segment to set.
- */
+*/
 - (void)setTitle:(NSString *)title reversible:(BOOL)reversible
                                forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:reversible:for:));
 
