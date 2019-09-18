@@ -251,32 +251,52 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)addNewSegmentWithImage:(UIImage *)image
 {
-    [self addNewSegment:image];
+    [self addNewSegmentWithImage:image reversible:NO];
+}
+
+- (void)addNewSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible
+{
+    [self addNewSegmentWithObject:image reversible:reversible];
 }
 
 - (void)addNewSegmentWithTitle:(NSString *)title
 {
-    [self addNewSegment:title];
+    [self addNewSegmentWithTitle:title reversible:NO];
 }
 
-- (void)addNewSegment:(id)object
+- (void)addNewSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible
 {
-    [self insertSegmentWithObject:object atIndex:self.items.count];
+    [self addNewSegmentWithObject:title reversible:reversible];
+}
+
+- (void)addNewSegmentWithObject:(id)object reversible:(BOOL)reversible
+{
+    [self insertSegmentWithObject:object reversible:reversible atIndex:self.items.count];
 }
 
 #pragma mark Inserting New Items
 
 - (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    [self insertSegmentWithObject:title atIndex:index];
+    [self insertSegmentWithTitle:title reversible:NO atIndex:index];
+}
+
+- (void)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible atIndex:(NSInteger)index
+{
+    [self insertSegmentWithObject:title reversible:reversible atIndex:index];
 }
 
 - (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index
 {
-    [self insertSegmentWithObject:image atIndex:index];
+    [self insertSegmentWithImage:image reversible:NO atIndex:index];
 }
 
-- (void)insertSegmentWithObject:(id)object atIndex:(NSInteger)index
+- (void)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible atIndex:(NSInteger)index
+{
+    [self insertSegmentWithObject:image reversible:reversible atIndex:index];
+}
+
+- (void)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
     // Add item to master list
     NSMutableArray *items = [self.items mutableCopy];
@@ -284,8 +304,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     _items = [NSArray arrayWithArray:items];
 
     // Add new item object to internal list
-   TOSegmentedControlSegment *segment = [[TOSegmentedControlSegment alloc] initWithObject:object
+    TOSegmentedControlSegment *segment = [[TOSegmentedControlSegment alloc] initWithObject:object
                                                              forSegmentedControl:self];
+    segment.isReversible = reversible;
     [self.segments insertObject:segment atIndex:index];
 
    // Update number of separators
@@ -299,15 +320,25 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setImage:(UIImage *)image forSegmentAtIndex:(NSInteger)index
 {
-    [self setObject:image forSegmentAtIndex:index];
+    [self setImage:image reversible:NO forSegmentAtIndex:index];
+}
+
+- (void)setImage:(UIImage *)image reversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index
+{
+    [self setObject:image reversible:reversible forSegmentAtIndex:index];
 }
 
 - (void)setTitle:(NSString *)title forSegmentAtIndex:(NSInteger)index
 {
-    [self setObject:title forSegmentAtIndex:index];
+    [self setTitle:title reversible:NO forSegmentAtIndex:index];
 }
 
-- (void)setObject:(id)object forSegmentAtIndex:(NSInteger)index
+- (void)setTitle:(NSString *)title reversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index
+{
+    [self setObject:title reversible:reversible forSegmentAtIndex:index];
+}
+
+- (void)setObject:(id)object reversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index
 {
     NSAssert([object isKindOfClass:NSString.class] || [object isKindOfClass:UIImage.class],
                 @"TOSegmentedControl: Only images and strings are supported.");
@@ -325,6 +356,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     TOSegmentedControlSegment *segment = self.segments[index];
     if ([object isKindOfClass:NSString.class]) { segment.title = object; }
     if ([object isKindOfClass:UIImage.class]) { segment.image = object; }
+    segment.isReversible = reversible;
     
     // Re-layout the views
     [self setNeedsLayout];
