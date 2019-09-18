@@ -39,10 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TOSegmentedControlSegment : NSObject
 
 /** When item is a label, the text to display */
-@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy, nullable) NSString *title;
 
 /** When item is an image, the image to display */
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong, nullable) UIImage *image;
 
 /** Whether the item can be tapped to toggle direction */
 @property (nonatomic, assign) BOOL isReversible;
