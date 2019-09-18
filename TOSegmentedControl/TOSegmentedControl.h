@@ -244,7 +244,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /**
  Sets whether a specific segment is currently reversible or not.
 
- @param enabled Whether the segment is reversible or not.
+ @param reversible Whether the segment is reversible or not.
  @param index The specific index to enable/disable.
 */
 - (void)setReversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setReversible(_:at:));
@@ -259,7 +259,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /**
  Sets whether a specific segment is currently in a reversed state or not.
 
- @param enabled Whether the segment is currently reversed or not.
+ @param reversed Whether the segment is currently reversed or not.
  @param index The specific index to enable/disable.
 */
 - (void)setReversed:(BOOL)reversed forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setReversed(_:at:));
