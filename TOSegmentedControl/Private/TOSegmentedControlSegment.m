@@ -20,7 +20,7 @@
 //  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 //  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#import "TOSegmentedControlItem.h"
+#import "TOSegmentedControlSegment.h"
 #import "TOSegmentedControl.h"
 #import <UIKit/UIKit.h>
 
@@ -35,7 +35,7 @@
 // -------------------------------------------------
 // Private Interface
 
-@interface TOSegmentedControlItem ()
+@interface TOSegmentedControlSegment ()
 
 // Weak reference to our parent segmented control
 @property (nonatomic, weak) TOSegmentedControl *segmentedControl;
@@ -48,7 +48,7 @@
 
 @end
 
-@implementation TOSegmentedControlItem
+@implementation TOSegmentedControlSegment
 
 #pragma mark - Object Lifecyle -
 
@@ -132,20 +132,20 @@
 
 #pragma mark - Comnvenience Initializers -
 
-+ (NSArray *)itemsWithObjects:(NSArray *)objects forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
++ (NSArray *)segmentsWithObjects:(NSArray *)objects forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
 {
     NSMutableArray *array = [NSMutableArray array];
     
     // Create an object for each item in the array.
     // Skip anything that isn't an image or a label
     for (id object in objects) {
-        TOSegmentedControlItem *item = nil;
+        TOSegmentedControlSegment *item = nil;
         if ([object isKindOfClass:NSString.class]) {
-            item = [[TOSegmentedControlItem alloc] initWithTitle:object
+            item = [[TOSegmentedControlSegment alloc] initWithTitle:object
                                              forSegmentedControl:segmentedControl];
         }
         else if ([object isKindOfClass:UIImage.class]) {
-            item = [[TOSegmentedControlItem alloc] initWithImage:object
+            item = [[TOSegmentedControlSegment alloc] initWithImage:object
                                              forSegmentedControl:segmentedControl];
         }
 

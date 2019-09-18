@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  information and state for a single item in the
  segmented control.
  */
-@interface TOSegmentedControlItem : NSObject
+@interface TOSegmentedControlSegment : NSObject
 
 /** When item is a label, the text to display */
 @property (nonatomic, copy) NSString *title;
@@ -63,8 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, readonly) UIImageView *imageView;
 
 // Create an array of objects given an array of strings and images
-+ (NSArray *)itemsWithObjects:(NSArray *)objects
-          forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
++ (NSArray *)segmentsWithObjects:(NSArray *)objects
+             forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
 
 // Create a non-reversible item from this class
 - (nullable instancetype)initWithObject:(id)object

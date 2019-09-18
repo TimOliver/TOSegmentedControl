@@ -21,7 +21,7 @@
 //  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import "TOSegmentedControl.h"
-#import "TOSegmentedControlItem.h"
+#import "TOSegmentedControlSegment.h"
 
 // ----------------------------------------------------------------
 // Static Members
@@ -44,7 +44,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 @interface TOSegmentedControl ()
 
 /** The private list of item objects, storing state and view data */
-@property (nonatomic, strong) NSMutableArray<TOSegmentedControlItem *> *itemObjects;
+@property (nonatomic, strong) NSMutableArray<TOSegmentedControlSegment *> *segments;
 
 /** Keep track when the user taps explicitily on the thumb view */
 @property (nonatomic, assign) BOOL isDraggingThumbView;
@@ -137,7 +137,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     [self.trackView addSubview:self.thumbView];
 
     // Create list for managing each item
-    self.itemObjects = [NSMutableArray array];
+    self.segments = [NSMutableArray array];
     
     // Create containers for views
     self.separatorViews = [NSMutableArray array];
@@ -223,18 +223,18 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 #pragma mark - Public Item Access -
 
-- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index
+- (nullable UIImage *)imageForSegmentAtIndex:(NSInteger)index
 {
-    if (index < 0 || index >= self.itemObjects.count) { return nil; }
-    return [self objectForItemAtIndex:index class:UIImage.class];
+    if (index < 0 || index >= self.segments.count) { return nil; }
+    return [self objectForSegmentAtIndex:index class:UIImage.class];
 }
 
-- (nullable NSString *)titleForItemAtIndex:(NSInteger)index
+- (nullable NSString *)titleForSegmentAtIndex:(NSInteger)index
 {
-    return [self objectForItemAtIndex:index class:NSString.class];
+    return [self objectForSegmentAtIndex:index class:NSString.class];
 }
 
-- (nullable id)objectForItemAtIndex:(NSInteger)index class:(Class)class
+- (nullable id)objectForSegmentAtIndex:(NSInteger)index class:(Class)class
 {
     // Make sure the index provided is valid
     if (index < 0 || index >= self.items.count) { return nil; }
@@ -249,34 +249,34 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 #pragma mark Add New Items
 
-- (void)addNewItemWithImage:(UIImage *)image
+- (void)addNewSegmentWithImage:(UIImage *)image
 {
-    [self addNewObject:image];
+    [self addNewSegment:image];
 }
 
-- (void)addNewItemWithTitle:(NSString *)title
+- (void)addNewSegmentWithTitle:(NSString *)title
 {
-    [self addNewObject:title];
+    [self addNewSegment:title];
 }
 
-- (void)addNewObject:(id)object
+- (void)addNewSegment:(id)object
 {
-    [self insertItemWithObject:object atIndex:self.items.count];
+    [self insertSegmentWithObject:object atIndex:self.items.count];
 }
 
 #pragma mark Inserting New Items
 
-- (void)insertItemWithTitle:(NSString *)title atIndex:(NSInteger)index
+- (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    [self insertItemWithObject:title atIndex:index];
+    [self insertSegmentWithObject:title atIndex:index];
 }
 
-- (void)insertItemWithImage:(UIImage *)image atIndex:(NSInteger)index
+- (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index
 {
-    [self insertItemWithObject:image atIndex:index];
+    [self insertSegmentWithObject:image atIndex:index];
 }
 
-- (void)insertItemWithObject:(id)object atIndex:(NSInteger)index
+- (void)insertSegmentWithObject:(id)object atIndex:(NSInteger)index
 {
     // Add item to master list
     NSMutableArray *items = [self.items mutableCopy];
@@ -284,9 +284,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     _items = [NSArray arrayWithArray:items];
 
     // Add new item object to internal list
-   TOSegmentedControlItem *item = [[TOSegmentedControlItem alloc] initWithObject:object
+   TOSegmentedControlSegment *segment = [[TOSegmentedControlSegment alloc] initWithObject:object
                                                              forSegmentedControl:self];
-    [self.itemObjects insertObject:item atIndex:index];
+    [self.segments insertObject:segment atIndex:index];
 
    // Update number of separators
    [self updateSeparatorViewCount];
@@ -297,17 +297,17 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 #pragma mark Replacing Items
 
-- (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index
+- (void)setImage:(UIImage *)image forSegmentAtIndex:(NSInteger)index
 {
-    [self setObject:image forItemAtIndex:index];
+    [self setObject:image forSegmentAtIndex:index];
 }
 
-- (void)setTitle:(NSString *)title forItemAtIndex:(NSInteger)index
+- (void)setTitle:(NSString *)title forSegmentAtIndex:(NSInteger)index
 {
-    [self setObject:title forItemAtIndex:index];
+    [self setObject:title forSegmentAtIndex:index];
 }
 
-- (void)setObject:(id)object forItemAtIndex:(NSInteger)index
+- (void)setObject:(id)object forSegmentAtIndex:(NSInteger)index
 {
     NSAssert([object isKindOfClass:NSString.class] || [object isKindOfClass:UIImage.class],
                 @"TOSegmentedControl: Only images and strings are supported.");
@@ -322,9 +322,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     _items = [NSArray arrayWithArray:items];
     
     // Update the item object at that point for the new item
-    TOSegmentedControlItem *item = self.itemObjects[index];
-    if ([object isKindOfClass:NSString.class]) { item.title = object; }
-    if ([object isKindOfClass:UIImage.class]) { item.image = object; }
+    TOSegmentedControlSegment *segment = self.segments[index];
+    if ([object isKindOfClass:NSString.class]) { segment.title = object; }
+    if ([object isKindOfClass:UIImage.class]) { segment.image = object; }
     
     // Re-layout the views
     [self setNeedsLayout];
@@ -332,12 +332,12 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 #pragma mark Deleting Items
 
-- (void)removeLastItem
+- (void)removeLastSegment
 {
-    [self removeItemAtIndex:self.items.count - 1];
+    [self removeSegmentAtIndex:self.items.count - 1];
 }
 
-- (void)removeItemAtIndex:(NSInteger)index
+- (void)removeSegmentAtIndex:(NSInteger)index
 {
     if (index < 0 || index >= self.items.count) { return; }
 
@@ -347,16 +347,16 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     _items = items;
 
     // Remove item object
-    [self.itemObjects removeObjectAtIndex:index];
+    [self.segments removeObjectAtIndex:index];
 
     // Update number of separators
     [self updateSeparatorViewCount];
 }
 
-- (void)removeAllItems
+- (void)removeAllSegments
 {
     // Remove all item objects
-    self.itemObjects = [NSMutableArray array];
+    self.segments = [NSMutableArray array];
 
     // Remove all separators
     for (UIView *separator in self.separatorViews) {
@@ -372,25 +372,25 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setEnabled:(BOOL)enabled forSegmentAtIndex:(NSInteger)index
 {
-    if (index < 0 || index >= self.itemObjects.count) { return; }
-    self.itemObjects[index].isDisabled = !enabled;
+    if (index < 0 || index >= self.segments.count) { return; }
+    self.segments[index].isDisabled = !enabled;
     [self setNeedsLayout];
 
     // If we disabled the selected index, choose another one
-    if (self.selectedSegmentIndex >= 0 && !self.itemObjects[self.selectedSegmentIndex].isDisabled) {
+    if (self.selectedSegmentIndex >= 0 && !self.segments[self.selectedSegmentIndex].isDisabled) {
         return;
     }
 
     // Loop ahead of the selected segment index to find the next enabled one
-    for (NSInteger i = self.selectedSegmentIndex; i < self.itemObjects.count; i++) {
-        if (self.itemObjects[i].isDisabled) { continue; }
+    for (NSInteger i = self.selectedSegmentIndex; i < self.segments.count; i++) {
+        if (self.segments[i].isDisabled) { continue; }
         self.selectedSegmentIndex = i;
         return;
     }
 
     // If that failed, loop forward to find an enabled one before it
     for (NSInteger i = self.selectedSegmentIndex; i >= 0; i--) {
-        if (self.itemObjects[i].isDisabled) { continue; }
+        if (self.segments[i].isDisabled) { continue; }
         self.selectedSegmentIndex = i;
         return;
     }
@@ -401,8 +401,8 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (BOOL)isEnabledForSegmentAtIndex:(NSInteger)index
 {
-    if (index < 0 || index >= self.itemObjects.count) { return NO; }
-    return !self.itemObjects[index].isDisabled;
+    if (index < 0 || index >= self.segments.count) { return NO; }
+    return !self.segments[index].isDisabled;
 }
 
 #pragma mark - View Layout -
@@ -416,7 +416,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     }
 
     // Lay-out the thumb view
-    CGRect frame = [self frameForItemAtSegment:self.selectedSegmentIndex];
+    CGRect frame = [self frameForSegmentAtIndex:self.selectedSegmentIndex];
     self.thumbView.frame = frame;
     self.thumbView.hidden = NO;
 
@@ -443,7 +443,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 {
     // Lay out the item views
       NSInteger i = 0;
-      for (TOSegmentedControlItem *item in self.itemObjects) {
+      for (TOSegmentedControlSegment *item in self.segments) {
           UIView *itemView = item.itemView;
           [self.trackView addSubview:itemView];
 
@@ -451,7 +451,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
           [itemView sizeToFit];
 
           // Lay out the frame
-          CGRect thumbFrame = [self frameForItemAtSegment:i];
+          CGRect thumbFrame = [self frameForSegmentAtIndex:i];
           itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
                                       CGRectGetMidY(thumbFrame)};
           itemView.frame = CGRectIntegral(itemView.frame);
@@ -510,7 +510,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     return floorf((self.bounds.size.width - (_thumbInset * 2.0f)) / self.numberOfSegments);
 }
 
-- (CGRect)frameForItemAtSegment:(NSInteger)index
+- (CGRect)frameForSegmentAtIndex:(NSInteger)index
 {
     CGSize size = self.trackView.frame.size;
     
@@ -548,7 +548,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     NSAssert(segmentIndex >= 0 && segmentIndex < self.items.count,
              @"TOSegmentedControl: Array should not be out of bounds");
     
-    UIView *itemView = self.itemObjects[segmentIndex].itemView;
+    UIView *itemView = self.segments[segmentIndex].itemView;
     CGFloat scale = shrunken ? kTOSegmentedControlSelectedScale : 1.0f;
     itemView.transform = CGAffineTransformScale(CGAffineTransformIdentity,
                                                       scale, scale);
@@ -556,10 +556,10 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
 {
-    NSAssert(index >= 0 && index < self.itemObjects.count,
+    NSAssert(index >= 0 && index < self.segments.count,
              @"TOSegmentedControl:  Array should not be out of bounds");
     
-    UILabel *label = self.itemObjects[index].label;
+    UILabel *label = self.segments[index].label;
     if (label == nil) { return; }
 
     // Capture its current position and scale
@@ -584,9 +584,9 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
 - (void)setItemAtIndex:(NSInteger)index faded:(BOOL)faded
 {
-    NSAssert(index >= 0 && index < self.itemObjects.count,
+    NSAssert(index >= 0 && index < self.segments.count,
              @"Array should not be out of bounds");
-    UIView *itemView = self.itemObjects[index].itemView;
+    UIView *itemView = self.segments[index].itemView;
     itemView.alpha = faded ? kTOSegmentedControlSelectedTextAlpha : 1.0f;
 }
 
@@ -618,7 +618,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
 
     // If the control or item is disabled, pass
-    if (self.itemObjects[tappedIndex].isDisabled) {
+    if (self.segments[tappedIndex].isDisabled) {
         return;
     }
     
@@ -662,7 +662,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     if (tappedIndex == self.focusedIndex) { return; }
 
     // If the control or item is disabled, pass
-    if (self.itemObjects[tappedIndex].isDisabled) {
+    if (self.segments[tappedIndex].isDisabled) {
         return;
     }
 
@@ -694,7 +694,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     }
     
     // Get the new frame of the segment
-    CGRect frame = [self frameForItemAtSegment:tappedIndex];
+    CGRect frame = [self frameForSegmentAtIndex:tappedIndex];
     
     // Work out the center point from the frame
     CGPoint center = (CGPoint){CGRectGetMidX(frame), CGRectGetMidY(frame)};
@@ -780,7 +780,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 
     // If we WEREN'T dragging the thumb view, work out where we need to move to
     if (!self.isDraggingThumbView) {
-        if (self.itemObjects[tappedIndex].isDisabled) { return; }
+        if (self.segments[tappedIndex].isDisabled) { return; }
 
         // If we actually changed, update the segmented index and trigger the callbacks
         if (self.selectedSegmentIndex != tappedIndex) {
@@ -795,7 +795,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
         // thumb view and restore all of the item views
         id animationBlock = ^{
             // Un-fade all of the item views
-            for (NSInteger i = 0; i < self.itemObjects.count; i++) {
+            for (NSInteger i = 0; i < self.segments.count; i++) {
                 [self setItemAtIndex:i faded:NO];
             }
 
@@ -880,13 +880,13 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     if (items == _items) { return; }
 
     // Remove all current items
-    [self removeAllItems];
+    [self removeAllSegments];
 
     // Set the new array
     _items = [self sanitizedItemArrayWithItems:items];
 
     // Create the list of item objects  to track their state
-    _itemObjects = [TOSegmentedControlItem itemsWithObjects:_items
+    _segments = [TOSegmentedControlSegment segmentsWithObjects:_items
                                         forSegmentedControl:self].mutableCopy;
     
     // Update the number of separators
@@ -1034,7 +1034,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     }
 
     // Set each item to the color
-    for (TOSegmentedControlItem *item in self.itemObjects) {
+    for (TOSegmentedControlSegment *item in self.segments) {
         [item refreshItemView];
     }
 }
@@ -1050,7 +1050,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     }
 
     // Set each item to adopt the new font
-    for (TOSegmentedControlItem *item in self.itemObjects) {
+    for (TOSegmentedControlSegment *item in self.segments) {
         [item refreshItemView];
     }
 }
@@ -1090,7 +1090,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 // -----------------------------------------------
 // Number of segments
 
-- (NSInteger)numberOfSegments { return self.itemObjects.count; }
+- (NSInteger)numberOfSegments { return self.segments.count; }
 
 #pragma mark - Image Creation and Management -
 
