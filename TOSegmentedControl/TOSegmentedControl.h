@@ -40,12 +40,6 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /** The items currently assigned to this segmented control. (Can be a combination of strings and images) */
 @property (nonatomic, copy, nullable) NSArray *items;
 
-/** A set of number values dictating which items are reversible. */
-@property (nonatomic, strong) NSMutableSet<NSNumber *> *reversibleItems;
-
-/** A store tracking the current direction of reversible items */
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *reversedItems;
-
 /** A block that is called whenever a segment is tapped. */
 @property (nonatomic, copy) void (^segmentTappedHandler)(NSInteger segmentIndex, BOOL reversed);
 
@@ -235,7 +229,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /**
  Enables or disables the segment at the specified index.
 
- @param enabled Whether the item is enabled or not.
+ @param enabled Whether the segment is enabled or not.
  @param index The specific index to enable/disable.
 */
 - (void)setEnabled:(BOOL)enabled forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setEnabled(_:at:));
@@ -246,6 +240,36 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param index The index to check.
 */
 - (BOOL)isEnabledForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isEnabled(at:));
+
+/**
+ Sets whether a specific segment is currently reversible or not.
+
+ @param enabled Whether the segment is reversible or not.
+ @param index The specific index to enable/disable.
+*/
+- (void)setReversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setReversible(_:at:));
+
+/**
+ Returns whether the segment at the specified index is reversible or not.
+
+ @param index The index to check.
+*/
+- (BOOL)isReversibleForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isReversible(at:));
+
+/**
+ Sets whether a specific segment is currently in a reversed state or not.
+
+ @param enabled Whether the segment is currently reversed or not.
+ @param index The specific index to enable/disable.
+*/
+- (void)setReversed:(BOOL)reversed forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setReversed(_:at:));
+
+/**
+ Returns whether the segment at the specified index is currently reversed or not.
+
+ @param index The index to check.
+*/
+- (BOOL)isReversedForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isReversed(at:));
 
 @end
 

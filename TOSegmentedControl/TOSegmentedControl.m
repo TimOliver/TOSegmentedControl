@@ -46,6 +46,10 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 /** The private list of item objects, storing state and view data */
 @property (nonatomic, strong) NSMutableArray<TOSegmentedControlSegment *> *segments;
 
+/** A dictionary tracking the reversed state of the segments.
+    The key is the segment index, the value is if it is reversed. */
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *reversedSegments;
+
 /** Keep track when the user taps explicitily on the thumb view */
 @property (nonatomic, assign) BOOL isDraggingThumbView;
 
@@ -141,7 +145,7 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     
     // Create containers for views
     self.separatorViews = [NSMutableArray array];
-
+    
     // Set default resettable values
     self.backgroundColor = nil;
     self.thumbColor = nil;
@@ -435,6 +439,36 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 {
     if (index < 0 || index >= self.segments.count) { return NO; }
     return !self.segments[index].isDisabled;
+}
+
+#pragma mark - Reversible Management -
+
+// Accessors for setting when a segment is reversible.
+
+- (void)setReversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index
+{
+    if (index < 0 || index >= self.segments.count) { return; }
+    self.segments[index].isReversible = reversible;
+}
+
+- (BOOL)isReversibleForSegmentAtIndex:(NSInteger)index
+{
+    if (index < 0 || index >= self.segments.count) { return NO; }
+    return !self.segments[index].isReversible;
+}
+
+// Accessors for toggling whether a reversible segment is currently reversed.
+
+- (void)setReversed:(BOOL)reversed forSegmentAtIndex:(NSInteger)index
+{
+    if (index < 0 || index >= self.segments.count) { return; }
+    self.segments[index].isReversed = reversed;
+}
+
+- (BOOL)isReversedForSegmentAtIndex:(NSInteger)index
+{
+    if (index < 0 || index >= self.segments.count) { return NO; }
+    return !self.segments[index].isReversed;
 }
 
 #pragma mark - View Layout -
@@ -1123,6 +1157,16 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 // Number of segments
 
 - (NSInteger)numberOfSegments { return self.segments.count; }
+
+// -----------------------------------------------
+// The store for tracking reveresed segments
+
+- (NSMutableDictionary *)reversedSegments
+{
+    if (_reversedSegments) { return _reversedSegments; }
+    _reversedSegments = [NSMutableDictionary dictionary];
+    return _reversedSegments;
+}
 
 #pragma mark - Image Creation and Management -
 
