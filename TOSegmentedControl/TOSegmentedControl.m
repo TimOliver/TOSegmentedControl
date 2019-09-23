@@ -516,21 +516,18 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
         UIView *itemView = item.itemView;
         [self.trackView addSubview:itemView];
 
-        // Size to fit
-        [itemView sizeToFit];
-
-        // Make sure they are all unselected
-        [self setItemAtIndex:i selected:NO];
-
         // Lay out the frame
         CGRect thumbFrame = [self frameForSegmentAtIndex:i];
         itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
                                   CGRectGetMidY(thumbFrame)};
         itemView.frame = CGRectIntegral(itemView.frame);
 
+        // Make sure they are all unselected
+        [self setItemAtIndex:i selected:NO];
+
         // If the item is disabled, make it faded
         if (!self.enabled || item.isDisabled) {
-          itemView.alpha = kTOSegmentedControlDisabledAlpha;
+            itemView.alpha = kTOSegmentedControlDisabledAlpha;
         }
 
         i++;
@@ -686,7 +683,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 
     // Tell the segment to select itself in order to show the reversible arrow
     TOSegmentedControlSegment *segment = self.segments[index];
-    if (segment.isSelected == selected) { return; }
 
     // Update the segment state
     segment.isSelected = selected;
@@ -699,37 +695,15 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     UILabel *label = segment.label;
     if (label == nil) { return; }
 
-    [UIView performWithoutAnimation:^{
-        // Capture its current position and scale
-        CGPoint center = label.center;
-        CGAffineTransform transform = label.transform;
+    // Set the font
+    UIFont *font = selected ? self.selectedTextFont : self.textFont;
+    label.font = font;
 
-        // Reset its transform so we don't mangle the frame
-        label.transform = CGAffineTransformIdentity;
+    // Re-apply the arrow image view to the translated frame
+    segment.arrowView.frame = [self frameForImageArrowViewWithItemFrame:label.frame];
 
-        // Set the font
-        UIFont *font = selected ? self.selectedTextFont : self.textFont;
-        label.font = font;
-
-        // Resize the frame in case the new font exceeded the bounds
-        [label sizeToFit];
-        label.frame = CGRectIntegral(label.frame);
-
-        // Re-apply the arrow image view to the translated frame
-        if (selected) {
-            CGAffineTransform transform = segment.arrowView.transform;
-            segment.arrowView.transform = CGAffineTransformIdentity;
-            segment.arrowView.frame = [self frameForImageArrowViewWithItemFrame:label.frame];
-            segment.arrowView.transform = transform;
-        }
-
-        // Ensure the arrow view is set to the right orientation
-        [segment setArrowImageReversed:segment.isReversed];
-
-        // Re-apply the transform and the positioning
-        label.transform = transform;
-        label.center = center;
-    }];
+    // Ensure the arrow view is set to the right orientation
+    [segment setArrowImageReversed:segment.isReversed];
 }
 
 - (void)setItemAtIndex:(NSInteger)index faded:(BOOL)faded
@@ -1261,6 +1235,11 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     _selectedTextFont = selectedTextFont;
     if (_selectedTextFont == nil) {
         _selectedTextFont = [UIFont systemFontOfSize:13.0f weight:UIFontWeightSemibold];
+    }
+
+    // Set each item to adopt the new font
+    for (TOSegmentedControlSegment *item in self.segments) {
+        [item refreshItemView];
     }
 }
 
