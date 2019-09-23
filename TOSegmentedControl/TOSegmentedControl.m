@@ -37,6 +37,7 @@ static NSString * const kTOSegmentedControlSeparatorImage = @"separatorImage";
 static CGFloat const kTOSegmentedControlSelectedTextAlpha = 0.3f;
 static CGFloat const kTOSegmentedControlDisabledAlpha = 0.4f;
 static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
+static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 
 // ----------------------------------------------------------------
 // Private Members
@@ -508,33 +509,38 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 - (void)layoutItemViews
 {
     // Lay out the item views
-      NSInteger i = 0;
-      for (TOSegmentedControlSegment *item in self.segments) {
-          UIView *itemView = item.itemView;
-          [self.trackView addSubview:itemView];
+    NSInteger i = 0;
+    for (TOSegmentedControlSegment *item in self.segments) {
+        UIView *itemView = item.itemView;
+        [self.trackView addSubview:itemView];
 
-          // Size to fit
-          [itemView sizeToFit];
+        // Size to fit
+        [itemView sizeToFit];
 
-          // Lay out the frame
-          CGRect thumbFrame = [self frameForSegmentAtIndex:i];
-          itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
-                                      CGRectGetMidY(thumbFrame)};
-          itemView.frame = CGRectIntegral(itemView.frame);
+        // Lay out the frame
+        CGRect thumbFrame = [self frameForSegmentAtIndex:i];
+        itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
+                                  CGRectGetMidY(thumbFrame)};
+        itemView.frame = CGRectIntegral(itemView.frame);
 
-          // Make sure they are all unselected
-          [self setItemAtIndex:i++ selected:NO];
+        // Make sure they are all unselected
+        [self setItemAtIndex:i++ selected:NO];
 
-          // If the item is disabled, make it faded
-          if (!self.enabled || item.isDisabled) {
-              itemView.alpha = kTOSegmentedControlDisabledAlpha;
-          }
-      }
+        // If the item is disabled, make it faded
+        if (!self.enabled || item.isDisabled) {
+          itemView.alpha = kTOSegmentedControlDisabledAlpha;
+        }
+    }
 
-      // Set the selected item
-      if (self.selectedSegmentIndex >= 0) {
-          [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
-      }
+    // Exit out if there is nothing selected
+    if (self.selectedSegmentIndex < 0) { return; }
+
+    // Set the selected state for the current selected index
+    [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
+
+    // Lay out the arrow graphic
+    TOSegmentedControlSegment *item = self.segments[self.selectedSegmentIndex];
+    item.arrowImageView.frame = [self frameForImageArrowViewWithItemView:item.itemView];
 }
 
 - (void)layoutSeparatorViews
@@ -593,6 +599,15 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     return CGRectIntegral(frame);
 }
 
+- (CGRect)frameForImageArrowViewWithItemView:(UIView *)itemView
+{
+    CGRect frame = CGRectZero;
+    frame.size = self.arrowImage.size;
+    frame.origin.x = CGRectGetMaxX(itemView.frame) + 2.0f;
+    frame.origin.y = ceilf(CGRectGetMidY(itemView.frame) - (frame.size.height * 0.5f));
+    return frame;
+}
+
 - (NSInteger)segmentIndexForPoint:(CGPoint)point
 {
     CGFloat segmentWidth = floorf(self.frame.size.width / self.numberOfSegments);
@@ -618,14 +633,38 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     CGFloat scale = shrunken ? kTOSegmentedControlSelectedScale : 1.0f;
     itemView.transform = CGAffineTransformScale(CGAffineTransformIdentity,
                                                       scale, scale);
+
+    // If we have a reversible image view, manipulate its transformation
+    // to match the position and scale of the item view
+    UIView *arrowImageView = self.segments[segmentIndex].arrowImageView;
+    if (arrowImageView == nil) { return; }
+
+    // Work out the delta between the middle of the item view,
+    // and the middle of the image view
+    CGPoint offset = CGPointZero;
+    offset.x = arrowImageView.center.x - itemView.center.x;
+
+    // Create a transformation matrix that applies the scale to the arrow,
+    // with the transformation origin being the middle of the item view
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    transform = CGAffineTransformTranslate(transform, -offset.x, -offset.y);
+    transform = CGAffineTransformScale(transform, scale, scale);
+    transform = CGAffineTransformTranslate(transform, offset.x, offset.y);
+    arrowImageView.transform = transform;
 }
 
 - (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
 {
     NSAssert(index >= 0 && index < self.segments.count,
              @"TOSegmentedControl:  Array should not be out of bounds");
-    
-    UILabel *label = self.segments[index].label;
+
+    // Tell the segment to select itself in order to show the reversible arrow
+    TOSegmentedControlSegment *segment = self.segments[index];
+    segment.arrowImageView.alpha = selected ? kTOSegmentedControlDirectionArrowAlpha : 0.0f;
+
+    // The rest of this code deals with swapping the font
+    // of the label. Cancel out if we're an image.
+    UILabel *label = segment.label;
     if (label == nil) { return; }
 
     // Capture its current position and scale
@@ -646,6 +685,12 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     // Re-apply the transform and the positioning
     label.transform = transform;
     label.center = center;
+
+    // Re-apply the arrow image view to the translated frame
+    transform = segment.arrowImageView.transform;
+    segment.arrowImageView.transform = CGAffineTransformIdentity;
+    segment.arrowImageView.frame = [self frameForImageArrowViewWithItemView:label];
+    segment.arrowImageView.transform = transform;
 }
 
 - (void)setItemAtIndex:(NSInteger)index faded:(BOOL)faded
@@ -1177,27 +1222,17 @@ static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
     if (arrowImage != nil) { return arrowImage; }
 
     // Generate for the first time
-    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:(CGSize){5.0, 3.0f}];
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:(CGSize){8.0, 4.0f}];
     arrowImage = [renderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
-        UIBezierPath* arrowPath = [UIBezierPath bezierPath];
-        [arrowPath moveToPoint: CGPointMake(4.71, 0.16)];
-        [arrowPath addCurveToPoint: CGPointMake(5, 0.75) controlPoint1: CGPointMake(4.89, 0.3) controlPoint2: CGPointMake(5.01, 0.37)];
-        [arrowPath addCurveToPoint: CGPointMake(4.57, 1.4) controlPoint1: CGPointMake(4.99, 1.13) controlPoint2: CGPointMake(4.8, 1.19)];
-        [arrowPath addCurveToPoint: CGPointMake(3.28, 2.57) controlPoint1: CGPointMake(4.35, 1.62) controlPoint2: CGPointMake(3.61, 2.29)];
-        [arrowPath addCurveToPoint: CGPointMake(2.95, 2.85) controlPoint1: CGPointMake(3.2, 2.67) controlPoint2: CGPointMake(3.08, 2.77)];
-        [arrowPath addCurveToPoint: CGPointMake(2.5, 3) controlPoint1: CGPointMake(2.83, 2.94) controlPoint2: CGPointMake(2.67, 3)];
-        [arrowPath addCurveToPoint: CGPointMake(2.05, 2.85) controlPoint1: CGPointMake(2.33, 3) controlPoint2: CGPointMake(2.17, 2.94)];
-        [arrowPath addCurveToPoint: CGPointMake(1.72, 2.57) controlPoint1: CGPointMake(1.92, 2.77) controlPoint2: CGPointMake(1.8, 2.67)];
-        [arrowPath addCurveToPoint: CGPointMake(0.43, 1.4) controlPoint1: CGPointMake(1.39, 2.29) controlPoint2: CGPointMake(0.65, 1.62)];
-        [arrowPath addCurveToPoint: CGPointMake(0, 0.75) controlPoint1: CGPointMake(0.2, 1.19) controlPoint2: CGPointMake(0.01, 1.13)];
-        [arrowPath addCurveToPoint: CGPointMake(0.29, 0.16) controlPoint1: CGPointMake(-0.01, 0.37) controlPoint2: CGPointMake(0.11, 0.3)];
-        [arrowPath addCurveToPoint: CGPointMake(0.73, 0) controlPoint1: CGPointMake(0.41, 0.06) controlPoint2: CGPointMake(0.56, 0.01)];
-        [arrowPath addCurveToPoint: CGPointMake(2.46, 0) controlPoint1: CGPointMake(0.81, 0) controlPoint2: CGPointMake(2.13, 0)];
-        [arrowPath addCurveToPoint: CGPointMake(4.21, 0) controlPoint1: CGPointMake(2.87, 0) controlPoint2: CGPointMake(4.19, 0)];
-        [arrowPath addCurveToPoint: CGPointMake(4.71, 0.16) controlPoint1: CGPointMake(4.42, -0) controlPoint2: CGPointMake(4.58, 0.06)];
-        [arrowPath closePath];
-        [UIColor.blackColor setFill];
-        [arrowPath fill];
+        UIBezierPath* bezierPath = [UIBezierPath bezierPath];
+        [bezierPath moveToPoint: CGPointMake(7.25, 0.75)];
+        [bezierPath addLineToPoint: CGPointMake(4, 3.25)];
+        [bezierPath addLineToPoint: CGPointMake(0.75, 0.75)];
+        [UIColor.blackColor setStroke];
+        bezierPath.lineWidth = 1.5;
+        bezierPath.lineCapStyle = kCGLineCapRound;
+        bezierPath.lineJoinStyle = kCGLineJoinRound;
+        [bezierPath stroke];
     }];
 
     // Force to always be template
