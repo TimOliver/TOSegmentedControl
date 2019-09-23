@@ -684,9 +684,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     // Tell the segment to select itself in order to show the reversible arrow
     TOSegmentedControlSegment *segment = self.segments[index];
 
-    // Update the segment state
-    segment.isSelected = selected;
-
     // Update the alpha of the reversible arrow
     segment.arrowView.alpha = selected ? kTOSegmentedControlDirectionArrowAlpha : 0.0f;
 
@@ -1077,7 +1074,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 - (void)setCornerRadius:(CGFloat)cornerRadius
 {
     self.trackView.layer.cornerRadius = cornerRadius;
-    self.thumbView.layer.cornerRadius = (cornerRadius - _thumbInset) + 0.5f;
+    self.thumbView.layer.cornerRadius = (self.cornerRadius - _thumbInset) + 1.0f;
 }
 
 - (CGFloat)cornerRadius { return self.trackView.layer.cornerRadius; }
@@ -1249,7 +1246,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 - (void)setThumbInset:(CGFloat)thumbInset
 {
     _thumbInset = thumbInset;
-    self.thumbView.layer.cornerRadius = (self.cornerRadius - _thumbInset) + 0.5f;
+    self.thumbView.layer.cornerRadius = (self.cornerRadius - _thumbInset) + 1.0f;
 }
 
 // -----------------------------------------------
