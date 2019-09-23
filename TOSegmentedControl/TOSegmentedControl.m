@@ -54,6 +54,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 /** Keep track when the user taps explicitily on the thumb view */
 @property (nonatomic, assign) BOOL isDraggingThumbView;
 
+/** Track if the user drags the thumb off the original segment. This disables reversing. */
+@property (nonatomic, assign) BOOL didDragOffOriginalSegment;
+
 /** Before we commit to a new selected index, this is the index the user has dragged over */
 @property (nonatomic, assign) NSInteger focusedIndex;
 
@@ -669,7 +672,16 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     NSAssert(segmentIndex >= 0 && segmentIndex < self.items.count,
              @"TOSegmentedControl: Array should not be out of bounds");
 
-    
+    TOSegmentedControlSegment *segment = self.segments[segmentIndex];
+
+    // Check we actually have a view to manipulate
+    UIView *arrowImageView = segment.arrowImageView;
+    if (arrowImageView == nil) { return; }
+
+    // Rotate the image view
+    CGAffineTransform transform = arrowImageView.transform;
+    CGFloat rotation = reversed ? M_PI : 0.0f;
+    arrowImageView.transform = CGAffineTransformRotate(transform, rotation);
 }
 
 - (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
@@ -764,7 +776,13 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     
     // Work out if we tapped on the thumb view, or on an un-selected segment
     self.isDraggingThumbView = (tappedIndex == self.selectedSegmentIndex);
-    
+
+    // Track if we drag off this segment
+    self.didDragOffOriginalSegment = NO;
+
+    // Track the currently selected item as the focused one
+    self.focusedIndex = tappedIndex;
+
     // Work out which animation effects to apply
     if (!self.isDraggingThumbView) {
         [UIView animateWithDuration:0.35f animations:^{
@@ -802,6 +820,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     if (self.segments[tappedIndex].isDisabled) {
         return;
     }
+
+    // Track that we dragged off the first segments
+    self.didDragOffOriginalSegment = YES;
 
     // Handle transitioning when not dragging the thumb view
     if (!self.isDraggingThumbView) {
@@ -967,7 +988,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
         _selectedSegmentIndex = tappedIndex;
         [self sendIndexChangedEventActions];
     }
-    else if (segment.isReversible && self.focusedIndex == -1) {
+    else if (segment.isReversible && !self.didDragOffOriginalSegment) {
         // If the item was reversible, and we never changed segments,
         // trigger the reverse alert delegate
         [segment toggleDirection];
