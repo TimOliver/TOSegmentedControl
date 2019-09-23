@@ -181,6 +181,7 @@
     if (self.arrowImageView == nil) {
         UIImage *arrow = self.segmentedControl.arrowImage;
         self.arrowImageView = [[UIImageView alloc] initWithImage:arrow];
+        self.arrowImageView.alpha = 0.0f;
         [self.segmentedControl.trackView addSubview:self.arrowImageView];
     }
 

@@ -53,6 +53,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** Whether this item is enabled or disabled. */
 @property (nonatomic, assign) BOOL isDisabled;
 
+/** Whether the item is selected or not. */
+@property (nonatomic, assign) BOOL isSelected;
+
 /** The view (either image or label) for this item */
 @property (nonatomic, readonly) UIView *itemView;
 
