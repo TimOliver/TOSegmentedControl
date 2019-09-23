@@ -29,9 +29,10 @@
     
     __weak typeof(self) weakSelf = self;
     self.segmentedControl.items = @[@"First", @"Second", @"Third"];
+    [self.segmentedControl setReversible:YES forSegmentAtIndex:1];
     self.segmentedControl.segmentTappedHandler = ^(NSInteger index, BOOL reversed) {
         NSString *title = [self nameForIndex:index];
-        [weakSelf animateLabel:weakSelf.segmentedLabel title:title];
+        [weakSelf animateLabel:weakSelf.segmentedLabel title:title reveresed:reversed];
     };
 
     // Additional options that can be tested on the control
@@ -49,12 +50,16 @@
 - (IBAction)segmentedControlUpdated:(id)sender
 {
     NSString *title = [self nameForIndex:self.classicSegmentedControl.selectedSegmentIndex];
-    [self animateLabel:self.classicSegmentedLabel title:title];
+    [self animateLabel:self.classicSegmentedLabel title:title reveresed:NO];
 }
 
-- (void)animateLabel:(UILabel *)label title:(NSString *)title
+- (void)animateLabel:(UILabel *)label title:(NSString *)title reveresed:(BOOL)reversed
 {
     label.text = title;
+    if (reversed) {
+        title = [title stringByAppendingString:@", Reversed"];
+    }
+
     label.alpha = 1.0f;
     label.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1f, 1.1f);
     
