@@ -30,6 +30,7 @@
     __weak typeof(self) weakSelf = self;
     self.segmentedControl.items = @[@"First", @"Second", @"Third"];
     [self.segmentedControl setReversible:YES forSegmentAtIndex:1];
+    [self.segmentedControl setReversed:YES forSegmentAtIndex:1];
     self.segmentedControl.segmentTappedHandler = ^(NSInteger index, BOOL reversed) {
         NSString *title = [self nameForIndex:index];
         [weakSelf animateLabel:weakSelf.segmentedLabel title:title reveresed:reversed];

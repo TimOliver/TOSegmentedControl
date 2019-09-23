@@ -462,7 +462,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 }
 
 // Accessors for toggling whether a reversible segment is currently reversed.
-
 - (void)setReversed:(BOOL)reversed forSegmentAtIndex:(NSInteger)index
 {
     if (index < 0 || index >= self.segments.count) { return; }
@@ -683,7 +682,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 - (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
 {
     NSAssert(index >= 0 && index < self.segments.count,
-             @"TOSegmentedControl:  Array should not be out of bounds");
+             @"TOSegmentedControl: Array should not be out of bounds");
 
     // Tell the segment to select itself in order to show the reversible arrow
     TOSegmentedControlSegment *segment = self.segments[index];
@@ -723,6 +722,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
             segment.arrowView.frame = [self frameForImageArrowViewWithItemFrame:label.frame];
             segment.arrowView.transform = transform;
         }
+
+        // Ensure the arrow view is set to the right orientation
+        [segment setArrowImageReversed:segment.isReversed];
 
         // Re-apply the transform and the positioning
         label.transform = transform;
