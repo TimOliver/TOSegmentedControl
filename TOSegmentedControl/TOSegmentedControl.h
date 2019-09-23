@@ -40,12 +40,6 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /** The items currently assigned to this segmented control. (Can be a combination of strings and images) */
 @property (nonatomic, copy, nullable) NSArray *items;
 
-/** A set of number values dictating which items are reversible. */
-@property (nonatomic, strong) NSMutableSet<NSNumber *> *reversibleItems;
-
-/** A store tracking the current direction of reversible items */
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *reversedItems;
-
 /** A block that is called whenever a segment is tapped. */
 @property (nonatomic, copy) void (^segmentTappedHandler)(NSInteger segmentIndex, BOOL reversed);
 
@@ -54,6 +48,9 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
 /** The index of the currently segment. (May be manually set) */
 @property (nonatomic, assign) NSInteger selectedSegmentIndex;
+
+/** Whether the selected segment is also reveresed. */
+@property (nonatomic, assign) BOOL selectedSegmentReversed;
 
 /** The amount of rounding in the corners (Default is 9.0f) */
 @property (nonatomic, assign) IBInspectable CGFloat cornerRadius;
@@ -89,10 +86,10 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 @property (nonatomic, assign) IBInspectable CGFloat thumbShadowRadius;
 
 /**
- Creates a new segmented control with the provided items
+ Creates a new segmented control with the provided items.
 
  @param items An array of either images, or strings to display
- */
+*/
 - (instancetype)initWithItems:(nullable NSArray *)items NS_SWIFT_NAME(init(items:));
 
 /**
@@ -100,94 +97,182 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
  @param image The image to set.
  @param index The index of the segment to set.
- */
-- (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:for:));
+*/
+- (void)setImage:(UIImage *)image forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:for:));
+
+/**
+ Replaces the content of an existing segment with a new image,
+ and optionally makes it reversible.
+
+ @param image The image to set.
+ @param reversible Whether the item can be tapped multiple times to flip directions.
+ @param index The index of the segment to set.
+*/
+- (void)setImage:(UIImage *)image reversible:(BOOL)reversible
+                              forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:reversible:for:));
 
 /**
  Returns the image that was assigned to a specific segment.
  Will return nil if the content at that segment is not an image.
 
  @param index The index at which the image is located.
- */
-- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index NS_SWIFT_NAME(image(for:));
+*/
+- (nullable UIImage *)imageForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(image(for:));
 
 /**
  Sets the content of a given segment to a text label.
 
- @param title The text to display at the segment
+ @param title The text to display at the segment.
  @param index The index of the segment to set.
- */
-- (void)setTitle:(NSString *)title forItemAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:for:));
-
-/**
-Returns the string of the title that was assigned to a specific segment.
-Will return nil if the content at that segment is not a string.
-
-@param index The index at which the image is located.
 */
-- (nullable NSString *)titleForItemAtIndex:(NSInteger)index NS_SWIFT_NAME(title(for:));
+- (void)setTitle:(NSString *)title forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:for:));
 
 /**
- Adds a new text item to the end of the list.
+ Sets the content of a given segment to a text label, and
+ optionally makes it reversible.
+
+ @param title The text to display at the segment.
+ @param reversible Whether the item can be tapped multiple times to flip directions.
+ @param index The index of the segment to set.
+*/
+- (void)setTitle:(NSString *)title reversible:(BOOL)reversible
+                               forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(set(_:reversible:for:));
+
+/**
+ Returns the string of the title that was assigned to a specific segment.
+ Will return nil if the content at that segment is not a string.
+
+ @param index The index at which the image is located.
+*/
+- (nullable NSString *)titleForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(title(for:));
+
+/**
+ Adds a new text segment to the end of the list.
  
  @param title The title of the new item.
- */
-- (void)addNewItemWithTitle:(NSString *)title NS_SWIFT_NAME(addItem(with:));
+*/
+- (void)addNewSegmentWithTitle:(NSString *)title NS_SWIFT_NAME(addSegment(with:));
 
 /**
- Adds a new image item to the end of the list.
+ Adds a new text segment to the end of the list, and optionally makes it reversible.
+ 
+ @param title The title of the new item.
+ @param reversible Whether the item is reversible or not.
+*/
+- (void)addNewSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible NS_SWIFT_NAME(addSegment(with:reversible:));
+
+/**
+ Adds a new image segment to the end of the list.
  
  @param image The image of the new item.
- */
-- (void)addNewItemWithImage:(UIImage *)image NS_SWIFT_NAME(addItem(with:));
+*/
+- (void)addNewSegmentWithImage:(UIImage *)image NS_SWIFT_NAME(addSegment(with:));
 
 /**
- Inserts a new image item at the specified segment index.
+ Adds a new image segment to the end of the list, and optionally makes it reversible.
+ 
+ @param image The image of the new item.
+ @param reversible Whether the item is reversible or not.
+*/
+- (void)addNewSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible NS_SWIFT_NAME(addSegment(with:reversible:));
+
+/**
+ Inserts a new image segment at the specified index.
 
  @param image The image to set.
  @param index The index of the segment to which the image will be set.
- */
-- (void)insertItemWithImage:(UIImage *)image atIndex:(NSInteger)index NS_SWIFT_NAME(insertItem(_:at:));
-
-/**
-Inserts a new image title at the specified segment index.
-
-@param title The title to set.
-@param index The index of the segment to which the image will be set.
 */
-- (void)insertItemWithTitle:(NSString *)title atIndex:(NSInteger)index NS_SWIFT_NAME(insertItem(_:at:));
+- (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:at:));
 
 /**
- Remove the last item in the list
- */
-- (void)removeLastItem NS_SWIFT_NAME(removeLastItem());
+ Inserts a new image segment at the specified segment index, and optionally makes it reversible.
 
-/**
-Removes the item at the specified index.
-
-@param index The index of the segment to remove.
+ @param image The image to set.
+ @param reversible Whether the item is reversible or not.
+ @param index The index of the segment to which the image will be set.
 */
-- (void)removeItemAtIndex:(NSInteger)index NS_SWIFT_NAME(removeItem(at:));
+- (void)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible
+                                                atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:reversible:at:));
+
+/**
+ Inserts a new title segment at the specified index.
+
+ @param title The title to set.
+ @param index The index of the segment to which the image will be set.
+*/
+- (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:at:));
+
+/**
+ Inserts a new title segment at the specified index, and optionally makes it reversible.
+
+ @param title The title to set.
+ @param reversible Whether the item is reversible or not.
+ @param index The index of the segment to which the image will be set.
+*/
+- (void)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible
+                       atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:reversible:at:));
+
+/**
+ Remove the last segment in the list
+*/
+- (void)removeLastSegment NS_SWIFT_NAME(removeLastSegment());
+
+/**
+ Removes the segment at the specified index.
+
+ @param index The index of the segment to remove.
+*/
+- (void)removeSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(removeSegment(at:));
 
 /**
  Removes all of the items from this control.
- */
-- (void)removeAllItems NS_SWIFT_NAME(removeAllItems());
+*/
+- (void)removeAllSegments NS_SWIFT_NAME(removeAllSegments());
 
 /**
- Enables or disables the item at the specified index.
+ Enables or disables the segment at the specified index.
 
- @param enabled Whether the item is enabled or not.
+ @param enabled Whether the segment is enabled or not.
  @param index The specific index to enable/disable.
- */
+*/
 - (void)setEnabled:(BOOL)enabled forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setEnabled(_:at:));
 
 /**
- Returns whether the item at the specified index is currently enabled or not.
+ Returns whether the segment at the specified index is currently enabled or not.
 
  @param index The index to check.
- */
+*/
 - (BOOL)isEnabledForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isEnabled(at:));
+
+/**
+ Sets whether a specific segment is currently reversible or not.
+
+ @param reversible Whether the segment is reversible or not.
+ @param index The specific index to enable/disable.
+*/
+- (void)setReversible:(BOOL)reversible forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setReversible(_:at:));
+
+/**
+ Returns whether the segment at the specified index is reversible or not.
+
+ @param index The index to check.
+*/
+- (BOOL)isReversibleForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isReversible(at:));
+
+/**
+ Sets whether a specific segment is currently in a reversed state or not.
+
+ @param reversed Whether the segment is currently reversed or not.
+ @param index The specific index to enable/disable.
+*/
+- (void)setReversed:(BOOL)reversed forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setReversed(_:at:));
+
+/**
+ Returns whether the segment at the specified index is currently reversed or not.
+
+ @param index The index to check.
+*/
+- (BOOL)isReversedForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isReversed(at:));
 
 @end
 

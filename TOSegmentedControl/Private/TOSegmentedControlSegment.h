@@ -36,13 +36,13 @@ NS_ASSUME_NONNULL_BEGIN
  information and state for a single item in the
  segmented control.
  */
-@interface TOSegmentedControlItem : NSObject
+@interface TOSegmentedControlSegment : NSObject
 
 /** When item is a label, the text to display */
-@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy, nullable) NSString *title;
 
 /** When item is an image, the image to display */
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong, nullable) UIImage *image;
 
 /** Whether the item can be tapped to toggle direction */
 @property (nonatomic, assign) BOOL isReversible;
@@ -53,6 +53,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** Whether this item is enabled or disabled. */
 @property (nonatomic, assign) BOOL isDisabled;
 
+/** Whether the item is selected or not. */
+@property (nonatomic, assign) BOOL isSelected;
+
 /** The view (either image or label) for this item */
 @property (nonatomic, readonly) UIView *itemView;
 
@@ -62,9 +65,12 @@ NS_ASSUME_NONNULL_BEGIN
 /** If the item is an image, the subsequent image view (nil if a string) */
 @property (nonatomic, nullable, readonly) UIImageView *imageView;
 
+/** If the item is reversible, the subsequent arrow image view. */
+@property (nonatomic, nullable, readonly) UIView *arrowView;
+
 // Create an array of objects given an array of strings and images
-+ (NSArray *)itemsWithObjects:(NSArray *)objects
-          forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
++ (NSArray *)segmentsWithObjects:(NSArray *)objects
+             forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
 
 // Create a non-reversible item from this class
 - (nullable instancetype)initWithObject:(id)object
@@ -87,6 +93,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Re-synchronize the item view when the segmented control style changes
 - (void)refreshItemView;
+
+// Rotates the arrow image view to 180 degrees and back again
+- (void)setArrowImageReversed:(BOOL)reversed;
 
 @end
 

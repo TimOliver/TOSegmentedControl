@@ -20,7 +20,7 @@
                                 <rect key="frame" x="0.0" y="560.33333333333337" width="414" height="301.66666666666663"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First Selected" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pwD-VJ-sLV">
-                                        <rect key="frame" x="46" y="137" width="149" height="27.5"/>
+                                        <rect key="frame" x="132.66666666666669" y="137" width="148.66666666666669" height="27.666666666666657"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -73,8 +73,6 @@
                                             </segmentedControl>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="lessThanOrEqual" constant="375" id="8Iu-0C-fZ1"/>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="320" id="DUT-Tn-0v8"/>
                                             <constraint firstItem="idK-8t-llR" firstAttribute="width" secondItem="EJ6-2M-G2q" secondAttribute="width" id="fvf-ap-nwF"/>
                                         </constraints>
                                         <viewLayoutGuide key="safeArea" id="GVh-KB-Wct"/>
@@ -97,14 +95,12 @@
                                             </view>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="lessThanOrEqual" constant="375" id="1pC-Us-fJq"/>
                                             <constraint firstItem="8wQ-al-Ecf" firstAttribute="width" secondItem="5od-9A-AUH" secondAttribute="width" id="FEI-IW-i76"/>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="320" id="Pd5-Da-Scv"/>
                                         </constraints>
                                     </stackView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="420" id="70V-7Q-Idt"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="414" id="70V-7Q-Idt"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="320" id="uIw-xN-0vC"/>
                                 </constraints>
                             </stackView>

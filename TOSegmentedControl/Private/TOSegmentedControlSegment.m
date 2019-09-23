@@ -20,7 +20,7 @@
 //  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 //  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#import "TOSegmentedControlItem.h"
+#import "TOSegmentedControlSegment.h"
 #import "TOSegmentedControl.h"
 #import <UIKit/UIKit.h>
 
@@ -35,7 +35,7 @@
 // -------------------------------------------------
 // Private Interface
 
-@interface TOSegmentedControlItem ()
+@interface TOSegmentedControlSegment ()
 
 // Weak reference to our parent segmented control
 @property (nonatomic, weak) TOSegmentedControl *segmentedControl;
@@ -43,12 +43,15 @@
 // Read-write access to the item view
 @property (nonatomic, strong, readwrite) UIView *itemView;
 
+// When made reversible, the container for arrow image view to show
+@property (nonatomic, strong, readwrite) UIView *arrowView;
+
 // When made reversible, the arrow image view to show
 @property (nonatomic, strong) UIImageView *arrowImageView;
 
 @end
 
-@implementation TOSegmentedControlItem
+@implementation TOSegmentedControlSegment
 
 #pragma mark - Object Lifecyle -
 
@@ -132,20 +135,20 @@
 
 #pragma mark - Comnvenience Initializers -
 
-+ (NSArray *)itemsWithObjects:(NSArray *)objects forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
++ (NSArray *)segmentsWithObjects:(NSArray *)objects forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
 {
     NSMutableArray *array = [NSMutableArray array];
     
     // Create an object for each item in the array.
     // Skip anything that isn't an image or a label
     for (id object in objects) {
-        TOSegmentedControlItem *item = nil;
+        TOSegmentedControlSegment *item = nil;
         if ([object isKindOfClass:NSString.class]) {
-            item = [[TOSegmentedControlItem alloc] initWithTitle:object
+            item = [[TOSegmentedControlSegment alloc] initWithTitle:object
                                              forSegmentedControl:segmentedControl];
         }
         else if ([object isKindOfClass:UIImage.class]) {
-            item = [[TOSegmentedControlItem alloc] initWithImage:object
+            item = [[TOSegmentedControlSegment alloc] initWithImage:object
                                              forSegmentedControl:segmentedControl];
         }
 
@@ -170,36 +173,30 @@
 
 - (void)refreshReversibleView
 {
-    // Whether it's in memory or not, set the tint color
-    self.arrowImageView.tintColor = self.segmentedControl.itemColor;
-    
     // If we're no longer (Or never were) reversible,
     // hide and exit out
     if (!self.isReversible) {
-        self.arrowImageView.hidden = YES;
+        self.arrowView.hidden = YES;
         return;
     }
     
     // Create the arrow view if we haven't done so yet
-    if (self.arrowImageView == nil) {
+    if (self.arrowView == nil && self.arrowImageView == nil) {
         UIImage *arrow = self.segmentedControl.arrowImage;
+        self.arrowView = [[UIView alloc] initWithFrame:(CGRect){CGPointZero, arrow.size}];
+        self.arrowView.alpha = 0.0f;
+        [self.segmentedControl.trackView addSubview:self.arrowView];
+
         self.arrowImageView = [[UIImageView alloc] initWithImage:arrow];
+        self.arrowImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self.arrowView addSubview:self.arrowImageView];
     }
-    
-    // Add the arrow to the item view
-    self.itemView.clipsToBounds = NO;
-    [self.itemView addSubview:self.arrowImageView];
-    
-    // Line up the item view vertically centered next to the item view
-    self.arrowImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin |
-                                            UIViewAutoresizingFlexibleBottomMargin |
-                                            UIViewAutoresizingFlexibleLeftMargin;
-    
-    CGRect itemFrame = self.itemView.frame;
-    CGRect frame = self.arrowImageView.frame;
-    frame.origin.x = CGRectGetMaxX(itemFrame) + 2.0f;
-    frame.origin.y = (CGRectGetHeight(itemFrame) - CGRectGetHeight(frame)) * 0.5f;
-    self.arrowImageView.frame = frame;
+
+    // Perform these updates, but never animate them
+    [UIView performWithoutAnimation:^{
+        // Set the tint color
+        self.arrowImageView.tintColor = self.segmentedControl.itemColor;
+    }];
 }
 
 #pragma mark - View Management -
@@ -319,6 +316,16 @@
     }
     
     return nil;
+}
+
+- (void)setArrowImageReversed:(BOOL)reversed
+{
+    if (reversed) {
+        self.arrowImageView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI);
+        return;
+    }
+
+    self.arrowImageView.transform = CGAffineTransformIdentity;
 }
 
 @end
