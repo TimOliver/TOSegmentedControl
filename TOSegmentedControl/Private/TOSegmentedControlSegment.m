@@ -43,8 +43,11 @@
 // Read-write access to the item view
 @property (nonatomic, strong, readwrite) UIView *itemView;
 
+// When made reversible, the container for arrow image view to show
+@property (nonatomic, strong, readwrite) UIView *arrowView;
+
 // When made reversible, the arrow image view to show
-@property (nonatomic, strong, readwrite) UIImageView *arrowImageView;
+@property (nonatomic, strong) UIImageView *arrowImageView;
 
 @end
 
@@ -173,16 +176,20 @@
     // If we're no longer (Or never were) reversible,
     // hide and exit out
     if (!self.isReversible) {
-        self.arrowImageView.hidden = YES;
+        self.arrowView.hidden = YES;
         return;
     }
     
     // Create the arrow view if we haven't done so yet
-    if (self.arrowImageView == nil) {
+    if (self.arrowView == nil && self.arrowImageView == nil) {
         UIImage *arrow = self.segmentedControl.arrowImage;
+        self.arrowView = [[UIView alloc] initWithFrame:(CGRect){CGPointZero, arrow.size}];
+        self.arrowView.alpha = 0.0f;
+        [self.segmentedControl.trackView addSubview:self.arrowView];
+
         self.arrowImageView = [[UIImageView alloc] initWithImage:arrow];
-        self.arrowImageView.alpha = 0.0f;
-        [self.segmentedControl.trackView addSubview:self.arrowImageView];
+        self.arrowImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self.arrowView addSubview:self.arrowImageView];
     }
 
     // Perform these updates, but never animate them
@@ -309,6 +316,16 @@
     }
     
     return nil;
+}
+
+- (void)setArrowImageReversed:(BOOL)reversed
+{
+    if (reversed) {
+        self.arrowImageView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI);
+        return;
+    }
+
+    self.arrowImageView.transform = CGAffineTransformIdentity;
 }
 
 @end

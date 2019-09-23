@@ -65,8 +65,8 @@ NS_ASSUME_NONNULL_BEGIN
 /** If the item is an image, the subsequent image view (nil if a string) */
 @property (nonatomic, nullable, readonly) UIImageView *imageView;
 
-/** If the item is reversible, the subsequent arrow image. */
-@property (nonatomic, nullable, readonly) UIImageView *arrowImageView;
+/** If the item is reversible, the subsequent arrow image view. */
+@property (nonatomic, nullable, readonly) UIView *arrowView;
 
 // Create an array of objects given an array of strings and images
 + (NSArray *)segmentsWithObjects:(NSArray *)objects
@@ -93,6 +93,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Re-synchronize the item view when the segmented control style changes
 - (void)refreshItemView;
+
+// Rotates the arrow image view to 180 degrees and back again
+- (void)setArrowImageReversed:(BOOL)reversed;
 
 @end
 

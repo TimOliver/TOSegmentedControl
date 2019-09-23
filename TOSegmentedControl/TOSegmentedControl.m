@@ -600,12 +600,12 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     return CGRectIntegral(frame);
 }
 
-- (CGRect)frameForImageArrowViewWithItemView:(UIView *)itemView
+- (CGRect)frameForImageArrowViewWithItemFrame:(CGRect)itemFrame
 {
     CGRect frame = CGRectZero;
     frame.size = self.arrowImage.size;
-    frame.origin.x = CGRectGetMaxX(itemView.frame) + 2.0f;
-    frame.origin.y = ceilf(CGRectGetMidY(itemView.frame) - (frame.size.height * 0.5f));
+    frame.origin.x = CGRectGetMaxX(itemFrame) + 2.0f;
+    frame.origin.y = ceilf(CGRectGetMidY(itemFrame) - (frame.size.height * 0.5f));
     return frame;
 }
 
@@ -629,8 +629,12 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 {
     NSAssert(segmentIndex >= 0 && segmentIndex < self.items.count,
              @"TOSegmentedControl: Array should not be out of bounds");
-    
-    UIView *itemView = self.segments[segmentIndex].itemView;
+
+    TOSegmentedControlSegment *segment = self.segments[segmentIndex];
+    UIView *itemView = segment.itemView;
+    CGRect itemFrame = itemView.frame;
+    CGPoint itemViewCenter = itemView.center;
+
     if (shrunken == NO) {
         itemView.transform = CGAffineTransformIdentity;
     }
@@ -642,29 +646,29 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 
     // If we have a reversible image view, manipulate its transformation
     // to match the position and scale of the item view
-    UIView *arrowImageView = self.segments[segmentIndex].arrowImageView;
-    if (arrowImageView == nil) { return; }
+    UIView *arrowView = segment.arrowView;
+    if (arrowView == nil) { return; }
 
-    // Reset back to the identity transform
-    if (shrunken == NO) {
-        arrowImageView.transform = CGAffineTransformIdentity;
+    if (!shrunken) {
+        arrowView.transform = CGAffineTransformIdentity;
         return;
     }
 
     CGFloat scale = kTOSegmentedControlSelectedScale;
+    CGRect arrowFrame = [self frameForImageArrowViewWithItemFrame:itemFrame];
 
     // Work out the delta between the middle of the item view,
     // and the middle of the image view
     CGPoint offset = CGPointZero;
-    offset.x = arrowImageView.center.x - itemView.center.x;
+    offset.x = (CGRectGetMidX(arrowFrame) - itemViewCenter.x);
 
     // Create a transformation matrix that applies the scale to the arrow,
     // with the transformation origin being the middle of the item view
-    CGAffineTransform transform = CGAffineTransformIdentity;
+    CGAffineTransform transform = arrowView.transform;
     transform = CGAffineTransformTranslate(transform, -offset.x, -offset.y);
     transform = CGAffineTransformScale(transform, scale, scale);
     transform = CGAffineTransformTranslate(transform, offset.x, offset.y);
-    arrowImageView.transform = transform;
+    arrowView.transform = transform;
 }
 
 - (void)setItemViewAtIndex:(NSInteger)segmentIndex reversed:(BOOL)reversed
@@ -673,15 +677,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
              @"TOSegmentedControl: Array should not be out of bounds");
 
     TOSegmentedControlSegment *segment = self.segments[segmentIndex];
-
-    // Check we actually have a view to manipulate
-    UIView *arrowImageView = segment.arrowImageView;
-    if (arrowImageView == nil) { return; }
-
-    // Rotate the image view
-    CGAffineTransform transform = arrowImageView.transform;
-    CGFloat rotation = reversed ? M_PI : 0.0f;
-    arrowImageView.transform = CGAffineTransformRotate(transform, rotation);
+    [segment setArrowImageReversed:reversed];
 }
 
 - (void)setItemAtIndex:(NSInteger)index selected:(BOOL)selected
@@ -697,7 +693,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     segment.isSelected = selected;
 
     // Update the alpha of the reversible arrow
-    segment.arrowImageView.alpha = selected ? kTOSegmentedControlDirectionArrowAlpha : 0.0f;
+    segment.arrowView.alpha = selected ? kTOSegmentedControlDirectionArrowAlpha : 0.0f;
 
     // The rest of this code deals with swapping the font
     // of the label. Cancel out if we're an image.
@@ -722,10 +718,10 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 
         // Re-apply the arrow image view to the translated frame
         if (selected) {
-            CGAffineTransform transform = segment.arrowImageView.transform;
-            segment.arrowImageView.transform = CGAffineTransformIdentity;
-            segment.arrowImageView.frame = [self frameForImageArrowViewWithItemView:label];
-            segment.arrowImageView.transform = transform;
+            CGAffineTransform transform = segment.arrowView.transform;
+            segment.arrowView.transform = CGAffineTransformIdentity;
+            segment.arrowView.frame = [self frameForImageArrowViewWithItemFrame:label.frame];
+            segment.arrowView.transform = transform;
         }
 
         // Re-apply the transform and the positioning
