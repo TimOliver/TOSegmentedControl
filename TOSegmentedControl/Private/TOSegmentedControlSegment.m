@@ -210,6 +210,8 @@
     label.text = title;
     label.textAlignment = NSTextAlignmentCenter;
     label.textColor = self.segmentedControl.itemColor;
+    label.font = self.segmentedControl.selectedTextFont;
+    [label sizeToFit]; // Size to the selected font
     label.font = self.segmentedControl.textFont;
     label.backgroundColor = [UIColor clearColor];
     return label;
@@ -264,6 +266,11 @@
     
     // Update the label view
     label.textColor = self.segmentedControl.itemColor;
+    // Set the frame off the selected text as it is larger
+    label.font = self.segmentedControl.selectedTextFont;
+    [label sizeToFit];
+
+    // Set back to default font
     label.font = self.segmentedControl.textFont;
     
     // Update the image view
