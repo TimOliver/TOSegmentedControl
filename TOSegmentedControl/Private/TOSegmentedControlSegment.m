@@ -44,7 +44,7 @@
 @property (nonatomic, strong, readwrite) UIView *itemView;
 
 // When made reversible, the arrow image view to show
-@property (nonatomic, strong) UIImageView *arrowImageView;
+@property (nonatomic, strong, readwrite) UIImageView *arrowImageView;
 
 @end
 
@@ -170,9 +170,6 @@
 
 - (void)refreshReversibleView
 {
-    // Whether it's in memory or not, set the tint color
-    self.arrowImageView.tintColor = self.segmentedControl.itemColor;
-    
     // If we're no longer (Or never were) reversible,
     // hide and exit out
     if (!self.isReversible) {
@@ -184,22 +181,14 @@
     if (self.arrowImageView == nil) {
         UIImage *arrow = self.segmentedControl.arrowImage;
         self.arrowImageView = [[UIImageView alloc] initWithImage:arrow];
+        [self.segmentedControl.trackView addSubview:self.arrowImageView];
     }
-    
-    // Add the arrow to the item view
-    self.itemView.clipsToBounds = NO;
-    [self.itemView addSubview:self.arrowImageView];
-    
-    // Line up the item view vertically centered next to the item view
-    self.arrowImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin |
-                                            UIViewAutoresizingFlexibleBottomMargin |
-                                            UIViewAutoresizingFlexibleLeftMargin;
-    
-    CGRect itemFrame = self.itemView.frame;
-    CGRect frame = self.arrowImageView.frame;
-    frame.origin.x = CGRectGetMaxX(itemFrame) + 2.0f;
-    frame.origin.y = (CGRectGetHeight(itemFrame) - CGRectGetHeight(frame)) * 0.5f;
-    self.arrowImageView.frame = frame;
+
+    // Perform these updates, but never animate them
+    [UIView performWithoutAnimation:^{
+        // Set the tint color
+        self.arrowImageView.tintColor = self.segmentedControl.itemColor;
+    }];
 }
 
 #pragma mark - View Management -

@@ -62,6 +62,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** If the item is an image, the subsequent image view (nil if a string) */
 @property (nonatomic, nullable, readonly) UIImageView *imageView;
 
+/** If the item is reversible, the subsequent arrow image. */
+@property (nonatomic, nullable, readonly) UIImageView *arrowImageView;
+
 // Create an array of objects given an array of strings and images
 + (NSArray *)segmentsWithObjects:(NSArray *)objects
              forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
