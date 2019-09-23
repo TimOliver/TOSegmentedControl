@@ -57,7 +57,7 @@
 {
     label.text = title;
     if (reversed) {
-        title = [title stringByAppendingString:@", Reversed"];
+        label.text = [label.text stringByAppendingString:@", Reversed"];
     }
 
     label.alpha = 1.0f;
