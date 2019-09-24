@@ -23,7 +23,7 @@ As part of the visual improvements featured in iOS 13, `UISegmentedControl` was 
 * Written in Objective-C, but provides full compatibility with Swift.
 * Provides both a block, or `UIControlEvents` to receive when the control is tapped.
 * Light and dark mode support for iOS 13.
-* **(TODO)** A reversible mode where tapping the same item twice flips its direction.
+* A reversible mode where tapping the same item twice flips its direction.
 
 # Sample Code
 
