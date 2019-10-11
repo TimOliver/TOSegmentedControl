@@ -171,9 +171,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		228CEE3023289D4E000B055C /* TOSegmentedControlFramework */ = {
+		228CEE3023289D4E000B055C /* TOSegmentedControl */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 228CEE3D23289D4E000B055C /* Build configuration list for PBXNativeTarget "TOSegmentedControlFramework" */;
+			buildConfigurationList = 228CEE3D23289D4E000B055C /* Build configuration list for PBXNativeTarget "TOSegmentedControl" */;
 			buildPhases = (
 				228CEE2C23289D4E000B055C /* Headers */,
 				228CEE2D23289D4E000B055C /* Sources */,
@@ -184,7 +184,7 @@
 			);
 			dependencies = (
 			);
-			name = TOSegmentedControlFramework;
+			name = TOSegmentedControl;
 			productName = TOSegmentedControlFramework;
 			productReference = 228CEE3123289D4E000B055C /* TOSegmentedControl.framework */;
 			productType = "com.apple.product-type.framework";
@@ -259,7 +259,7 @@
 			projectRoot = "";
 			targets = (
 				22DF8D8422FF119C0051F319 /* TOSegmentedControlExample */,
-				228CEE3023289D4E000B055C /* TOSegmentedControlFramework */,
+				228CEE3023289D4E000B055C /* TOSegmentedControl */,
 				228CEE422328A009000B055C /* TOSegmentedControlTests */,
 			);
 		};
@@ -589,7 +589,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		228CEE3D23289D4E000B055C /* Build configuration list for PBXNativeTarget "TOSegmentedControlFramework" */ = {
+		228CEE3D23289D4E000B055C /* Build configuration list for PBXNativeTarget "TOSegmentedControl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				228CEE3B23289D4E000B055C /* Debug */,
