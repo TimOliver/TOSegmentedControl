@@ -90,8 +90,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 - (instancetype)initWithItems:(NSArray *)items
 {
     if (self = [super initWithFrame:(CGRect){0.0f, 0.0f, 300.0f, 32.0f}]) {
-        _items = [self sanitizedItemArrayWithItems:items];
         [self commonInit];
+        self.items = [self sanitizedItemArrayWithItems:items];
     }
 
     return self;
