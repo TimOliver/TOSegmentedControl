@@ -67,6 +67,9 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /** The color of the text labels / images (Default is black) */
 @property (nonatomic, strong, null_resettable) IBInspectable UIColor *itemColor;
 
+/** The color of the selected labels / images (Default is black) */
+@property (nonatomic, strong, null_resettable) IBInspectable UIColor *selectedItemColor;
+
 /** The font of the text items (Default is system default at 10 points) */
 @property (nonatomic, strong, null_resettable) IBInspectable UIFont *textFont;
 

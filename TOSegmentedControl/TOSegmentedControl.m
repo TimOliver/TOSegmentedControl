@@ -155,6 +155,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     self.thumbColor = nil;
     self.separatorColor = nil;
     self.itemColor = nil;
+    self.selectedItemColor = nil;
     self.textFont = nil;
     self.selectedTextFont = nil;
 
@@ -696,6 +697,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     UIFont *font = selected ? self.selectedTextFont : self.textFont;
     label.font = font;
 
+    // Set the text color
+    label.textColor = selected ? self.selectedItemColor : self.itemColor;
+    
     // Re-apply the arrow image view to the translated frame
     segment.arrowView.frame = [self frameForImageArrowViewWithItemFrame:label.frame];
 
@@ -1198,6 +1202,29 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
         #ifdef __IPHONE_13_0
         if (@available(iOS 13.0, *)) {
             _itemColor = [UIColor labelColor];
+        }
+        #endif
+    }
+
+    // Set each item to the color
+    for (TOSegmentedControlSegment *item in self.segments) {
+        [item refreshItemView];
+    }
+}
+
+//-------------------------------------------------
+// Selected Item Color
+
+- (void)setSelectedItemColor:(UIColor *)selectedItemColor
+{
+    _selectedItemColor = selectedItemColor;
+    if (_selectedItemColor == nil) {
+        _selectedItemColor = [UIColor blackColor];
+
+        // Assign the dynamic label color on iOS 13 and up
+        #ifdef __IPHONE_13_0
+        if (@available(iOS 13.0, *)) {
+            _selectedItemColor = [UIColor labelColor];
         }
         #endif
     }
