@@ -1,6 +1,10 @@
 x.y.z Release Notes (yyyy-MM-dd)
 =============================================================
 
+### Fixed
+
+* A bug where creating instances with `init(items:)` would yield no visible items.
+
 1.0.1 Release Notes (2019-09-24)
 =============================================================
 
