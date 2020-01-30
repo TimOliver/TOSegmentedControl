@@ -1312,8 +1312,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     if (arrowImage != nil) { return arrowImage; }
 
     // Generate for the first time
-    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:(CGSize){8.0, 4.0f}];
-    arrowImage = [renderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+    UIGraphicsBeginImageContextWithOptions((CGSize){8.0f, 4.0f}, NO, 0.0f);
+    {
         UIBezierPath* bezierPath = [UIBezierPath bezierPath];
         [bezierPath moveToPoint: CGPointMake(7.25, 0.75)];
         [bezierPath addLineToPoint: CGPointMake(4, 3.25)];
@@ -1323,7 +1323,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
         bezierPath.lineCapStyle = kCGLineCapRound;
         bezierPath.lineJoinStyle = kCGLineJoinRound;
         [bezierPath stroke];
-    }];
+        arrowImage = UIGraphicsGetImageFromCurrentImageContext();
+    }
+    UIGraphicsEndImageContext();
 
     // Force to always be template
     arrowImage = [arrowImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
@@ -1339,12 +1341,14 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     UIImage *separatorImage = [self.imageTable objectForKey:kTOSegmentedControlSeparatorImage];
     if (separatorImage != nil) { return separatorImage; }
 
-    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:(CGSize){1.0f, 3.0f}];
-    separatorImage = [renderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+    UIGraphicsBeginImageContextWithOptions((CGSize){1.0f, 3.0f}, NO, 0.0f);
+    {
         UIBezierPath* separatorPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, 1, 3) cornerRadius:0.5];
         [UIColor.blackColor setFill];
         [separatorPath fill];
-    }];
+        separatorImage = UIGraphicsGetImageFromCurrentImageContext();
+    }
+    UIGraphicsEndImageContext();
 
     // Format image to be resizable and tint-able.
     separatorImage = [separatorImage resizableImageWithCapInsets:(UIEdgeInsets){1.0f, 0.0f, 1.0f, 0.0f}
