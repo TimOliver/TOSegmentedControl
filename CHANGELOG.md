@@ -1,6 +1,10 @@
 x.y.z Release Notes (yyyy-MM-dd)
 =============================================================
 
+### Added
+
+* Support for iOS 9.
+
 ### Fixed
 
 * A bug where creating instances with `init(items:)` would yield no visible items.
