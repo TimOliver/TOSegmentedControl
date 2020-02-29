@@ -38,6 +38,7 @@ static CGFloat const kTOSegmentedControlSelectedTextAlpha = 0.3f;
 static CGFloat const kTOSegmentedControlDisabledAlpha = 0.4f;
 static CGFloat const kTOSegmentedControlSelectedScale = 0.95f;
 static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
+static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 // ----------------------------------------------------------------
 // Private Members
@@ -46,10 +47,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 
 /** The private list of item objects, storing state and view data */
 @property (nonatomic, strong) NSMutableArray<TOSegmentedControlSegment *> *segments;
-
-/** A dictionary tracking the reversed state of the segments.
-    The key is the segment index, the value is if it is reversed. */
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *reversedSegments;
 
 /** Keep track when the user taps explicitily on the thumb view */
 @property (nonatomic, assign) BOOL isDraggingThumbView;
@@ -515,13 +512,31 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
     NSInteger i = 0;
     for (TOSegmentedControlSegment *item in self.segments) {
         UIView *itemView = item.itemView;
+        [itemView sizeToFit];
         [self.trackView addSubview:itemView];
 
-        // Lay out the frame
+        // Get the container frame that the item will be aligned with
         CGRect thumbFrame = [self frameForSegmentAtIndex:i];
-        itemView.center = (CGPoint){CGRectGetMidX(thumbFrame),
-                                  CGRectGetMidY(thumbFrame)};
-        itemView.frame = CGRectIntegral(itemView.frame);
+        
+        // Work out the appropriate size of the item
+        CGRect itemFrame = itemView.frame;
+        
+        // Cap its size to be within the segmented frame
+        itemFrame.size.height = MIN(thumbFrame.size.height, itemFrame.size.height);
+        itemFrame.size.width = MIN(thumbFrame.size.width, itemFrame.size.width);
+        
+        // If the item is reversible, make sure there is also room to show the arrow
+        CGFloat arrowSpacing = (self.arrowImage.size.width + kTOSegmentedControlDirectionArrowMargin) * 2.0f;
+        if (item.isReversible && (itemFrame.size.width + arrowSpacing) > thumbFrame.size.width) {
+            itemFrame.size.width -= arrowSpacing;
+        }
+        
+        // Center the item in the container
+        itemFrame.origin.x = CGRectGetMidX(thumbFrame) - (itemFrame.size.width * 0.5f);
+        itemFrame.origin.y = CGRectGetMidY(thumbFrame) - (itemFrame.size.height * 0.5f);
+        
+        // Set the item frame
+        itemView.frame = CGRectIntegral(itemFrame);
 
         // Make sure they are all unselected
         [self setItemAtIndex:i selected:NO];
@@ -601,7 +616,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 {
     CGRect frame = CGRectZero;
     frame.size = self.arrowImage.size;
-    frame.origin.x = CGRectGetMaxX(itemFrame) + 2.0f;
+    frame.origin.x = CGRectGetMaxX(itemFrame) + kTOSegmentedControlDirectionArrowMargin;
     frame.origin.y = ceilf(CGRectGetMidY(itemFrame) - (frame.size.height * 0.5f));
     return frame;
 }
@@ -1294,13 +1309,25 @@ static CGFloat const kTOSegmentedControlDirectionArrowAlpha = 0.4f;
 - (NSInteger)numberOfSegments { return self.segments.count; }
 
 // -----------------------------------------------
-// The store for tracking reveresed segments
-
-- (NSMutableDictionary *)reversedSegments
+// Setting all reversible indexes
+- (void)setReversibleSegmentIndexes:(NSArray<NSNumber *> *)reversibleSegmentIndexes
 {
-    if (_reversedSegments) { return _reversedSegments; }
-    _reversedSegments = [NSMutableDictionary dictionary];
-    return _reversedSegments;
+    for (NSInteger i = 0; i < self.numberOfSegments; i++) {
+        BOOL reversible = [reversibleSegmentIndexes indexOfObject:@(i)] != NSNotFound;
+        [self setReversible:reversible forSegmentAtIndex:i];
+    }
+}
+
+- (NSArray<NSNumber *> *)reversibleSegmentIndexes
+{
+    NSMutableArray *array = [NSMutableArray array];
+    for (NSInteger i = 0; i < self.numberOfSegments; i++) {
+        if ([self isReversibleForSegmentAtIndex:i]) {
+            [array addObject:@(i)];
+        }
+    }
+    
+    return [NSArray arrayWithArray:array];
 }
 
 #pragma mark - Image Creation and Management -

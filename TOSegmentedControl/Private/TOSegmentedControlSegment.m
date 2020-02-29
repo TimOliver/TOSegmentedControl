@@ -211,6 +211,8 @@
     label.textAlignment = NSTextAlignmentCenter;
     label.textColor = self.segmentedControl.itemColor;
     label.font = self.segmentedControl.selectedTextFont;
+    label.adjustsFontSizeToFitWidth = YES;
+    label.minimumScaleFactor = 0.3f;
     [label sizeToFit]; // Size to the selected font
     label.font = self.segmentedControl.textFont;
     label.backgroundColor = [UIColor clearColor];
