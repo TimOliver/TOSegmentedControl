@@ -52,6 +52,9 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /** Whether the selected segment is also reveresed. */
 @property (nonatomic, assign) BOOL selectedSegmentReversed;
 
+/** The index values of all of the segments that are reversible. */
+@property (nonatomic, strong) NSArray<NSNumber *> *reversibleSegmentIndexes;
+
 /** The amount of rounding in the corners (Default is 9.0f) */
 @property (nonatomic, assign) IBInspectable CGFloat cornerRadius;
 
