@@ -715,6 +715,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Set the text color
     label.textColor = selected ? self.selectedItemColor : self.itemColor;
     
+    // Set the arrow tint color
+    segment.arrowView.tintColor = label.textColor;
+    
     // Re-apply the arrow image view to the translated frame
     segment.arrowView.frame = [self frameForImageArrowViewWithItemFrame:label.frame];
 

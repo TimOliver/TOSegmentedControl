@@ -195,7 +195,7 @@
     // Perform these updates, but never animate them
     [UIView performWithoutAnimation:^{
         // Set the tint color
-        self.arrowImageView.tintColor = self.segmentedControl.itemColor;
+        self.arrowView.tintColor = self.segmentedControl.itemColor;
     }];
 }
 
