@@ -2,7 +2,7 @@
 
 ![TOSegmentedControl](screenshot.jpg)
 
-[![Build status](https://badge.buildkite.com/f88a3dac71358b8341d9f3bedb2342d2ea765bc0efc7207b48.svg)](https://buildkite.com/xd-ci/tosegmentedcontrol-run-ci)
+[![CI](https://github.com/TimOliver/TOSegmentedControl/workflows/CI/badge.svg)](https://github.com/TimOliver/TOSegmentedControl/actions?query=workflow%3ACI)
 [![Version](https://img.shields.io/cocoapods/v/TOSegmentedControl.svg?style=flat)](http://cocoadocs.org/docsets/TOSegmentedControl)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/TimOliver/TOSegmentedControl/master/LICENSE)
