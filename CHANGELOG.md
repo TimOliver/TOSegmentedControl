@@ -8,6 +8,7 @@ x.y.z Release Notes (yyyy-MM-dd)
 ### Fixed
 
 * A bug where creating instances with `init(items:)` would yield no visible items.
+* A bug where the tint color of the reversible arrow icon wouldn't update properly.
 
 1.0.1 Release Notes (2019-09-24)
 =============================================================
