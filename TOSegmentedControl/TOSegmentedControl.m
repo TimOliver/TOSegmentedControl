@@ -484,6 +484,19 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     return !self.segments[index].isReversed;
 }
 
+- (NSUInteger)count
+{
+  if (self.segments == nil) {
+    return 0;
+  }
+  return [self.segments count];
+}
+
+- (BOOL)isEmpty
+{
+  return [self count] == 0;
+}
+
 #pragma mark - View Layout -
 
 - (void)layoutThumbView

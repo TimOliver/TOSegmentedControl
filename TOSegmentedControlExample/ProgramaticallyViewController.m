@@ -91,6 +91,8 @@
       [self.thirdSegmentedControl addNewSegmentWithTitle:@"Third"];
     }];
 
+    NSAssert(![self.thirdSegmentedControl isEmpty], @"SegmentedControl is not empty");
+
     BOOL addedMax = [self.thirdSegmentedControl insertSegmentWithTitle:@"Max" atIndex: INT_MAX];
 
     NSAssert(!addedMax, @"Could not add at a invalid index");

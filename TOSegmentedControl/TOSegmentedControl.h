@@ -280,6 +280,10 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 */
 - (BOOL)isReversedForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isReversed(at:));
 
+- (NSUInteger)count;
+
+- (BOOL)isEmpty;
+
 @end
 
 NS_ASSUME_NONNULL_END
