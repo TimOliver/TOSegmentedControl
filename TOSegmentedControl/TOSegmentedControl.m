@@ -209,7 +209,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)updateSeparatorViewCount
 {
-    NSInteger numberOfSeparators = (self.items.count - 1);
+    NSInteger numberOfSeparators = (self.segments.count - 1);
 
     // Add as many separators as needed
     while (self.separatorViews.count < numberOfSeparators) {
@@ -277,7 +277,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)addNewSegmentWithObject:(id)object reversible:(BOOL)reversible
 {
-    [self insertSegmentWithObject:object reversible:reversible atIndex:self.items.count];
+    [self insertSegmentWithObject:object reversible:reversible atIndex:self.segments.count];
 }
 
 #pragma mark Inserting New Items
@@ -313,7 +313,12 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     TOSegmentedControlSegment *segment = [[TOSegmentedControlSegment alloc] initWithObject:object
                                                              forSegmentedControl:self];
     segment.isReversible = reversible;
-    [self.segments insertObject:segment atIndex:index];
+
+    if (self.segments == nil || [self.segments count] == 0) {
+        [self.segments addObject:segment];
+    } else {
+        [self.segments insertObject:segment atIndex:index];
+    }
 
    // Update number of separators
    [self updateSeparatorViewCount];
@@ -1068,6 +1073,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)setItems:(NSArray *)items
 {
+
+    if (items == NULL) { return; }
+
     if (items == _items) { return; }
 
     // Remove all current items
