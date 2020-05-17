@@ -282,28 +282,33 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 #pragma mark Inserting New Items
 
-- (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index
+- (BOOL)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    [self insertSegmentWithTitle:title reversible:NO atIndex:index];
+    return [self insertSegmentWithTitle:title reversible:NO atIndex:index];
 }
 
-- (void)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible atIndex:(NSInteger)index
+- (BOOL)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
-    [self insertSegmentWithObject:title reversible:reversible atIndex:index];
+    return [self insertSegmentWithObject:title reversible:reversible atIndex:index];
 }
 
-- (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index
+- (BOOL)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index
 {
-    [self insertSegmentWithImage:image reversible:NO atIndex:index];
+    return [self insertSegmentWithImage:image reversible:NO atIndex:index];
 }
 
-- (void)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible atIndex:(NSInteger)index
+- (BOOL)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
-    [self insertSegmentWithObject:image reversible:reversible atIndex:index];
+    return [self insertSegmentWithObject:image reversible:reversible atIndex:index];
 }
 
-- (void)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
+- (BOOL)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
+
+    if (self.items == nil || [self.items count] <= index) {
+      return NO;
+    }
+
     // Add item to master list
     NSMutableArray *items = [self.items mutableCopy];
     [items insertObject:object atIndex:index];
@@ -320,11 +325,13 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         [self.segments insertObject:segment atIndex:index];
     }
 
-   // Update number of separators
-   [self updateSeparatorViewCount];
+    // Update number of separators
+    [self updateSeparatorViewCount];
 
-   // Perform new layout update
-   [self setNeedsLayout];
+    // Perform new layout update
+    [self setNeedsLayout];
+
+    return YES;
 }
 
 #pragma mark Replacing Items

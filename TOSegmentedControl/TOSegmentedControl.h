@@ -188,7 +188,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param image The image to set.
  @param index The index of the segment to which the image will be set.
 */
-- (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:at:));
+- (BOOL)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:at:));
 
 /**
  Inserts a new image segment at the specified segment index, and optionally makes it reversible.
@@ -197,7 +197,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param reversible Whether the item is reversible or not.
  @param index The index of the segment to which the image will be set.
 */
-- (void)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible
+- (BOOL)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible
                                                 atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:reversible:at:));
 
 /**
@@ -206,7 +206,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param title The title to set.
  @param index The index of the segment to which the image will be set.
 */
-- (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:at:));
+- (BOOL)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:at:));
 
 /**
  Inserts a new title segment at the specified index, and optionally makes it reversible.
@@ -215,7 +215,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param reversible Whether the item is reversible or not.
  @param index The index of the segment to which the image will be set.
 */
-- (void)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible
+- (BOOL)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible
                        atIndex:(NSInteger)index NS_SWIFT_NAME(insertSegment(_:reversible:at:));
 
 /**
