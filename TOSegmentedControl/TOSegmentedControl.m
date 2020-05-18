@@ -324,7 +324,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
                                                              forSegmentedControl:self];
     segment.isReversible = reversible;
 
-    if (self.segments == nil || [self.segments count] == 0) {
+    if ([self isEmpty]) {
         [self.segments addObject:segment];
     } else {
         [self.segments insertObject:segment atIndex:index];
@@ -491,10 +491,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (BOOL)isEmpty
 {
-  if (self.segments == nil) {
-    return YES;
-  }
-  return [self.segments count] == 0;
+  return self.segments == nil || [self.segments count] == 0;
 }
 
 #pragma mark - View Layout -
@@ -1140,9 +1137,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)setItems:(NSArray *)items
 {
 
-    if (items == NULL) { return; }
-
-    if (items == _items) { return; }
+    if (items == NULL || items == _items) { return; }
 
     // Remove all current items
     [self removeAllSegments];
