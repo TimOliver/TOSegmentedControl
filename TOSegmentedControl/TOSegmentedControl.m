@@ -835,33 +835,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
     
     if (tappedIndex == self.focusedIndex) {
-
-      // Create an animation block that will update the position of the
-      // thumb view and restore all of the item views
-      id animationBlock = ^{
-          // Un-fade all of the item views
-          for (NSInteger i = 0; i < self.segments.count; i++) {
-              // De-select everything
-              [self setItemAtIndex:i faded:NO];
-              [self setItemAtIndex:i selected:NO];
-
-              // Select the currently selected index
-              [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
-
-              // Update the separators
-              [self refreshSeparatorViewsForSelectedIndex:self.selectedSegmentIndex];
-          }
-      };
-
-      // Commit the animation
-      [UIView animateWithDuration:0.45
-                            delay:0.0f
-           usingSpringWithDamping:1.0f
-            initialSpringVelocity:2.0f
-                          options:UIViewAnimationOptionBeginFromCurrentState
-                       animations:animationBlock
-                       completion:nil];
-
       return;
     }
 

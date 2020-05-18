@@ -37,7 +37,6 @@
         [weakSelf animateLabel:weakSelf.segmentedLabel title:title reveresed:reversed];
         if (index == 2) {
             UIViewController* viewController = [[ProgramaticallyViewController alloc] init];
-            viewController.modalPresentationStyle = UIModalPresentationFullScreen;
             [self presentViewController:viewController animated:YES completion:NULL];
         }
     };
