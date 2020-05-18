@@ -11,7 +11,9 @@
 
 @interface ProgramaticallyViewController ()
 
-@property (nonatomic, strong) TOSegmentedControl *thirdSegmentedControl;
+@property (nonatomic, strong) TOSegmentedControl *firstSegmentedControl;
+@property (nonatomic, strong) TOSegmentedControl *secondSegmentedControl;
+
 @property (nonatomic, assign) BOOL didSetupConstraints;
 
 @end
@@ -26,7 +28,8 @@
   } else {
     self.view.backgroundColor = UIColor.whiteColor;
   }
-  [self setupThirdSegmentedControl];
+  [self setupFirstSegmentedControl];
+  [self setupSecondSegmentedControl];
   [self.view setNeedsUpdateConstraints];
 
 }
@@ -37,8 +40,10 @@
 
         self.didSetupConstraints = YES;
 
+#pragma mark - firstSegmentedControl
+
         NSLayoutConstraint *leadingConstraint = [NSLayoutConstraint
-                                                  constraintWithItem:self.thirdSegmentedControl
+                                                  constraintWithItem:self.firstSegmentedControl
                                                   attribute:NSLayoutAttributeLeading
                                                   relatedBy:NSLayoutRelationEqual
                                                   toItem:self.view
@@ -47,9 +52,8 @@
                                                   constant:0.f];
         [self.view addConstraint:leadingConstraint];
 
-
         NSLayoutConstraint *trailingConstraint = [NSLayoutConstraint
-                                                   constraintWithItem:self.thirdSegmentedControl
+                                                   constraintWithItem:self.firstSegmentedControl
                                                    attribute:NSLayoutAttributeTrailing
                                                    relatedBy:NSLayoutRelationEqual
                                                    toItem:self.view
@@ -58,45 +62,105 @@
                                                    constant:0];
         [self.view addConstraint:trailingConstraint];
 
-        NSLayoutConstraint *con4 = [NSLayoutConstraint
-                                    constraintWithItem:self.thirdSegmentedControl
+        NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint
+                                                   constraintWithItem:self.firstSegmentedControl
+                                                   attribute:NSLayoutAttributeCenterY
+                                                   relatedBy:NSLayoutRelationEqual
+                                                   toItem:self.view
+                                                   attribute:NSLayoutAttributeCenterY
+                                                   multiplier:1.0
+                                                   constant:0];
+        [self.view addConstraint:centerYConstraint];
+
+        NSLayoutConstraint *firstHeightConstraint = [NSLayoutConstraint
+                                    constraintWithItem:self.firstSegmentedControl
                                     attribute:NSLayoutAttributeHeight
                                     relatedBy:0
                                     toItem:nil
                                     attribute:NSLayoutAttributeNotAnAttribute
                                     multiplier:1
                                     constant:50];
-        [self.view addConstraint:con4];
+        [self.view addConstraint:firstHeightConstraint];
+
+#pragma mark - secondSegmentedControl
+
+        NSLayoutConstraint *secondLeadingConstraint = [NSLayoutConstraint
+                                                  constraintWithItem:self.secondSegmentedControl
+                                                  attribute:NSLayoutAttributeLeading
+                                                  relatedBy:NSLayoutRelationEqual
+                                                  toItem:self.view
+                                                  attribute:NSLayoutAttributeLeading
+                                                  multiplier:1.0f
+                                                  constant:0.f];
+        [self.view addConstraint:secondLeadingConstraint];
+
+
+        NSLayoutConstraint *secondTrailingConstraint = [NSLayoutConstraint
+                                                   constraintWithItem:self.secondSegmentedControl
+                                                   attribute:NSLayoutAttributeTrailing
+                                                   relatedBy:NSLayoutRelationEqual
+                                                   toItem:self.view
+                                                   attribute:NSLayoutAttributeTrailing
+                                                   multiplier:1.0
+                                                   constant:0.f];
+        [self.view addConstraint:secondTrailingConstraint];
+
+        NSLayoutConstraint *secondTopConstraint = [NSLayoutConstraint
+                                                   constraintWithItem:self.secondSegmentedControl
+                                                   attribute:NSLayoutAttributeTop
+                                                   relatedBy:NSLayoutRelationEqual
+                                                   toItem:self.firstSegmentedControl
+                                                   attribute:NSLayoutAttributeBottom
+                                                   multiplier:1.0
+                                                   constant:16.0];
+        [self.view addConstraint:secondTopConstraint];
+
+        NSLayoutConstraint *secondHeightConstraint = [NSLayoutConstraint
+                                    constraintWithItem:self.secondSegmentedControl
+                                    attribute:NSLayoutAttributeHeight
+                                    relatedBy:0
+                                    toItem:nil
+                                    attribute:NSLayoutAttributeNotAnAttribute
+                                    multiplier:1
+                                    constant:50];
+        [self.view addConstraint:secondHeightConstraint];
 
     }
 
     [super updateViewConstraints];
 }
 
-- (void)setupThirdSegmentedControl {
-    self.thirdSegmentedControl = [[TOSegmentedControl alloc] initWithItems:@[@"Crash"]];
-    self.thirdSegmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
+- (void)setupFirstSegmentedControl {
 
-    [self.view addSubview:self.thirdSegmentedControl];
-    self.thirdSegmentedControl.items = @[@"First", @"Second"];
-    self.thirdSegmentedControl.itemColor = UIColor.whiteColor;
-    self.thirdSegmentedControl.backgroundColor = UIColor.blackColor;
+    self.firstSegmentedControl = [[TOSegmentedControl alloc] initWithItems:@[@"Crash"]];
+    self.firstSegmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self.thirdSegmentedControl removeAllSegments];
+    [self.view addSubview:self.firstSegmentedControl];
+    self.firstSegmentedControl.items = @[@"First", @"Second"];
+    self.firstSegmentedControl.itemColor = UIColor.whiteColor;
+    self.firstSegmentedControl.backgroundColor = UIColor.blackColor;
 
-    [self.thirdSegmentedControl addNewSegmentWithTitle:@"First"];
-    [self.thirdSegmentedControl addNewSegmentWithTitle:@"Second"];
+    [self.firstSegmentedControl removeAllSegments];
+
+    [self.firstSegmentedControl addNewSegmentWithTitle:@"First"];
+    [self.firstSegmentedControl addNewSegmentWithTitle:@"Second"];
 
     [UIView performWithoutAnimation:^{
-      [self.thirdSegmentedControl addNewSegmentWithTitle:@"Third"];
+      [self.firstSegmentedControl addNewSegmentWithTitle:@"Third"];
     }];
 
-    NSAssert(![self.thirdSegmentedControl isEmpty], @"SegmentedControl is not empty");
+    NSAssert(![self.firstSegmentedControl isEmpty], @"SegmentedControl is not empty");
 
-    BOOL addedMax = [self.thirdSegmentedControl insertSegmentWithTitle:@"Max" atIndex: INT_MAX];
+    BOOL addedMax = [self.firstSegmentedControl insertSegmentWithTitle:@"Max" atIndex: INT_MAX];
 
     NSAssert(!addedMax, @"Could not add at a invalid index");
 
+}
+
+- (void)setupSecondSegmentedControl {
+  self.secondSegmentedControl = [[TOSegmentedControl alloc] init];
+  self.secondSegmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
+  [self.view addSubview:self.secondSegmentedControl];
 }
 
 @end

@@ -781,6 +781,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Exit out if the control is disabled
     if (!self.enabled) { return; }
 
+    if ([self isEmpty]) { return; }
+
     // Determine which segment the user tapped
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
@@ -827,10 +829,49 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Exit out if the control is disabled
     if (!self.enabled) { return; }
 
+    if ([self isEmpty]) { return; }
+
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
     
-    if (tappedIndex == self.focusedIndex) { return; }
+    if (tappedIndex == self.focusedIndex) {
+
+//      CGRect thumbFrame = [self frameForSegmentAtIndex:tappedIndex];
+//      NSLog(@"%@ ==== %@", NSStringFromCGRect(thumbFrame), NSStringFromCGPoint(tapPoint));
+//      BOOL contains = CGRectContainsPoint(thumbFrame, tapPoint);
+//
+//      if (contains) {
+//        return;
+//      }
+
+      // Create an animation block that will update the position of the
+      // thumb view and restore all of the item views
+      id animationBlock = ^{
+          // Un-fade all of the item views
+          for (NSInteger i = 0; i < self.segments.count; i++) {
+              // De-select everything
+              [self setItemAtIndex:i faded:NO];
+              [self setItemAtIndex:i selected:NO];
+
+              // Select the currently selected index
+              [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
+
+              // Update the separators
+              [self refreshSeparatorViewsForSelectedIndex:self.selectedSegmentIndex];
+          }
+      };
+
+      // Commit the animation
+      [UIView animateWithDuration:0.45
+                            delay:0.0f
+           usingSpringWithDamping:1.0f
+            initialSpringVelocity:2.0f
+                          options:UIViewAnimationOptionBeginFromCurrentState
+                       animations:animationBlock
+                       completion:nil];
+
+      return;
+    }
 
     // If the control or item is disabled, pass
     if (self.segments[tappedIndex].isDisabled) {
@@ -907,6 +948,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Exit out if the control is disabled
     if (!self.enabled) { return; }
 
+    if ([self isEmpty]) { return; }
+
     // No effects needed when tracking the thumb view
     if (self.isDraggingThumbView) { return; }
     
@@ -926,6 +969,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Exit out if the control is disabled
     if (!self.enabled) { return; }
 
+    if ([self isEmpty]) { return; }
+
     // No effects needed when tracking the thumb view
     if (self.isDraggingThumbView) { return; }
     
@@ -944,6 +989,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 {
     // Exit out if the control is disabled
     if (!self.enabled) { return; }
+
+    if ([self isEmpty]) { return; }
 
     // Work out the final place where we released
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
