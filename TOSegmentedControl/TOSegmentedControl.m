@@ -1104,9 +1104,10 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         [self sendIndexChangedEventActions];
     }
 
-    if (animated) {
+    if (!animated) {
         // Trigger a view layout
         [self setNeedsLayout];
+        return;
     }
 
     // Create an animation block that will update the position of the
