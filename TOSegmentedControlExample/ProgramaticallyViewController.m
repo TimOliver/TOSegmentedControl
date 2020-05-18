@@ -44,25 +44,7 @@
 
 #pragma mark - firstSegmentedControl
 
-        NSLayoutConstraint *leadingConstraint = [NSLayoutConstraint
-                                                  constraintWithItem:self.firstSegmentedControl
-                                                  attribute:NSLayoutAttributeLeading
-                                                  relatedBy:NSLayoutRelationEqual
-                                                  toItem:self.view
-                                                  attribute:NSLayoutAttributeLeading
-                                                  multiplier:1.0f
-                                                  constant:0.f];
-        [self.view addConstraint:leadingConstraint];
-
-        NSLayoutConstraint *trailingConstraint = [NSLayoutConstraint
-                                                   constraintWithItem:self.firstSegmentedControl
-                                                   attribute:NSLayoutAttributeTrailing
-                                                   relatedBy:NSLayoutRelationEqual
-                                                   toItem:self.view
-                                                   attribute:NSLayoutAttributeTrailing
-                                                   multiplier:1.0
-                                                   constant:0];
-        [self.view addConstraint:trailingConstraint];
+        [self setConstraints:self.firstSegmentedControl];
 
         NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint
                                                    constraintWithItem:self.firstSegmentedControl
@@ -74,101 +56,15 @@
                                                    constant:0];
         [self.view addConstraint:centerYConstraint];
 
-        NSLayoutConstraint *firstHeightConstraint = [NSLayoutConstraint
-                                    constraintWithItem:self.firstSegmentedControl
-                                    attribute:NSLayoutAttributeHeight
-                                    relatedBy:0
-                                    toItem:nil
-                                    attribute:NSLayoutAttributeNotAnAttribute
-                                    multiplier:1
-                                    constant:50];
-        [self.view addConstraint:firstHeightConstraint];
-
 #pragma mark - secondSegmentedControl
 
-        NSLayoutConstraint *secondLeadingConstraint = [NSLayoutConstraint
-                                                  constraintWithItem:self.secondSegmentedControl
-                                                  attribute:NSLayoutAttributeLeading
-                                                  relatedBy:NSLayoutRelationEqual
-                                                  toItem:self.view
-                                                  attribute:NSLayoutAttributeLeading
-                                                  multiplier:1.0f
-                                                  constant:0.f];
-        [self.view addConstraint:secondLeadingConstraint];
-
-
-        NSLayoutConstraint *secondTrailingConstraint = [NSLayoutConstraint
-                                                   constraintWithItem:self.secondSegmentedControl
-                                                   attribute:NSLayoutAttributeTrailing
-                                                   relatedBy:NSLayoutRelationEqual
-                                                   toItem:self.view
-                                                   attribute:NSLayoutAttributeTrailing
-                                                   multiplier:1.0
-                                                   constant:0.f];
-        [self.view addConstraint:secondTrailingConstraint];
-
-        NSLayoutConstraint *secondTopConstraint = [NSLayoutConstraint
-                                                   constraintWithItem:self.secondSegmentedControl
-                                                   attribute:NSLayoutAttributeTop
-                                                   relatedBy:NSLayoutRelationEqual
-                                                   toItem:self.firstSegmentedControl
-                                                   attribute:NSLayoutAttributeBottom
-                                                   multiplier:1.0
-                                                   constant:16.0];
-        [self.view addConstraint:secondTopConstraint];
-
-        NSLayoutConstraint *secondHeightConstraint = [NSLayoutConstraint
-                                                   constraintWithItem:self.secondSegmentedControl
-                                                   attribute:NSLayoutAttributeHeight
-                                                   relatedBy:0
-                                                   toItem:nil
-                                                   attribute:NSLayoutAttributeNotAnAttribute
-                                                   multiplier:1
-                                                   constant:50];
-        [self.view addConstraint:secondHeightConstraint];
+        [self setConstraints:self.secondSegmentedControl];
+        [self setTopConstraint:self.secondSegmentedControl below:self.firstSegmentedControl];
 
 #pragma mark - selectIndexButton
 
-        NSLayoutConstraint *selectIndexButtonLeadingConstraint = [NSLayoutConstraint
-                                                  constraintWithItem:self.selectIndexButton
-                                                  attribute:NSLayoutAttributeLeading
-                                                  relatedBy:NSLayoutRelationEqual
-                                                  toItem:self.view
-                                                  attribute:NSLayoutAttributeLeading
-                                                  multiplier:1.0f
-                                                  constant:0.f];
-        [self.view addConstraint:selectIndexButtonLeadingConstraint];
-
-
-        NSLayoutConstraint *selectIndexButtonTrailingConstraint = [NSLayoutConstraint
-                                                   constraintWithItem:self.selectIndexButton
-                                                   attribute:NSLayoutAttributeTrailing
-                                                   relatedBy:NSLayoutRelationEqual
-                                                   toItem:self.view
-                                                   attribute:NSLayoutAttributeTrailing
-                                                   multiplier:1.0
-                                                   constant:0.f];
-        [self.view addConstraint:selectIndexButtonTrailingConstraint];
-
-        NSLayoutConstraint *selectIndexButtonTopConstraint = [NSLayoutConstraint
-                                                   constraintWithItem:self.selectIndexButton
-                                                   attribute:NSLayoutAttributeTop
-                                                   relatedBy:NSLayoutRelationEqual
-                                                   toItem:self.secondSegmentedControl
-                                                   attribute:NSLayoutAttributeBottom
-                                                   multiplier:1.0
-                                                   constant:16.0];
-        [self.view addConstraint:selectIndexButtonTopConstraint];
-
-        NSLayoutConstraint *selectIndexButtonHeightConstraint = [NSLayoutConstraint
-                                                   constraintWithItem:self.selectIndexButton
-                                                   attribute:NSLayoutAttributeHeight
-                                                   relatedBy:0
-                                                   toItem:nil
-                                                   attribute:NSLayoutAttributeNotAnAttribute
-                                                   multiplier:1
-                                                   constant:50];
-        [self.view addConstraint:selectIndexButtonHeightConstraint];
+        [self setConstraints:self.selectIndexButton];
+        [self setTopConstraint:self.selectIndexButton below:self.secondSegmentedControl];
 
     }
 
@@ -220,6 +116,52 @@
 
 - (void) selectIndexButtonTouchUpInside:(id) obj {
   [self.firstSegmentedControl setSelectedSegmentIndex:1 animated:true];
+}
+
+- (void)setConstraints:(UIView *)view {
+
+  NSLayoutConstraint *leadingConstraint = [NSLayoutConstraint
+                                            constraintWithItem:view
+                                            attribute:NSLayoutAttributeLeading
+                                            relatedBy:NSLayoutRelationEqual
+                                            toItem:self.view
+                                            attribute:NSLayoutAttributeLeading
+                                            multiplier:1.0f
+                                            constant:0.f];
+  [self.view addConstraint:leadingConstraint];
+
+  NSLayoutConstraint *trailingConstraint = [NSLayoutConstraint
+                                             constraintWithItem:view
+                                             attribute:NSLayoutAttributeTrailing
+                                             relatedBy:NSLayoutRelationEqual
+                                             toItem:self.view
+                                             attribute:NSLayoutAttributeTrailing
+                                             multiplier:1.0
+                                             constant:0];
+  [self.view addConstraint:trailingConstraint];
+
+  NSLayoutConstraint *heightConstraint = [NSLayoutConstraint
+                                            constraintWithItem:view
+                                            attribute:NSLayoutAttributeHeight
+                                            relatedBy:0
+                                            toItem:nil
+                                            attribute:NSLayoutAttributeNotAnAttribute
+                                            multiplier:1
+                                            constant:50];
+  [self.view addConstraint:heightConstraint];
+
+}
+
+- (void)setTopConstraint:(UIView *)view below:(UIView *)topView {
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint
+                                             constraintWithItem:view
+                                             attribute:NSLayoutAttributeTop
+                                             relatedBy:NSLayoutRelationEqual
+                                             toItem:topView
+                                             attribute:NSLayoutAttributeBottom
+                                             multiplier:1.0
+                                             constant:16.0];
+    [self.view addConstraint:topConstraint];
 }
 
 @end
