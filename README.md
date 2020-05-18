@@ -37,6 +37,8 @@ segmentedControlsegmentTappedHandler = { segmentIndex, reversed in
 }
 ```
 
+You can also initialize the view purely by code, please check this [example](https://github.com/TimOliver/TOSegmentedControl/blob/master/TOSegmentedControlExample/CodeViewController.m).
+
 ## System Requirements
 iOS 10.0 or above
 
