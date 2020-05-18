@@ -284,6 +284,8 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 
 - (BOOL)isEmpty;
 
+- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex animated:(BOOL)animated;
+
 @end
 
 NS_ASSUME_NONNULL_END

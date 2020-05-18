@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) TOSegmentedControl *firstSegmentedControl;
 @property (nonatomic, strong) TOSegmentedControl *secondSegmentedControl;
+@property (nonatomic, strong) UIButton *selectIndexButton;
 
 @property (nonatomic, assign) BOOL didSetupConstraints;
 
@@ -30,6 +31,7 @@
   }
   [self setupFirstSegmentedControl];
   [self setupSecondSegmentedControl];
+  [self setupSelectIndexButton];
   [self.view setNeedsUpdateConstraints];
 
 }
@@ -116,14 +118,57 @@
         [self.view addConstraint:secondTopConstraint];
 
         NSLayoutConstraint *secondHeightConstraint = [NSLayoutConstraint
-                                    constraintWithItem:self.secondSegmentedControl
-                                    attribute:NSLayoutAttributeHeight
-                                    relatedBy:0
-                                    toItem:nil
-                                    attribute:NSLayoutAttributeNotAnAttribute
-                                    multiplier:1
-                                    constant:50];
+                                                   constraintWithItem:self.secondSegmentedControl
+                                                   attribute:NSLayoutAttributeHeight
+                                                   relatedBy:0
+                                                   toItem:nil
+                                                   attribute:NSLayoutAttributeNotAnAttribute
+                                                   multiplier:1
+                                                   constant:50];
         [self.view addConstraint:secondHeightConstraint];
+
+#pragma mark - selectIndexButton
+
+        NSLayoutConstraint *selectIndexButtonLeadingConstraint = [NSLayoutConstraint
+                                                  constraintWithItem:self.selectIndexButton
+                                                  attribute:NSLayoutAttributeLeading
+                                                  relatedBy:NSLayoutRelationEqual
+                                                  toItem:self.view
+                                                  attribute:NSLayoutAttributeLeading
+                                                  multiplier:1.0f
+                                                  constant:0.f];
+        [self.view addConstraint:selectIndexButtonLeadingConstraint];
+
+
+        NSLayoutConstraint *selectIndexButtonTrailingConstraint = [NSLayoutConstraint
+                                                   constraintWithItem:self.selectIndexButton
+                                                   attribute:NSLayoutAttributeTrailing
+                                                   relatedBy:NSLayoutRelationEqual
+                                                   toItem:self.view
+                                                   attribute:NSLayoutAttributeTrailing
+                                                   multiplier:1.0
+                                                   constant:0.f];
+        [self.view addConstraint:selectIndexButtonTrailingConstraint];
+
+        NSLayoutConstraint *selectIndexButtonTopConstraint = [NSLayoutConstraint
+                                                   constraintWithItem:self.selectIndexButton
+                                                   attribute:NSLayoutAttributeTop
+                                                   relatedBy:NSLayoutRelationEqual
+                                                   toItem:self.secondSegmentedControl
+                                                   attribute:NSLayoutAttributeBottom
+                                                   multiplier:1.0
+                                                   constant:16.0];
+        [self.view addConstraint:selectIndexButtonTopConstraint];
+
+        NSLayoutConstraint *selectIndexButtonHeightConstraint = [NSLayoutConstraint
+                                                   constraintWithItem:self.selectIndexButton
+                                                   attribute:NSLayoutAttributeHeight
+                                                   relatedBy:0
+                                                   toItem:nil
+                                                   attribute:NSLayoutAttributeNotAnAttribute
+                                                   multiplier:1
+                                                   constant:50];
+        [self.view addConstraint:selectIndexButtonHeightConstraint];
 
     }
 
@@ -158,9 +203,23 @@
 }
 
 - (void)setupSecondSegmentedControl {
-  self.secondSegmentedControl = [[TOSegmentedControl alloc] init];
-  self.secondSegmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
-  [self.view addSubview:self.secondSegmentedControl];
+    self.secondSegmentedControl = [[TOSegmentedControl alloc] init];
+    self.secondSegmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.secondSegmentedControl];
+}
+
+- (void)setupSelectIndexButton {
+    self.selectIndexButton = [[UIButton alloc] init];
+    self.selectIndexButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.selectIndexButton.backgroundColor = UIColor.darkGrayColor;
+    [self.selectIndexButton setTitle:@"Select second index animated" forState: UIControlStateNormal];
+    [self.view addSubview:self.selectIndexButton];
+    [self.selectIndexButton addTarget:self action:@selector(selectIndexButtonTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
+
+}
+
+- (void) selectIndexButtonTouchUpInside:(id) obj {
+  [self.firstSegmentedControl setSelectedSegmentIndex:1 animated:true];
 }
 
 @end
