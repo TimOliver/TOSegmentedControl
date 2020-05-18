@@ -1,15 +1,15 @@
 //
-//  ProgramaticallyViewController.m
+//  CodeViewController.m
 //  TOSegmentedControlExample
 //
 //  Created by Pedro Paulo de Amorim on 17/05/2020.
 //  Copyright © 2020 Tim Oliver. All rights reserved.
 //
 
-#import "ProgramaticallyViewController.h"
+#import "CodeViewController.h"
 #import "TOSegmentedControl.h"
 
-@interface ProgramaticallyViewController ()
+@interface CodeViewController ()
 
 @property (nonatomic, strong) TOSegmentedControl *firstSegmentedControl;
 @property (nonatomic, strong) TOSegmentedControl *secondSegmentedControl;
@@ -19,7 +19,7 @@
 
 @end
 
-@implementation ProgramaticallyViewController
+@implementation CodeViewController
 
 - (void)loadView {
   [super loadView];
@@ -90,11 +90,7 @@
       [self.firstSegmentedControl addNewSegmentWithTitle:@"Third"];
     }];
 
-    NSAssert(![self.firstSegmentedControl isEmpty], @"SegmentedControl is not empty");
-
-    BOOL addedMax = [self.firstSegmentedControl insertSegmentWithTitle:@"Max" atIndex: INT_MAX];
-
-    NSAssert(!addedMax, @"Could not add at a invalid index");
+    [self.firstSegmentedControl insertSegmentWithTitle:@"Max" atIndex: INT_MAX];
 
 }
 

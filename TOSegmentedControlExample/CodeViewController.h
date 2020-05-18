@@ -1,5 +1,5 @@
 //
-//  ProgramaticallyViewController.h
+//  CodeViewController.h
 //  TOSegmentedControlExample
 //
 //  Created by Pedro Paulo de Amorim on 17/05/2020.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ProgramaticallyViewController : UIViewController
+@interface CodeViewController : UIViewController
 
 
 @end

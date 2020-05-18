@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "TOSegmentedControl.h"
-#import "ProgramaticallyViewController.h"
+#import "CodeViewController.h"
 
 @interface ViewController ()
 
@@ -29,16 +29,12 @@
     self.segmentedLabel.alpha = 0.0f;
     
     __weak typeof(self) weakSelf = self;
-    self.segmentedControl.items = @[@"First", @"Second", @"Programatically"];
+    self.segmentedControl.items = @[@"First", @"Second", @"Third"];
     [self.segmentedControl setReversible:YES forSegmentAtIndex:1];
     [self.segmentedControl setReversed:YES forSegmentAtIndex:1];
     self.segmentedControl.segmentTappedHandler = ^(NSInteger index, BOOL reversed) {
         NSString *title = [self nameForIndex:index];
         [weakSelf animateLabel:weakSelf.segmentedLabel title:title reveresed:reversed];
-        if (index == 2) {
-            UIViewController* viewController = [[ProgramaticallyViewController alloc] init];
-            [self presentViewController:viewController animated:YES completion:NULL];
-        }
     };
 
     // Additional options that can be tested on the control

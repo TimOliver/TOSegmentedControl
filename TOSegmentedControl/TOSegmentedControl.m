@@ -282,31 +282,31 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 #pragma mark Inserting New Items
 
-- (BOOL)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index
+- (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    return [self insertSegmentWithTitle:title reversible:NO atIndex:index];
+    [self insertSegmentWithTitle:title reversible:NO atIndex:index];
 }
 
-- (BOOL)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible atIndex:(NSInteger)index
+- (void)insertSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
-    return [self insertSegmentWithObject:title reversible:reversible atIndex:index];
+    [self insertSegmentWithObject:title reversible:reversible atIndex:index];
 }
 
-- (BOOL)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index
+- (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSInteger)index
 {
-    return [self insertSegmentWithImage:image reversible:NO atIndex:index];
+    [self insertSegmentWithImage:image reversible:NO atIndex:index];
 }
 
-- (BOOL)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible atIndex:(NSInteger)index
+- (void)insertSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
-    return [self insertSegmentWithObject:image reversible:reversible atIndex:index];
+    [self insertSegmentWithObject:image reversible:reversible atIndex:index];
 }
 
-- (BOOL)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
+- (void)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
 
     if (self.items == nil || [self.items count] <= index) {
-      return NO;
+      return;
     }
 
     // Add item to master list
@@ -331,7 +331,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Perform new layout update
     [self setNeedsLayout];
 
-    return YES;
+    return;
 }
 
 #pragma mark Replacing Items
@@ -484,17 +484,12 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     return !self.segments[index].isReversed;
 }
 
-- (NSUInteger)count
-{
-  if (self.segments == nil) {
-    return 0;
-  }
-  return [self.segments count];
-}
-
 - (BOOL)isEmpty
 {
-  return [self count] == 0;
+  if (self.segments == nil) {
+    return YES;
+  }
+  return [self.segments count] == 0;
 }
 
 #pragma mark - View Layout -
