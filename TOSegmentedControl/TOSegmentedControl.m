@@ -305,8 +305,13 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
 
-    if (self.items == nil || [self.items count] <= index) {
-      return;
+    if (self.items == nil) {
+        return;
+    }
+
+    if (index < 0 || [self.items count] <= index) {
+        [self addNewSegmentWithObject:object reversible:reversible];
+        return;
     }
 
     // Add item to master list

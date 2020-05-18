@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "TOSegmentedControl.h"
-#import "CodeViewController.h"
 
 @interface ViewController ()
 
