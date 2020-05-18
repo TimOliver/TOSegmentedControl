@@ -836,14 +836,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     
     if (tappedIndex == self.focusedIndex) {
 
-//      CGRect thumbFrame = [self frameForSegmentAtIndex:tappedIndex];
-//      NSLog(@"%@ ==== %@", NSStringFromCGRect(thumbFrame), NSStringFromCGPoint(tapPoint));
-//      BOOL contains = CGRectContainsPoint(thumbFrame, tapPoint);
-//
-//      if (contains) {
-//        return;
-//      }
-
       // Create an animation block that will update the position of the
       // thumb view and restore all of the item views
       id animationBlock = ^{
