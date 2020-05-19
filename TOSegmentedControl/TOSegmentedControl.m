@@ -311,30 +311,22 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
-    if (self.items == nil) {
-        return;
-    }
+    // If an invalid index was provided, cap it to the available range
+    if (index < 0) { index = 0; }
+    if (index >= self.segments.count) { index = self.segments.count; }
 
-    if (index < 0 || [self.items count] <= index) {
-        [self addNewSegmentWithObject:object reversible:reversible];
-        return;
-    }
-
-    // Add item to master list
-    NSMutableArray *items = [self.items mutableCopy];
+    // Add item to master list (Create a new list if one didn't exist)
+    NSMutableArray *items = nil;
+    if (self.items) { items = [self.items mutableCopy]; }
+    else { items = [NSMutableArray array]; }
     [items insertObject:object atIndex:index];
     _items = [NSArray arrayWithArray:items];
 
     // Add new item object to internal list
     TOSegmentedControlSegment *segment = [[TOSegmentedControlSegment alloc] initWithObject:object
-                                                             forSegmentedControl:self];
+                                                                       forSegmentedControl:self];
     segment.isReversible = reversible;
-
-    if (self.hasNoSegments) {
-        [self.segments addObject:segment];
-    } else {
-        [self.segments insertObject:segment atIndex:index];
-    }
+    [self.segments insertObject:segment atIndex:index];
 
     // Update number of separators
     [self updateSeparatorViewCount];
