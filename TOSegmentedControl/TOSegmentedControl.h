@@ -274,13 +274,20 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 - (void)setReversed:(BOOL)reversed forSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(setReversed(_:at:));
 
 /**
+ Sets which segment is currently selected, and optionally play an animation during the transition.
+
+ @param selectedSegmentIndex The index of the segment to select.
+ @param animated Whether the transition to the newly selected index is animated or not.
+*/
+- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex animated:(BOOL)animated;
+
+/**
  Returns whether the segment at the specified index is currently reversed or not.
 
  @param index The index to check.
 */
 - (BOOL)isReversedForSegmentAtIndex:(NSInteger)index NS_SWIFT_NAME(isReversed(at:));
 
-- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex animated:(BOOL)animated;
 
 @end
 
