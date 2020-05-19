@@ -333,8 +333,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
     // Perform new layout update
     [self setNeedsLayout];
-
-    return;
 }
 
 #pragma mark Replacing Items
