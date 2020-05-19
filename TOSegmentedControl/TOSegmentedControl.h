@@ -279,7 +279,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param selectedSegmentIndex The index of the segment to select.
  @param animated Whether the transition to the newly selected index is animated or not.
 */
-- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex animated:(BOOL)animated;
+- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex animated:(BOOL)animated NS_SWIFT_NAME(setSelectedSegmentIndex(_:animated:));
 
 /**
  Returns whether the segment at the specified index is currently reversed or not.
