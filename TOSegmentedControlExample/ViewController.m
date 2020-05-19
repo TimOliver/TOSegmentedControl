@@ -46,6 +46,11 @@
 
     // Removes the last item from the end
     //[self.segmentedControl removeLastItem];
+
+    // Animate selection to the final segment
+    // dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    //    [self.segmentedControl setSelectedSegmentIndex:2 animated:YES];
+    // });
 }
 
 - (IBAction)segmentedControlUpdated:(id)sender
