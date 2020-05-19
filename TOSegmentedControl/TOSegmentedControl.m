@@ -212,7 +212,11 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)updateSeparatorViewCount
 {
-    NSInteger numberOfSeparators = (self.segments.count - 1);
+    // Work out how many separators we need (One less than segments)
+    NSInteger numberOfSeparators = self.segments.count - 1;
+
+    // Cap the number at 0 if there were no segments
+    numberOfSeparators = MAX(0, numberOfSeparators);
 
     // Add as many separators as needed
     while (self.separatorViews.count < numberOfSeparators) {
