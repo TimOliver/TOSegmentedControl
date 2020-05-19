@@ -1,6 +1,11 @@
 x.y.z Release Notes (yyyy-MM-dd)
 =============================================================
 
+### Enhancements
+
+* All `add` APIs have had `new` removed from them for more succinct naming.
+* Most Swift annotated methods have been renamed to match `UISegmentedControl` more closely.
+
 ### Added
 
 * Support for iOS 9.
