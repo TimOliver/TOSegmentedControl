@@ -39,13 +39,18 @@
     // Additional options that can be tested on the control
 
     // Adds a new item called "Fourth" on the end
-    //[self.segmentedControl addNewItemWithTitle:@"Fourth"];
+    // [self.segmentedControl addNewSegmentWithTitle:@"Fourth"];
 
     // Inserts a new item called Zero to the beginning
-    //[self.segmentedControl insertItemWithTitle:@"Zero" atIndex:0];
+    // [self.segmentedControl insertSegmentWithTitle:@"Zero" atIndex:0];
 
     // Removes the last item from the end
-    //[self.segmentedControl removeLastItem];
+    // [self.segmentedControl removeLastSegment];
+
+    // Animate selection to the final segment
+    // dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    //    [self.segmentedControl setSelectedSegmentIndex:2 animated:YES];
+    // });
 }
 
 - (IBAction)segmentedControlUpdated:(id)sender

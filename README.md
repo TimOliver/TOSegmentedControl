@@ -29,16 +29,58 @@ As part of the visual improvements featured in iOS 13, `UISegmentedControl` was 
 
 `TOSegmentedControl` has been written to follow the interface of `UISegmentedControl` as closely as possible. This should make it very intuitive to work with.
 
+## Swift
+
+In Swift, the class is renamed to `SegmentedControl`. Creating a new instance is very similar to `UISegmentedControl`.
+
 ```Swift
 
-let segmentedControl = SegmentedControl(items: ["First", "Second", "Third"])
+// Create a new instance
+let segmentedControl = SegmentedControl(items: )
+
+// Add a closure that will be called each time the selected segment changes
 segmentedControlsegmentTappedHandler = { segmentIndex, reversed in
    print("Segment \(segmentIndex) was tapped!")
 }
+
+// Add a new item to the end
+segmentedControl.addSegment(withTitle: "Fourth")
+
+// Insert a new item at the beginning
+segmentedControl.insertSegment(withTitle: "Zero", at: 0)
+
+// Remove all segments
+segmentedControl.removeAllSegments()
+
 ```
 
-## System Requirements
-iOS 10.0 or above
+## Objective-C
+
+```objc
+
+NSArray *items = @[@"First", @"Second", @"Third"];
+
+// Create a new instance
+TOSegmentedControl *segmentedControl = [[TOSegmentedControl alloc] initWithItems:items]];
+
+// Add a block that will be called each time the selected segment changes
+segmentedControl.segmentTappedHandler = ^(NSInteger index, BOOL reversed) {
+    NSLog(@"Segment %d was tapped!", index);
+};
+
+// Add a new item to the end
+[segmentedControl addSegmentWithTitle:@"Fourth"];
+
+// Insert a new item at the beginning
+[segmentedControl insertSegmentWithTitle:@"Zero" atIndex:0];
+
+// Remove all segments
+[segmentedControl removeAllSegments];
+```
+
+
+# System Requirements
+iOS 9.0 or above
 
 # Installation
 

@@ -78,6 +78,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 /** The width of each segment */
 @property (nonatomic, readonly) CGFloat segmentWidth;
 
+/** Convenience property for testing if there are no segments */
+@property (nonatomic, readonly) BOOL hasNoSegments;
+
 @end
 
 @implementation TOSegmentedControl
@@ -188,7 +191,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // When the user taps up, either inside or out
     [self addTarget:self
              action:@selector(didEndTap:withEvent:)
-   forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
+   forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside|UIControlEventTouchCancel];
 }
 
 #pragma mark - Item Management -
@@ -209,7 +212,11 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)updateSeparatorViewCount
 {
-    NSInteger numberOfSeparators = (self.items.count - 1);
+    // Work out how many separators we need (One less than segments)
+    NSInteger numberOfSeparators = self.segments.count - 1;
+
+    // Cap the number at 0 if there were no segments
+    numberOfSeparators = MAX(0, numberOfSeparators);
 
     // Add as many separators as needed
     while (self.separatorViews.count < numberOfSeparators) {
@@ -255,29 +262,29 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 #pragma mark Add New Items
 
-- (void)addNewSegmentWithImage:(UIImage *)image
+- (void)addSegmentWithImage:(UIImage *)image
 {
-    [self addNewSegmentWithImage:image reversible:NO];
+    [self addSegmentWithImage:image reversible:NO];
 }
 
-- (void)addNewSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible
+- (void)addSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible
 {
-    [self addNewSegmentWithObject:image reversible:reversible];
+    [self addSegmentWithObject:image reversible:reversible];
 }
 
-- (void)addNewSegmentWithTitle:(NSString *)title
+- (void)addSegmentWithTitle:(NSString *)title
 {
-    [self addNewSegmentWithTitle:title reversible:NO];
+    [self addSegmentWithTitle:title reversible:NO];
 }
 
-- (void)addNewSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible
+- (void)addSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible
 {
-    [self addNewSegmentWithObject:title reversible:reversible];
+    [self addSegmentWithObject:title reversible:reversible];
 }
 
-- (void)addNewSegmentWithObject:(id)object reversible:(BOOL)reversible
+- (void)addSegmentWithObject:(id)object reversible:(BOOL)reversible
 {
-    [self insertSegmentWithObject:object reversible:reversible atIndex:self.items.count];
+    [self insertSegmentWithObject:object reversible:reversible atIndex:self.segments.count];
 }
 
 #pragma mark Inserting New Items
@@ -304,22 +311,28 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
-    // Add item to master list
-    NSMutableArray *items = [self.items mutableCopy];
+    // If an invalid index was provided, cap it to the available range
+    if (index < 0) { index = 0; }
+    if (index >= self.segments.count) { index = self.segments.count; }
+
+    // Add item to master list (Create a new list if one didn't exist)
+    NSMutableArray *items = nil;
+    if (self.items) { items = [self.items mutableCopy]; }
+    else { items = [NSMutableArray array]; }
     [items insertObject:object atIndex:index];
     _items = [NSArray arrayWithArray:items];
 
     // Add new item object to internal list
     TOSegmentedControlSegment *segment = [[TOSegmentedControlSegment alloc] initWithObject:object
-                                                             forSegmentedControl:self];
+                                                                       forSegmentedControl:self];
     segment.isReversible = reversible;
     [self.segments insertObject:segment atIndex:index];
 
-   // Update number of separators
-   [self updateSeparatorViewCount];
+    // Update number of separators
+    [self updateSeparatorViewCount];
 
-   // Perform new layout update
-   [self setNeedsLayout];
+    // Perform new layout update
+    [self setNeedsLayout];
 }
 
 #pragma mark Replacing Items
@@ -403,7 +416,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     [self.separatorViews removeAllObjects];
 
     // Delete the items array
-    self.items = nil;
+    _items = nil;
 }
 
 #pragma mark Enabled/Disabled
@@ -754,7 +767,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didTapDown:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     // Determine which segment the user tapped
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
@@ -800,12 +813,14 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didDragTap:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
     
-    if (tappedIndex == self.focusedIndex) { return; }
+    if (tappedIndex == self.focusedIndex) {
+      return;
+    }
 
     // If the control or item is disabled, pass
     if (self.segments[tappedIndex].isDisabled) {
@@ -880,7 +895,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didExitTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     // No effects needed when tracking the thumb view
     if (self.isDraggingThumbView) { return; }
@@ -899,7 +914,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didEnterTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     // No effects needed when tracking the thumb view
     if (self.isDraggingThumbView) { return; }
@@ -918,10 +933,16 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didEndTap:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
+
+    // Capture the touch object in order to track its state
+    UITouch *touch = event.allTouches.anyObject;
+
+    // Check if the tap was cancelled (In which case we shouldn't commit non-drag events)
+    BOOL isCancelled = (touch.phase == UITouchPhaseCancelled);
 
     // Work out the final place where we released
-    CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
+    CGPoint tapPoint = [touch locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
 
     TOSegmentedControlSegment *segment = self.segments[tappedIndex];
@@ -930,43 +951,14 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     if (!self.isDraggingThumbView) {
         if (segment.isDisabled) { return; }
 
-        // If we actually changed, update the segmented index and trigger the callbacks
-        if (self.selectedSegmentIndex != tappedIndex) {
-            // Set the new selected segment index
-            _selectedSegmentIndex = tappedIndex;
-
-            // Trigger the notification to all of the delegates
-            [self sendIndexChangedEventActions];
+        // If we weren't cancelled, animate to the new index
+        if (!isCancelled) {
+            [self setSelectedSegmentIndex:tappedIndex animated:YES];
         }
-
-        // Create an animation block that will update the position of the
-        // thumb view and restore all of the item views
-        id animationBlock = ^{
-            // Un-fade all of the item views
-            for (NSInteger i = 0; i < self.segments.count; i++) {
-                // De-select everything
-                [self setItemAtIndex:i faded:NO];
-                [self setItemAtIndex:i selected:NO];
-
-                // Select the currently selected index
-                [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
-
-                // Move the thumb view
-                self.thumbView.frame = [self frameForSegmentAtIndex:self.selectedSegmentIndex];
-
-                // Update the separators
-                [self refreshSeparatorViewsForSelectedIndex:self.selectedSegmentIndex];
-            }
-        };
-
-        // Commit the animation
-        [UIView animateWithDuration:0.45
-                              delay:0.0f
-             usingSpringWithDamping:1.0f
-              initialSpringVelocity:2.0f
-                            options:UIViewAnimationOptionBeginFromCurrentState
-                         animations:animationBlock
-                         completion:nil];
+        else {
+            // Else, reset the currently highlighted item
+            [self didExitTapBounds:self withEvent:event];
+        }
 
         // Reset the focused index flag
         self.focusedIndex = -1;
@@ -1024,7 +1016,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 // -----------------------------------------------
 // Selected Item Index
 
-- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex
+- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex animated:(BOOL)animated
 {
     if (self.selectedSegmentIndex == selectedSegmentIndex) { return; }
 
@@ -1040,8 +1032,42 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         [self sendIndexChangedEventActions];
     }
 
-    // Trigger a view layout
-    [self setNeedsLayout];
+    if (!animated) {
+        // Trigger a view layout
+        [self setNeedsLayout];
+        return;
+    }
+
+    // Create an animation block that will update the position of the
+    // thumb view and restore all of the item views
+    id animationBlock = ^{
+        // Un-fade all of the item views
+        for (NSInteger i = 0; i < self.segments.count; i++) {
+            // De-select everything
+            [self setItemAtIndex:i faded:NO];
+            [self setItemAtIndex:i selected:NO];
+
+            // Select the currently selected index
+            [self setItemAtIndex:self.selectedSegmentIndex selected:YES];
+
+            // Move the thumb view
+            self.thumbView.frame = [self frameForSegmentAtIndex:self.selectedSegmentIndex];
+
+            // Update the separators
+            [self refreshSeparatorViewsForSelectedIndex:self.selectedSegmentIndex];
+        }
+    };
+
+    // Commit the animation
+    [UIView animateWithDuration:0.45
+                          delay:0.0f
+         usingSpringWithDamping:1.0f
+          initialSpringVelocity:2.0f
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:animationBlock
+                     completion:nil];
+
+
 }
 
 // -----------------------------------------------
@@ -1078,7 +1104,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
     // Create the list of item objects  to track their state
     _segments = [TOSegmentedControlSegment segmentsWithObjects:_items
-                                        forSegmentedControl:self].mutableCopy;
+                                           forSegmentedControl:self].mutableCopy;
     
     // Update the number of separators
     [self updateSeparatorViewCount];
@@ -1332,6 +1358,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     
     return [NSArray arrayWithArray:array];
 }
+
+- (BOOL)hasNoSegments { return self.segments.count <= 0; }
 
 #pragma mark - Image Creation and Management -
 

@@ -22,7 +22,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class UIColor;
 @class UIView;
 @class UIImage;
 @class UIImageView;
@@ -68,11 +67,11 @@ NS_ASSUME_NONNULL_BEGIN
 /** If the item is reversible, the subsequent arrow image view. */
 @property (nonatomic, nullable, readonly) UIView *arrowView;
 
-// Create an array of objects given an array of strings and images
+/// Create an array of objects given an array of strings and images
 + (NSArray *)segmentsWithObjects:(NSArray *)objects
              forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
 
-// Create a non-reversible item from this class
+/// Create a non-reversible item from this class
 - (nullable instancetype)initWithObject:(id)object
                     forSegmentedControl:(TOSegmentedControl *)segmentedControl;
 - (instancetype)initWithTitle:(NSString *)title
@@ -80,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithImage:(UIImage *)image
           forSegmentedControl:(TOSegmentedControl *)segmentedControl;
 
-// Create a potentially reversible item from this class
+/// Create a potentially reversible item from this class
 - (instancetype)initWithTitle:(NSString *)title
                    reversible:(BOOL)reversible
           forSegmentedControl:(TOSegmentedControl *)segmentedControl;
@@ -88,13 +87,13 @@ NS_ASSUME_NONNULL_BEGIN
                    reversible:(BOOL)reversible
           forSegmentedControl:(TOSegmentedControl *)segmentedControl ;
 
-// If the item is reversible, flip the direction
+/// If the item is reversible, flip the direction
 - (void)toggleDirection;
 
-// Re-synchronize the item view when the segmented control style changes
+/// Re-synchronize the item view when the segmented control style changes
 - (void)refreshItemView;
 
-// Rotates the arrow image view to 180 degrees and back again
+/// Rotates the arrow image view to 180 degrees and back again
 - (void)setArrowImageReversed:(BOOL)reversed;
 
 @end
