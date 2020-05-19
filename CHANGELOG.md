@@ -4,15 +4,15 @@ x.y.z Release Notes (yyyy-MM-dd)
 ### Added
 
 * Support for iOS 9.
+* A new method called  `setSelectedSegmentIndex(_:animated:)` to allow animated transitions of the thumb.
 
 ### Fixed
 
-* A bug where creating instances with `init(items:)` would yield no visible items.
-* A bug where the tint color of the reversible arrow icon wouldn't update properly.
-* Deadlock when setup the view by code when calling the  `init(items:)` and inserting items after.
-* Treat invalid index and append items at the end of the component.
-* Remove trailing separator when appending items with using `insert` function.
-* Add  `setSelectedSegmentIndex(_:animated:)` function to allow animated transition of the thumb.
+* Creating instances with `init(items:)` was yielding no visible items.
+* Tint color of the reversible arrow icon wasn't updating properly.
+* A deadlock was occurring when creating an instance with no items initially, and adding items later.
+* A crash was occurring when trying to insert new items with invalid index numbers.
+* Removed trailing separators when appending items with using `insert` functions.
 
 1.0.1 Release Notes (2019-09-24)
 =============================================================
