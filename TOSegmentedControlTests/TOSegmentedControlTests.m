@@ -52,6 +52,33 @@
     XCTAssertNotNil(self.segmentedControl);
 }
 
+/// Test a crash fix for cycling items in a control
+/// (Credit to Pedro Paulo de Amorim)
+- (void)testCyclingItems
+{
+    TOSegmentedControl *segmentedControl = [[TOSegmentedControl alloc] initWithItems:@[@"Crash"]];
+    [self.view addSubview:segmentedControl];
+
+    segmentedControl.items = @[@"First", @"Second"];
+    segmentedControl.itemColor = UIColor.whiteColor;
+    segmentedControl.backgroundColor = UIColor.blackColor;
+
+    [segmentedControl removeAllSegments];
+
+    [segmentedControl addNewSegmentWithTitle:@"First"];
+    [segmentedControl addNewSegmentWithTitle:@"Second"];
+
+    [UIView performWithoutAnimation:^{
+        [segmentedControl addNewSegmentWithTitle:@"Third"];
+    }];
+
+    [segmentedControl insertSegmentWithTitle:@"Max" atIndex:INT_MAX];
+
+    // Check to make sure the final list of items is consistent
+    NSArray *items = @[@"First", @"Second", @"Third", @"Max"];
+    XCTAssertTrue([segmentedControl.items isEqual:items]);
+}
+
 #pragma mark - Test Lifecycle -
 
 - (void)setUp
