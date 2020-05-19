@@ -1,6 +1,9 @@
 x.y.z Release Notes (yyyy-MM-dd)
 =============================================================
 
+1.5.0 Release Notes (2020-05-20)
+=============================================================
+
 ### Enhancements
 
 * All `add` APIs have had `new` removed from them for more succinct naming.
