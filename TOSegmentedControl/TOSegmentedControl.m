@@ -422,7 +422,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     [self.separatorViews removeAllObjects];
 
     // Delete the items array
-    self.items = nil;
+    _items = nil;
 }
 
 #pragma mark Enabled/Disabled
@@ -1123,8 +1123,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)setItems:(NSArray *)items
 {
-
-    if (items == NULL || items == _items) { return; }
+    if (items == _items) { return; }
 
     // Remove all current items
     [self removeAllSegments];
@@ -1134,7 +1133,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
     // Create the list of item objects  to track their state
     _segments = [TOSegmentedControlSegment segmentsWithObjects:_items
-                                        forSegmentedControl:self].mutableCopy;
+                                           forSegmentedControl:self].mutableCopy;
     
     // Update the number of separators
     [self updateSeparatorViewCount];
