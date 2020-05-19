@@ -36,7 +36,7 @@ In Swift, the class is renamed to `SegmentedControl`. Creating a new instance is
 ```Swift
 
 // Create a new instance
-let segmentedControl = SegmentedControl(items: )
+let segmentedControl = SegmentedControl(items: ["First", "Second", "Third"])
 
 // Add a closure that will be called each time the selected segment changes
 segmentedControlsegmentTappedHandler = { segmentIndex, reversed in
