@@ -262,27 +262,27 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 #pragma mark Add New Items
 
-- (void)addNewSegmentWithImage:(UIImage *)image
+- (void)addSegmentWithImage:(UIImage *)image
 {
-    [self addNewSegmentWithImage:image reversible:NO];
+    [self addSegmentWithImage:image reversible:NO];
 }
 
-- (void)addNewSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible
+- (void)addSegmentWithImage:(UIImage *)image reversible:(BOOL)reversible
 {
-    [self addNewSegmentWithObject:image reversible:reversible];
+    [self addSegmentWithObject:image reversible:reversible];
 }
 
-- (void)addNewSegmentWithTitle:(NSString *)title
+- (void)addSegmentWithTitle:(NSString *)title
 {
-    [self addNewSegmentWithTitle:title reversible:NO];
+    [self addSegmentWithTitle:title reversible:NO];
 }
 
-- (void)addNewSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible
+- (void)addSegmentWithTitle:(NSString *)title reversible:(BOOL)reversible
 {
-    [self addNewSegmentWithObject:title reversible:reversible];
+    [self addSegmentWithObject:title reversible:reversible];
 }
 
-- (void)addNewSegmentWithObject:(id)object reversible:(BOOL)reversible
+- (void)addSegmentWithObject:(id)object reversible:(BOOL)reversible
 {
     [self insertSegmentWithObject:object reversible:reversible atIndex:self.segments.count];
 }
