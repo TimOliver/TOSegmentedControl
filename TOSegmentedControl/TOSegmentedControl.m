@@ -78,6 +78,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 /** The width of each segment */
 @property (nonatomic, readonly) CGFloat segmentWidth;
 
+/** Convenience property for testing if there are no segments */
+@property (nonatomic, readonly) BOOL hasNoSegments;
+
 @end
 
 @implementation TOSegmentedControl
@@ -304,7 +307,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)insertSegmentWithObject:(id)object reversible:(BOOL)reversible atIndex:(NSInteger)index
 {
-
     if (self.items == nil) {
         return;
     }
@@ -324,7 +326,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
                                                              forSegmentedControl:self];
     segment.isReversible = reversible;
 
-    if ([self isEmpty]) {
+    if (self.hasNoSegments) {
         [self.segments addObject:segment];
     } else {
         [self.segments insertObject:segment atIndex:index];
@@ -487,11 +489,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 {
     if (index < 0 || index >= self.segments.count) { return NO; }
     return !self.segments[index].isReversed;
-}
-
-- (BOOL)isEmpty
-{
-  return self.segments == nil || [self.segments count] == 0;
 }
 
 #pragma mark - View Layout -
@@ -776,9 +773,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didTapDown:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
-
-    if ([self isEmpty]) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     // Determine which segment the user tapped
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
@@ -824,9 +819,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didDragTap:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
-
-    if ([self isEmpty]) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
@@ -908,9 +901,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didExitTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
-
-    if ([self isEmpty]) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     // No effects needed when tracking the thumb view
     if (self.isDraggingThumbView) { return; }
@@ -929,9 +920,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didEnterTapBounds:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
-
-    if ([self isEmpty]) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     // No effects needed when tracking the thumb view
     if (self.isDraggingThumbView) { return; }
@@ -950,9 +939,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)didEndTap:(UIControl *)control withEvent:(UIEvent *)event
 {
     // Exit out if the control is disabled
-    if (!self.enabled) { return; }
-
-    if ([self isEmpty]) { return; }
+    if (!self.enabled || self.hasNoSegments) { return; }
 
     // Work out the final place where we released
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
@@ -1401,6 +1388,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     
     return [NSArray arrayWithArray:array];
 }
+
+- (BOOL)hasNoSegments { return self.segments.count <= 0; }
 
 #pragma mark - Image Creation and Management -
 
