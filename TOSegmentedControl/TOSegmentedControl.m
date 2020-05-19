@@ -191,7 +191,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // When the user taps up, either inside or out
     [self addTarget:self
              action:@selector(didEndTap:withEvent:)
-   forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
+   forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside|UIControlEventTouchCancel];
 }
 
 #pragma mark - Item Management -
@@ -935,8 +935,14 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Exit out if the control is disabled
     if (!self.enabled || self.hasNoSegments) { return; }
 
+    // Capture the touch object in order to track its state
+    UITouch *touch = event.allTouches.anyObject;
+
+    // Check if the tap was cancelled (In which case we shouldn't commit non-drag events)
+    BOOL isCancelled = (touch.phase == UITouchPhaseCancelled);
+
     // Work out the final place where we released
-    CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
+    CGPoint tapPoint = [touch locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
 
     TOSegmentedControlSegment *segment = self.segments[tappedIndex];
@@ -945,8 +951,14 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     if (!self.isDraggingThumbView) {
         if (segment.isDisabled) { return; }
 
-        // Animate the thumb view and items to the new selected segment
-        [self setSelectedSegmentIndex:tappedIndex animated:YES];
+        // If we weren't cancelled, animate to the new index
+        if (!isCancelled) {
+            [self setSelectedSegmentIndex:tappedIndex animated:YES];
+        }
+        else {
+            // Else, reset the currently highlighted item
+            [self didExitTapBounds:self withEvent:event];
+        }
 
         // Reset the focused index flag
         self.focusedIndex = -1;
