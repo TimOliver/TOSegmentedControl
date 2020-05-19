@@ -22,7 +22,6 @@
 
 @implementation TOSegmentedControlTests
 
-
 /// Basic litmus test to ensure the control can be
 /// created with different constructors with no crashes
 - (void)testViewInit
@@ -106,11 +105,12 @@
 + (UIImage *)testImage
 {
     CGSize size = (CGSize){30,30};
-    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:size];
-    return [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
-        [[UIColor blackColor] setFill];
-        [[UIBezierPath bezierPathWithOvalInRect:(CGRect){CGPointZero, size}] fill];
-    }];
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0.0f);
+    [[UIColor blackColor] setFill];
+    [[UIBezierPath bezierPathWithOvalInRect:(CGRect){CGPointZero, size}] fill];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
 }
 
 @end
