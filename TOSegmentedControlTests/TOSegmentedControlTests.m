@@ -65,11 +65,11 @@
 
     [segmentedControl removeAllSegments];
 
-    [segmentedControl addNewSegmentWithTitle:@"First"];
-    [segmentedControl addNewSegmentWithTitle:@"Second"];
+    [segmentedControl addSegmentWithTitle:@"First"];
+    [segmentedControl addSegmentWithTitle:@"Second"];
 
     [UIView performWithoutAnimation:^{
-        [segmentedControl addNewSegmentWithTitle:@"Third"];
+        [segmentedControl addSegmentWithTitle:@"Third"];
     }];
 
     [segmentedControl insertSegmentWithTitle:@"Max" atIndex:INT_MAX];
