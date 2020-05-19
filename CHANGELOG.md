@@ -18,6 +18,7 @@ x.y.z Release Notes (yyyy-MM-dd)
 * A deadlock was occurring when creating an instance with no items initially, and adding items later.
 * A crash was occurring when trying to insert new items with invalid index numbers.
 * Removed trailing separators when appending items with using `insert` functions.
+* If touch events were canceled while tapping down on the control, UI state wasn't being restored to an untapped state.
 
 1.0.1 Release Notes (2019-09-24)
 =============================================================
