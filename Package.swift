@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "TOSegmentedControl",
     platforms: [
-        .iOS(.v10)
+        .iOS(.v9)
     ],
     products: [
         .library(
@@ -17,7 +17,13 @@ let package = Package(
     targets: [
         .target(
             name: "TOSegmentedControl",
-            path: "TOSegmentedControl"),
+            path: ".",
+            sources: [
+                "TOSegmentedControl/TOSegmentedControl.m",
+                "TOSegmentedControl/Private/TOSegmentedControlSegment.m",
+            ],
+            publicHeadersPath: "include"
+        ),
         .testTarget(
             name: "TOSegmentedControlTests",
             dependencies: ["TOSegmentedControl"],
