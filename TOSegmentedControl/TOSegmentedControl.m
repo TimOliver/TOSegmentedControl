@@ -43,7 +43,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 // ----------------------------------------------------------------
 // Private Members
 
-@interface TOSegmentedControl ()
+@interface TOSegmentedControl () <UIPointerInteractionDelegate>
 
 /** The private list of item objects, storing state and view data */
 @property (nonatomic, strong) NSMutableArray<TOSegmentedControlSegment *> *segments;
@@ -166,7 +166,13 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     self.thumbShadowRadius = 3.0f;
     self.thumbShadowOffset = 2.0f;
     self.thumbShadowOpacity = 0.13f;
-    
+
+    // Configure indirect pointing support
+    if (@available(iOS 13.4, *)) {
+        UIPointerInteraction *pointerInteraction = [[UIPointerInteraction alloc] initWithDelegate:self];
+        [self addInteraction:pointerInteraction];
+    }
+
     // Configure view interaction
     // When the user taps down in the view
     [self addTarget:self
@@ -1009,6 +1015,36 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         self.segmentTappedHandler(self.selectedSegmentIndex,
                                   self.selectedSegmentReversed);
     }
+}
+
+#pragma mark - Pointer Interaction -
+
+- (UIPointerRegion *)pointerInteraction:(UIPointerInteraction *)interaction
+                       regionForRequest:(UIPointerRegionRequest *)request
+                          defaultRegion:(UIPointerRegion *)defaultRegion API_AVAILABLE(ios(13.4))
+{
+    CGRect frame = defaultRegion.rect;
+
+    CGFloat segmentWidth = frame.size.width / self.segments.count;
+    CGPoint location = request.location;
+    NSInteger segment = floorf(location.x / segmentWidth);
+
+    frame.origin.x = segmentWidth * segment;
+    frame.size.width = segmentWidth;
+
+    return [UIPointerRegion regionWithRect:frame identifier:@(segment)];
+}
+
+- (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction
+                        styleForRegion:(UIPointerRegion *)region API_AVAILABLE(ios(13.4))
+{
+    NSInteger segment = [(NSNumber *)region.identifier integerValue];
+
+    CGRect frame = [self frameForSegmentAtIndex:segment];
+    frame.origin = CGPointZero;
+
+    UIPointerShape *shape = [UIPointerShape shapeWithRoundedRect:frame cornerRadius:self.thumbView.layer.cornerRadius];
+    return [UIPointerStyle styleWithShape:shape constrainedAxes:UIAxisBoth];
 }
 
 #pragma mark - Accessors -
