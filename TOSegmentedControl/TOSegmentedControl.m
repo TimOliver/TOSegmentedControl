@@ -792,6 +792,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         [UIView animateWithDuration:0.35f animations:^{
             [self setItemAtIndex:tappedIndex faded:YES];
         }];
+        
+        [self setSelectedSegmentIndex:tappedIndex animated:YES];
         return;
     }
     
