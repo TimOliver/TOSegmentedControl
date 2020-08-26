@@ -1095,7 +1095,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 // -----------------------------------------------
 // Manually change thumb horizontal offset to connect it with UIPageController scroll
 
-- (void)setThumbHorizontalOffset:(CGFloat)thumbHorizontalOffsetPercent :(NSInteger)direction
+- (void)setThumbHorizontalOffset:(CGFloat)offsetPercent :(NSInteger)direction
 {
     //Get current thumb frame
     CGRect frame = [self frameForSegmentAtIndex:self.selectedSegmentIndex];
@@ -1106,9 +1106,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     //Animation block to move thumb
     id animationBlock = ^{
         if (direction > 0) {
-            newX = frame.origin.x + frame.size.width*thumbHorizontalOffsetPercent;
+            newX = frame.origin.x + frame.size.width*offsetPercent;
         } else {
-            newX = frame.origin.x - frame.size.width*thumbHorizontalOffsetPercent;
+            newX = frame.origin.x - frame.size.width*offsetPercent;
         }
         [self.thumbView setFrame:CGRectMake(newX, frame.origin.y, frame.size.width, frame.size.height)];
     };
