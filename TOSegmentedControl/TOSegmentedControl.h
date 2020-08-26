@@ -288,6 +288,15 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 */
 - (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex animated:(BOOL)animated NS_SWIFT_NAME(setSelectedSegmentIndex(_:animated:));
 
+/**
+ Changes thumb X position according to percentage of scroll, can be used to connect smooth segment change with UIPageController
+
+ @param setThumbHorizontalOffset Percent of scroll in relation to screen: positionFromStartOfCurrentPage /  self.view.frame.width
+ @param direction Direction of thumb/scroll. Should be negative for scrolling left and positive for scrolling right
+*/
+- (void)setThumbHorizontalOffset:(CGFloat)thumbHorizontalOffsetPercent: (NSInteger)direction
+NS_SWIFT_NAME(setThumbHorizontalOffset(offsetPercent:, direction:));
+
 @end
 
 NS_ASSUME_NONNULL_END
