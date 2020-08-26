@@ -613,7 +613,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     CGSize size = self.trackView.frame.size;
     
     CGRect frame = CGRectZero;
-    frame.origin.x = _thumbInset + (self.segmentWidth * index) + ((_thumbInset * 2.0f) * index);
+    frame.origin.x = (self.segmentWidth * index) + ((_thumbInset) * index-2);
     frame.origin.y = _thumbInset;
     frame.size.width = self.segmentWidth;
     frame.size.height = size.height - (_thumbInset * 2.0f);
@@ -1090,6 +1090,39 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     if (segment.isReversible == NO) { return NO; }
     return segment.isReversed;
 }
+
+
+// -----------------------------------------------
+// Manually change thumb horizontal offset to connect it with UIPageController scroll
+
+- (void)setThumbHorizontalOffset:(CGFloat)offsetPercent direction:(NSInteger)direction
+{
+    //Get current thumb frame
+    CGRect frame = [self frameForSegmentAtIndex:self.selectedSegmentIndex];
+    
+    //Variable that will hold new X position for thumb
+    __block CGFloat newX = 0;
+    
+    //Animation block to move thumb
+    id animationBlock = ^{
+        if (direction > 0) {
+            newX = frame.origin.x + frame.size.width*offsetPercent;
+        } else {
+            newX = frame.origin.x - frame.size.width*offsetPercent;
+        }
+        [self.thumbView setFrame:CGRectMake(newX, frame.origin.y, frame.size.width, frame.size.height)];
+    };
+    
+    //Commit the animation
+    [UIView animateWithDuration:0.45
+                          delay:0.0f
+         usingSpringWithDamping:1.0f
+          initialSpringVelocity:2.0f
+                        options: UIViewAnimationOptionBeginFromCurrentState
+                     animations: animationBlock
+                     completion:nil];
+}
+ 
 
 // -----------------------------------------------
 // Items
