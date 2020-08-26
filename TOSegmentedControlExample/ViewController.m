@@ -28,7 +28,7 @@
     self.segmentedLabel.alpha = 0.0f;
     
     __weak typeof(self) weakSelf = self;
-    self.segmentedControl.items = @[@"First", @"Second", @"Third"];
+    self.segmentedControl.items = @[@"First", @"Second", @"Third", @"Fourth"];
     [self.segmentedControl setReversible:YES forSegmentAtIndex:1];
     [self.segmentedControl setReversed:YES forSegmentAtIndex:1];
     self.segmentedControl.segmentTappedHandler = ^(NSInteger index, BOOL reversed) {

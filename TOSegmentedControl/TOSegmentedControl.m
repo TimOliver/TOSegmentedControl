@@ -613,7 +613,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     CGSize size = self.trackView.frame.size;
     
     CGRect frame = CGRectZero;
-    frame.origin.x = _thumbInset + (self.segmentWidth * index) + ((_thumbInset * 2.0f) * index);
+    frame.origin.x = (self.segmentWidth * index) + ((_thumbInset) * index-2);
     frame.origin.y = _thumbInset;
     frame.size.width = self.segmentWidth;
     frame.size.height = size.height - (_thumbInset * 2.0f);
