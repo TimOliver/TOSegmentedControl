@@ -295,7 +295,7 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
  @param direction Direction of thumb/scroll. Should be negative for scrolling left and positive for scrolling right
 */
 - (void)setThumbHorizontalOffset:(CGFloat)thumbHorizontalOffsetPercent direction:(NSInteger)direction
-    NS_SWIFT_NAME(setThumbHorizontalOffset(offsetPercent:, direction:));
+    NS_SWIFT_NAME(setThumbHorizontalOffset(_:direction:));
 
 @end
 
