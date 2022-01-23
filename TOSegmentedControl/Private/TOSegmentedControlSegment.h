@@ -55,6 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** Whether the item is selected or not. */
 @property (nonatomic, assign) BOOL isSelected;
 
+/** A container view that wraps the item and arrow views */
+@property (nonatomic, strong) UIView *containerView;
+
 /** The view (either image or label) for this item */
 @property (nonatomic, readonly) UIView *itemView;
 
