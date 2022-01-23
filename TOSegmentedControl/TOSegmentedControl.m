@@ -1,7 +1,7 @@
 //
 //  TOSegmentedControl.m
 //
-//  Copyright 2019 Timothy Oliver. All rights reserved.
+//  Copyright 2019-2022 Timothy Oliver. All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -43,7 +43,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 // ----------------------------------------------------------------
 // Private Members
 
-@interface TOSegmentedControl ()
+@interface TOSegmentedControl () <UIPointerInteractionDelegate>
 
 /** The private list of item objects, storing state and view data */
 @property (nonatomic, strong) NSMutableArray<TOSegmentedControlSegment *> *segments;
@@ -80,6 +80,12 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 /** Convenience property for testing if there are no segments */
 @property (nonatomic, readonly) BOOL hasNoSegments;
+
+/** Pointer interaction for mice interactions */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
+@property (nonatomic, strong) UIPointerInteraction *pointerInteraction;
+#pragma clang diagnostic pop
 
 @end
 
@@ -166,7 +172,16 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     self.thumbShadowRadius = 3.0f;
     self.thumbShadowOffset = 2.0f;
     self.thumbShadowOpacity = 0.13f;
-    
+
+    // Set focused index to -1 to indicate nothing is focused
+    self.focusedIndex = -1;
+
+    // Configure indirect pointing support
+    if (@available(iOS 13.4, *)) {
+        self.pointerInteraction = [[UIPointerInteraction alloc] initWithDelegate:self];
+        [self addInteraction:self.pointerInteraction];
+    }
+
     // Configure view interaction
     // When the user taps down in the view
     [self addTarget:self
@@ -398,6 +413,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     _items = items;
 
     // Remove item object
+    [self.segments[index].containerView removeFromSuperview];
     [self.segments removeObjectAtIndex:index];
 
     // Update number of separators
@@ -407,6 +423,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)removeAllSegments
 {
     // Remove all item objects
+    for (TOSegmentedControlSegment * segment in self.segments) {
+        [segment.containerView removeFromSuperview];
+    }
     self.segments = [NSMutableArray array];
 
     // Remove all separators
@@ -526,11 +545,12 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     for (TOSegmentedControlSegment *item in self.segments) {
         UIView *itemView = item.itemView;
         [itemView sizeToFit];
-        [self.trackView addSubview:itemView];
+        [self.trackView addSubview:item.containerView];
 
         // Get the container frame that the item will be aligned with
         CGRect thumbFrame = [self frameForSegmentAtIndex:i];
-        
+        item.containerView.frame = thumbFrame;
+
         // Work out the appropriate size of the item
         CGRect itemFrame = itemView.frame;
         
@@ -545,8 +565,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         }
         
         // Center the item in the container
-        itemFrame.origin.x = CGRectGetMidX(thumbFrame) - (itemFrame.size.width * 0.5f);
-        itemFrame.origin.y = CGRectGetMidY(thumbFrame) - (itemFrame.size.height * 0.5f);
+        itemFrame.origin.x = (CGRectGetWidth(thumbFrame) - itemFrame.size.width) * 0.5f;
+        itemFrame.origin.y = (CGRectGetHeight(thumbFrame) - itemFrame.size.height) * 0.5f;
         
         // Set the item frame
         itemView.frame = CGRectIntegral(itemFrame);
@@ -748,6 +768,11 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)refreshSeparatorViewsForSelectedIndex:(NSInteger)index
 {
+    [self refreshSeparatorViewsForSelectedIndexes:[NSSet setWithObject:@(index)]];
+}
+
+- (void)refreshSeparatorViewsForSelectedIndexes:(NSSet<NSNumber *> *)indexes
+{
     // Hide the separators on either side of the selected segment
     NSInteger i = 0;
     for (UIView *separatorView in self.separatorViews) {
@@ -757,7 +782,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
             continue;
         }
 
-        separatorView.alpha = (i == index || i == (index - 1)) ? 0.0f : 1.0f;
+        // Hide the index (right side) and the previous index (left side) if it's in the set
+        BOOL containsIndex = ([indexes containsObject:@(i)] || [indexes containsObject:@(i+1)]);
+        separatorView.alpha = containsIndex ? 0.0f : 1.0f;
         i++;
     }
 }
@@ -786,6 +813,11 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
     // Track the currently selected item as the focused one
     self.focusedIndex = tappedIndex;
+
+    // On iOS 13.4, update the point interaction
+    if (@available(iOS 13.4, *)) {
+        [self.pointerInteraction invalidate];
+    }
 
     // Work out which animation effects to apply
     if (!self.isDraggingThumbView) {
@@ -819,7 +851,12 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
     CGPoint tapPoint = [event.allTouches.anyObject locationInView:self];
     NSInteger tappedIndex = [self segmentIndexForPoint:tapPoint];
-    
+
+    // On iOS 13.4, update the point interaction
+    if (@available(iOS 13.4, *)) {
+        [self.pointerInteraction invalidate];
+    }
+
     if (tappedIndex == self.focusedIndex) {
       return;
     }
@@ -965,6 +1002,11 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         // Reset the focused index flag
         self.focusedIndex = -1;
 
+        // On iOS 13.4, update the point interaction
+        if (@available(iOS 13.4, *)) {
+            [self.pointerInteraction invalidate];
+        }
+
         return;
     }
 
@@ -978,6 +1020,11 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         // trigger the reverse alert delegate
         [segment toggleDirection];
         [self sendIndexChangedEventActions];
+    }
+
+    // On iOS 13.4, update the point interaction
+    if (@available(iOS 13.4, *)) {
+        [self.pointerInteraction invalidate];
     }
 
     // Work out which animation effects to apply
@@ -1011,6 +1058,80 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         self.segmentTappedHandler(self.selectedSegmentIndex,
                                   self.selectedSegmentReversed);
     }
+}
+
+#pragma mark - Pointer Interaction -
+
+- (UIPointerRegion *)pointerInteraction:(UIPointerInteraction *)interaction
+                       regionForRequest:(UIPointerRegionRequest *)request
+                          defaultRegion:(UIPointerRegion *)defaultRegion API_AVAILABLE(ios(13.4))
+{
+    CGRect frame = defaultRegion.rect;
+
+    // Determine which segment the pointer is in
+    CGFloat segmentWidth = frame.size.width / self.segments.count;
+    CGPoint location = request.location;
+    NSInteger segment = floorf(location.x / segmentWidth);
+
+    // Define the selectable region for this segment
+    frame.origin.x = segmentWidth * segment;
+    frame.size.width = segmentWidth;
+
+    // Return the region and an identifier for the segment
+    return [UIPointerRegion regionWithRect:frame identifier:@(segment)];
+}
+
+- (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction
+                        styleForRegion:(UIPointerRegion *)region API_AVAILABLE(ios(13.4))
+{
+    // Fetch which segment was selected
+    NSInteger segment = [(NSNumber *)region.identifier integerValue];
+
+    // Fetch the frame size of the segment
+    CGRect frame = [self frameForSegmentAtIndex:segment];
+
+    // Create a preview link to the container view containing the item and arrow
+    UITargetedPreview *preview = [[UITargetedPreview alloc] initWithView:[self.segments[segment] containerView]];
+
+    // Define the selection shape as the size of the segment with the thumb's corner radius
+    UIPointerShape *shape = [UIPointerShape shapeWithRoundedRect:frame
+                                                    cornerRadius:self.thumbView.layer.cornerRadius];
+
+    // For selected segments
+    UIPointerEffect *effect = nil;
+    if (segment == self.selectedSegmentIndex) {
+        effect = [UIPointerLiftEffect effectWithPreview:preview];
+    } else { // Un-selected segments
+        effect = [UIPointerHighlightEffect effectWithPreview:preview];
+    }
+
+    // Return the final generated shape
+    return [UIPointerStyle styleWithEffect:effect shape:shape];
+}
+
+- (void)pointerInteraction:(UIPointerInteraction *)interaction
+           willEnterRegion:(UIPointerRegion *)region
+                  animator:(id<UIPointerInteractionAnimating>)animator API_AVAILABLE(ios(13.4))
+{
+    NSInteger segment = [(NSNumber *)region.identifier integerValue];
+    NSSet *selectedSegments = [NSSet setWithArray:@[@(segment), @(self.selectedSegmentIndex)]];
+
+    // Animate the separator views fading in and out to match
+    [animator addAnimations:^{
+        [self refreshSeparatorViewsForSelectedIndexes:selectedSegments];
+    }];
+}
+
+- (void)pointerInteraction:(UIPointerInteraction *)interaction
+            willExitRegion:(UIPointerRegion *)region
+                  animator:(id<UIPointerInteractionAnimating>)animator API_AVAILABLE(ios(13.4))
+{
+    // Restore the thumb view
+    self.trackView.clipsToBounds = YES;
+
+    [animator addAnimations:^{
+        [self refreshSeparatorViewsForSelectedIndex:self.selectedSegmentIndex];
+    }];
 }
 
 #pragma mark - Accessors -

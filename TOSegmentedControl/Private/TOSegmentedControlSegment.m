@@ -1,7 +1,7 @@
 //
 //  TOSegmentedControlItem.m
 //
-//  Copyright 2019 Timothy Oliver. All rights reserved.
+//  Copyright 2019-2022 Timothy Oliver. All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -161,7 +161,10 @@
 #pragma mark - Set-up -
 
 - (void)commonInit
-{    
+{
+    // Create the container view
+    _containerView = [[UIView alloc] init];
+
     // Create the initial image / label view
     [self refreshItemView];
     
@@ -185,7 +188,7 @@
         UIImage *arrow = self.segmentedControl.arrowImage;
         self.arrowView = [[UIView alloc] initWithFrame:(CGRect){CGPointZero, arrow.size}];
         self.arrowView.alpha = 0.0f;
-        [self.segmentedControl.trackView addSubview:self.arrowView];
+        [self.containerView addSubview:self.arrowView];
 
         self.arrowImageView = [[UIImageView alloc] initWithImage:arrow];
         self.arrowImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -250,7 +253,7 @@
         imageView = nil;
         
         self.itemView = [self makeLabelForTitle:self.title];
-        [self.segmentedControl.trackView addSubview:self.itemView];
+        [self.containerView addSubview:self.itemView];
         
         label = (UILabel *)self.itemView;
     }
@@ -261,13 +264,14 @@
         label = nil;
         
         self.itemView = [self makeImageViewForImage:self.image];
-        [self.segmentedControl.trackView addSubview:self.itemView];
+        [self.containerView addSubview:self.itemView];
         
         imageView = (UIImageView *)self.itemView;
     }
     
     // Update the label view
     label.textColor = self.segmentedControl.itemColor;
+
     // Set the frame off the selected text as it is larger
     label.font = self.segmentedControl.selectedTextFont;
     [label sizeToFit];

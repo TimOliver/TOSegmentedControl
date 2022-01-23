@@ -1,7 +1,7 @@
 //
 //  TOSegmentedControlItem.h
 //
-//  Copyright 2019 Timothy Oliver. All rights reserved.
+//  Copyright 2019-2022 Timothy Oliver. All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -54,6 +54,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Whether the item is selected or not. */
 @property (nonatomic, assign) BOOL isSelected;
+
+/** A container view that wraps the item and arrow views */
+@property (nonatomic, strong) UIView *containerView;
 
 /** The view (either image or label) for this item */
 @property (nonatomic, readonly) UIView *itemView;
