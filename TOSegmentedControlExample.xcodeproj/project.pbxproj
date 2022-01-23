@@ -43,6 +43,7 @@
 		22C93B05232AA79900A281CA /* TOSegmentedControl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = TOSegmentedControl.h; sourceTree = "<group>"; };
 		22C93B07232ADBEA00A281CA /* TOSegmentedControlSegment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOSegmentedControlSegment.h; sourceTree = "<group>"; };
 		22C93B0D232ADFDD00A281CA /* TOSegmentedControlSegment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TOSegmentedControlSegment.m; sourceTree = "<group>"; };
+		22D83E6E279D2F3700CF0D8E /* TOSegmentedControl.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = TOSegmentedControl.podspec; sourceTree = "<group>"; };
 		22DF8D8522FF119C0051F319 /* TOSegmentedControlExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TOSegmentedControlExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22DF8D8822FF119C0051F319 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		22DF8D8922FF119C0051F319 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -127,6 +128,7 @@
 				22DF8D8622FF119C0051F319 /* Products */,
 				22E1FE3A232F7F0600CE1C92 /* README.md */,
 				22E1FE3B232F7F0D00CE1C92 /* CHANGELOG.md */,
+				22D83E6E279D2F3700CF0D8E /* TOSegmentedControl.podspec */,
 			);
 			sourceTree = "<group>";
 		};
