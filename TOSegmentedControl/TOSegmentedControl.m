@@ -407,14 +407,13 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 {
     if (index < 0 || index >= self.items.count) { return; }
 
-    
-
     // Remove from the item list
     NSMutableArray *items = self.items.mutableCopy;
     [items removeObjectAtIndex:index];
     _items = items;
 
     // Remove item object
+    [self.segments[index].containerView removeFromSuperview];
     [self.segments removeObjectAtIndex:index];
 
     // Update number of separators
@@ -424,6 +423,9 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)removeAllSegments
 {
     // Remove all item objects
+    for (TOSegmentedControlSegment * segment in self.segments) {
+        [segment.containerView removeFromSuperview];
+    }
     self.segments = [NSMutableArray array];
 
     // Remove all separators
