@@ -1,6 +1,17 @@
 x.y.z Release Notes (yyyy-MM-dd)
 =============================================================
 
+1.2.0 Release Notes (2022-01-23)
+=============================================================
+
+### Enhancements
+
+* Added iPadOS mouse pointer support.
+
+### Fixed
+
+* Tapping a segment may not have properly played the selection animation.
+
 1.1.0 Release Notes (2020-05-20)
 =============================================================
 
