@@ -82,7 +82,10 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 @property (nonatomic, readonly) BOOL hasNoSegments;
 
 /** Pointer interaction for mice interactions */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
 @property (nonatomic, strong) UIPointerInteraction *pointerInteraction;
+#pragma clang diagnostic pop
 
 @end
 
@@ -403,6 +406,8 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)removeSegmentAtIndex:(NSInteger)index
 {
     if (index < 0 || index >= self.items.count) { return; }
+
+    
 
     // Remove from the item list
     NSMutableArray *items = self.items.mutableCopy;
