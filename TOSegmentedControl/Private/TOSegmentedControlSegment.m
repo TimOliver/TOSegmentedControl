@@ -21,7 +21,9 @@
 //  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import "TOSegmentedControlSegment.h"
+
 #import "TOSegmentedControl.h"
+
 #import <UIKit/UIKit.h>
 
 // -------------------------------------------------
@@ -56,133 +58,125 @@
 #pragma mark - Object Lifecyle -
 
 - (instancetype)initWithObject:(id)object
-           forSegmentedControl:(TOSegmentedControl *)segmentedControl
-{
+           forSegmentedControl:(TOSegmentedControl *)segmentedControl {
     if (![object isKindOfClass:NSString.class] && ![object isKindOfClass:UIImage.class]) {
         return nil;
     }
-    
+
     if (self = [super init]) {
         if ([object isKindOfClass:NSString.class]) {
             _title = (NSString *)object;
-        }
-        else {
+        } else {
             _image = (UIImage *)object;
         }
         _segmentedControl = segmentedControl;
         [self commonInit];
     }
-    
+
     return self;
 }
 
 - (instancetype)initWithTitle:(NSString *)title
-          forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
-{
+          forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl {
     if (self = [super init]) {
         _title = [title copy];
         _segmentedControl = segmentedControl;
         [self commonInit];
     }
-    
+
     return self;
 }
 
 - (instancetype)initWithImage:(UIImage *)image
-          forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
-{
+          forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl {
     if (self = [super init]) {
         _image = image;
         _segmentedControl = segmentedControl;
         [self commonInit];
     }
-    
+
     return self;
 }
 
 - (instancetype)initWithTitle:(NSString *)title
                    reversible:(BOOL)reversible
-          forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
-{
+          forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl {
     if (self = [super init]) {
         _title = [title copy];
         _isReversible = reversible;
         _segmentedControl = segmentedControl;
         [self commonInit];
     }
-    
+
     return self;
 }
 
 - (instancetype)initWithImage:(UIImage *)image
                    reversible:(BOOL)reversible
-          forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
-{
+          forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl {
     if (self = [super init]) {
         _image = image;
         _isReversible = reversible;
         _segmentedControl = segmentedControl;
         [self commonInit];
     }
-    
+
     return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [self.itemView removeFromSuperview];
 }
 
 #pragma mark - Comnvenience Initializers -
 
-+ (NSArray *)segmentsWithObjects:(NSArray *)objects forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl
-{
++ (NSArray *)segmentsWithObjects:(NSArray *)objects
+             forSegmentedControl:(nonnull TOSegmentedControl *)segmentedControl {
     NSMutableArray *array = [NSMutableArray array];
-    
+
     // Create an object for each item in the array.
     // Skip anything that isn't an image or a label
     for (id object in objects) {
         TOSegmentedControlSegment *item = nil;
         if ([object isKindOfClass:NSString.class]) {
             item = [[TOSegmentedControlSegment alloc] initWithTitle:object
-                                             forSegmentedControl:segmentedControl];
-        }
-        else if ([object isKindOfClass:UIImage.class]) {
+                                                forSegmentedControl:segmentedControl];
+        } else if ([object isKindOfClass:UIImage.class]) {
             item = [[TOSegmentedControlSegment alloc] initWithImage:object
-                                             forSegmentedControl:segmentedControl];
+                                                forSegmentedControl:segmentedControl];
         }
 
-        if (item) { [array addObject:item]; }
+        if (item) {
+            [array addObject:item];
+        }
     }
-    
+
     return [NSArray arrayWithArray:array];
 }
 
 #pragma mark - Set-up -
 
-- (void)commonInit
-{
+- (void)commonInit {
     // Create the container view
     _containerView = [[UIView alloc] init];
 
     // Create the initial image / label view
     [self refreshItemView];
-    
+
     // Refresh the reversible state
     [self refreshReversibleView];
 }
 
 #pragma mark - Reversible Management -
 
-- (void)refreshReversibleView
-{
+- (void)refreshReversibleView {
     // If we're no longer (Or never were) reversible,
     // hide and exit out
     if (!self.isReversible) {
         self.arrowView.hidden = YES;
         return;
     }
-    
+
     // Create the arrow view if we haven't done so yet
     if (self.arrowView == nil && self.arrowImageView == nil) {
         UIImage *arrow = self.segmentedControl.arrowImage;
@@ -191,7 +185,8 @@
         [self.containerView addSubview:self.arrowView];
 
         self.arrowImageView = [[UIImageView alloc] initWithImage:arrow];
-        self.arrowImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.arrowImageView.autoresizingMask =
+            UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self.arrowView addSubview:self.arrowImageView];
     }
 
@@ -204,10 +199,11 @@
 
 #pragma mark - View Management -
 
-- (UILabel *)makeLabelForTitle:(NSString *)title
-{
-    if (title.length == 0) { return nil; }
-    
+- (UILabel *)makeLabelForTitle:(NSString *)title {
+    if (title.length == 0) {
+        return nil;
+    }
+
     // Object is a string. Create a label
     UILabel *label = [[UILabel alloc] init];
     label.text = title;
@@ -216,22 +212,20 @@
     label.font = self.segmentedControl.selectedTextFont;
     label.adjustsFontSizeToFitWidth = YES;
     label.minimumScaleFactor = 0.3f;
-    [label sizeToFit]; // Size to the selected font
+    [label sizeToFit];  // Size to the selected font
     label.font = self.segmentedControl.textFont;
     label.backgroundColor = [UIColor clearColor];
     return label;
 }
 
-- (UIImageView *)makeImageViewForImage:(UIImage *)image
-{
+- (UIImageView *)makeImageViewForImage:(UIImage *)image {
     // Object is an image. Create an image view
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.tintColor = self.segmentedControl.itemColor;
     return imageView;
 }
 
-- (void)refreshItemView
-{
+- (void)refreshItemView {
     // Convenience check for whether the view is a label or image
     UIImageView *imageView = self.imageView;
     UILabel *label = self.label;
@@ -241,34 +235,34 @@
     if (imageView && self.image) {
         [(UIImageView *)self.itemView setImage:self.image];
     }
-    
+
     // If it's already a label, refresh the text
     if (label && self.title) {
         [(UILabel *)self.itemView setText:self.title];
     }
-    
+
     // If it's an image view, but the title text is set, swap them out
     if (!label && self.title) {
         [imageView removeFromSuperview];
         imageView = nil;
-        
+
         self.itemView = [self makeLabelForTitle:self.title];
         [self.containerView addSubview:self.itemView];
-        
+
         label = (UILabel *)self.itemView;
     }
-    
+
     // If it's a label view, but the image is set, swap them out
     if (!imageView && self.image) {
         [label removeFromSuperview];
         label = nil;
-        
+
         self.itemView = [self makeImageViewForImage:self.image];
         [self.containerView addSubview:self.itemView];
-        
+
         imageView = (UIImageView *)self.itemView;
     }
-    
+
     // Update the label view
     label.textColor = self.segmentedControl.itemColor;
 
@@ -278,61 +272,58 @@
 
     // Set back to default font
     label.font = self.segmentedControl.textFont;
-    
+
     // Update the image view
     imageView.tintColor = self.segmentedControl.itemColor;
 }
 
-- (void)toggleDirection
-{
+- (void)toggleDirection {
     self.isReversed = !self.isReversed;
 }
 
 #pragma mark - Public Accessors -
 
-- (void)setTitle:(NSString *)title
-{
+- (void)setTitle:(NSString *)title {
     // Copy text, and regenerate the view if need be
     _title = [title copy];
     _image = nil;
     [self refreshItemView];
 }
 
-- (void)setImage:(UIImage *)image
-{
-    if (_image == image) { return; }
+- (void)setImage:(UIImage *)image {
+    if (_image == image) {
+        return;
+    }
     _image = image;
     _title = nil;
     [self refreshItemView];
 }
 
-- (void)setIsReversible:(BOOL)isReversible
-{
-    if (_isReversible == isReversible) { return; }
+- (void)setIsReversible:(BOOL)isReversible {
+    if (_isReversible == isReversible) {
+        return;
+    }
     _isReversible = isReversible;
     [self refreshReversibleView];
 }
 
-- (UILabel *)label
-{
+- (UILabel *)label {
     if ([self.itemView isKindOfClass:UILabel.class]) {
         return (UILabel *)self.itemView;
     }
-    
+
     return nil;
 }
 
-- (UIImageView *)imageView
-{
+- (UIImageView *)imageView {
     if ([self.itemView isKindOfClass:UIImageView.class]) {
         return (UIImageView *)self.itemView;
     }
-    
+
     return nil;
 }
 
-- (void)setArrowImageReversed:(BOOL)reversed
-{
+- (void)setArrowImageReversed:(BOOL)reversed {
     if (reversed) {
         self.arrowImageView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI);
         return;
