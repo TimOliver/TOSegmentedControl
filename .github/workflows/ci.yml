@@ -3,13 +3,18 @@ name: CI
 on: [push]
 
 jobs:
-  build:
-
+  iOS:
+    name: Run Unit Tests
     runs-on: macos-latest
-
+    env:
+      PROJECT_NAME: TOSegmentendControlExample.xcodeproj
+      SCHEME_NAME: TOSegmentedControlTests
+      DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro"
     steps:
-    - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: '(curl -s -L https://tim.dev/install_ios_oss_ci | bash -s arg1 arg2) && bundle exec fastlane test'
-      env:
-        TEST_SCHEME: "TOSegmentedControlTests"
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Run Tests
+        run: |
+          set -o pipefail
+          xcodebuild build build-for-testing -project "${{ env.PROJECT_NAME }}" -scheme "${{ env.SCHEME_NAME }}" -destination "${{ env.DESTINATION }}" -configuration Debug ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES
+          xcodebuild analyze test-without-building -project "${{ env.PROJECT_NAME }}" -scheme "${{ env.SCHEME_NAME }}" -destination "${{ env.DESTINATION }}" -configuration Debug ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES
