@@ -1,6 +1,6 @@
 # TOSegmentedControl
 
-![TOSegmentedControl](screenshot.jpg)
+![TOSegmentedControl](screenshot.webp)
 
 [![CI](https://github.com/TimOliver/TOSegmentedControl/workflows/CI/badge.svg)](https://github.com/TimOliver/TOSegmentedControl/actions?query=workflow%3ACI)
 [![Version](https://img.shields.io/cocoapods/v/TOSegmentedControl.svg?style=flat)](http://cocoadocs.org/docsets/TOSegmentedControl)
