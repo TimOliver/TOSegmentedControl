@@ -2,7 +2,7 @@
 
 ![TOSegmentedControl](screenshot.webp)
 
-[![CI](https://github.com/TimOliver/TOSegmentedControl/workflows/CI/badge.svg)](https://github.com/TimOliver/TOSegmentedControl/actions?query=workflow%3ACI)
+[![CI](https://github.com/TimOliver/TOSegmentedControl/actions/workflows/ci.yml/badge.svg)](https://github.com/TimOliver/TOSegmentedControl/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/cocoapods/v/TOSegmentedControl.svg?style=flat)](http://cocoadocs.org/docsets/TOSegmentedControl)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/TimOliver/TOSegmentedControl/master/LICENSE)
