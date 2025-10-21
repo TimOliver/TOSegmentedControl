@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="s9L-5g-lrU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24408" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="s9L-5g-lrU">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24402"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -17,10 +18,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S5K-RK-Gno" userLabel="BottomContainer">
-                                <rect key="frame" x="0.0" y="560.33333333333337" width="414" height="301.66666666666663"/>
+                                <rect key="frame" x="0.0" y="565.33333333333337" width="414" height="262.66666666666663"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First Selected" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pwD-VJ-sLV">
-                                        <rect key="frame" x="132.66666666666669" y="137" width="148.66666666666669" height="27.666666666666657"/>
+                                        <rect key="frame" x="133" y="117.66666666666664" width="148" height="27.666666666666671"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -33,10 +34,10 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A4r-nn-NTO" userLabel="TopContainer">
-                                <rect key="frame" x="0.0" y="44" width="414" height="301.66666666666669"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="262.66666666666669"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First Selected" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sjH-n0-avO">
-                                        <rect key="frame" x="132.66666666666669" y="137" width="148.66666666666669" height="27.666666666666657"/>
+                                        <rect key="frame" x="133" y="117.66666666666667" width="148" height="27.666666666666671"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -49,7 +50,7 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="47" translatesAutoresizingMaskIntoConstraints="NO" id="0Qa-CG-QHl">
-                                <rect key="frame" x="47" y="345.66666666666669" width="320" height="214.66666666666669"/>
+                                <rect key="frame" x="47" y="350.66666666666669" width="320" height="214.66666666666669"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="EJ6-2M-G2q">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="83.333333333333329"/>
@@ -72,10 +73,10 @@
                                                 </connections>
                                             </segmentedControl>
                                         </subviews>
+                                        <viewLayoutGuide key="safeArea" id="GVh-KB-Wct"/>
                                         <constraints>
                                             <constraint firstItem="idK-8t-llR" firstAttribute="width" secondItem="EJ6-2M-G2q" secondAttribute="width" id="fvf-ap-nwF"/>
                                         </constraints>
-                                        <viewLayoutGuide key="safeArea" id="GVh-KB-Wct"/>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="5od-9A-AUH">
                                         <rect key="frame" x="0.0" y="130.33333333333331" width="320" height="84.333333333333314"/>
@@ -88,7 +89,7 @@
                                             </label>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8wQ-al-Ecf" customClass="TOSegmentedControl">
                                                 <rect key="frame" x="0.0" y="52.333333333333371" width="320" height="32"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="32" id="9J6-T7-g7C"/>
                                                 </constraints>
@@ -105,7 +106,8 @@
                                 </constraints>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="tXf-lg-ywe"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="0Qa-CG-QHl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="tXf-lg-ywe" secondAttribute="leading" constant="20" id="1wj-JT-J3G"/>
                             <constraint firstItem="A4r-nn-NTO" firstAttribute="top" secondItem="tXf-lg-ywe" secondAttribute="top" id="4ta-7M-eSh"/>
@@ -120,7 +122,6 @@
                             <constraint firstItem="A4r-nn-NTO" firstAttribute="bottom" secondItem="0Qa-CG-QHl" secondAttribute="top" id="u0x-0z-ZPY"/>
                             <constraint firstItem="0Qa-CG-QHl" firstAttribute="centerY" secondItem="tXf-lg-ywe" secondAttribute="centerY" id="yvp-Yh-8S7"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="tXf-lg-ywe"/>
                     </view>
                     <connections>
                         <outlet property="classicSegmentedControl" destination="idK-8t-llR" id="IFx-2j-r8d"/>
@@ -134,4 +135,9 @@
             <point key="canvasLocation" x="131.8840579710145" y="123.88392857142857"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

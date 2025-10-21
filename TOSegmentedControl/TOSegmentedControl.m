@@ -24,10 +24,16 @@
 #import "TOSegmentedControlSegment.h"
 
 // ----------------------------------------------------------------
-// Static Members
+// Global members
 
 // A cache to hold images generated for this view that may be shared.
 static NSMapTable *_imageTable = nil;
+
+// A magic value used to indicate the rounding should be automatically based off height.
+const CGFloat TOSegmentendControlCapsuleCornerRadius = -1.0f;
+
+// ----------------------------------------------------------------
+// Internal Members
 
 // Statically referenced key names for the images stored in the map table.
 static NSString * const kTOSegmentedControlArrowImage = @"arrowIcon";
@@ -167,11 +173,16 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
     // Set default values
     self.selectedSegmentIndex = -1;
-    self.cornerRadius = 8.0f;
     self.thumbInset = 2.0f;
     self.thumbShadowRadius = 3.0f;
     self.thumbShadowOffset = 2.0f;
     self.thumbShadowOpacity = 0.13f;
+
+    if (@available(iOS 26.0, *)) {
+        self.cornerRadius = TOSegmentendControlCapsuleCornerRadius;
+    } else {
+        self.cornerRadius = 8.0f;
+    }
 
     // Set focused index to -1 to indicate nothing is focused
     self.focusedIndex = -1;
@@ -522,7 +533,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Match the shadow path to the new size of the thumb view
     CGPathRef oldShadowPath = self.thumbView.layer.shadowPath;
     UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:(CGRect){CGPointZero, frame.size}
-                                                          cornerRadius:self.cornerRadius - self.thumbInset];
+                                                          cornerRadius:[self _cornerRadiusValue] - self.thumbInset];
 
     // If the segmented control is animating its shape, to prevent the
     // shadow from visibly snapping, perform a resize animation on it
@@ -596,13 +607,13 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     CGFloat xOffset = (_thumbInset + segmentWidth) - 1.0f;
     NSInteger i = 0;
     for (UIView *separatorView in self.separatorViews) {
-       CGRect frame = separatorView.frame;
-       frame.size.width = 1.0f;
-       frame.size.height = (size.height - (self.cornerRadius) * 2.0f) + 2.0f;
-       frame.origin.x = xOffset + (segmentWidth * i);
-       frame.origin.y = (size.height - frame.size.height) * 0.5f;
-       separatorView.frame = CGRectIntegral(frame);
-       i++;
+        CGRect frame = separatorView.frame;
+        frame.size.width = 1.0f;
+        frame.size.height = self.textFont.lineHeight;
+        frame.origin.x = xOffset + (segmentWidth * i);
+        frame.origin.y = (size.height - frame.size.height) * 0.5f;
+        separatorView.frame = CGRectIntegral(frame);
+        i++;
     }
 
    // Update the alpha of the separator views
@@ -1244,11 +1255,26 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)setCornerRadius:(CGFloat)cornerRadius
 {
-    self.trackView.layer.cornerRadius = cornerRadius;
-    self.thumbView.layer.cornerRadius = (self.cornerRadius - _thumbInset) + 1.0f;
+    if (cornerRadius == _cornerRadius) {
+        return;
+    }
+
+    _cornerRadius = cornerRadius;
+    [self _updateCornerRadius];
 }
 
-- (CGFloat)cornerRadius { return self.trackView.layer.cornerRadius; }
+- (CGFloat)_cornerRadiusValue
+{
+    const BOOL isCapsuleShape = _cornerRadius == TOSegmentendControlCapsuleCornerRadius;
+    return isCapsuleShape ? CGRectGetHeight(self.trackView.frame) / 2.0f : _cornerRadius;
+}
+
+- (void)_updateCornerRadius
+{
+    const CGFloat cornerRadius = [self _cornerRadiusValue];
+    self.trackView.layer.cornerRadius = cornerRadius;
+    self.thumbView.layer.cornerRadius = (cornerRadius - _thumbInset) + 1.0f;
+}
 
 // -----------------------------------------------
 // Thumb Color
@@ -1440,7 +1466,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 - (void)setThumbInset:(CGFloat)thumbInset
 {
     _thumbInset = thumbInset;
-    self.thumbView.layer.cornerRadius = (self.cornerRadius - _thumbInset) + 1.0f;
+    self.thumbView.layer.cornerRadius = ([self _cornerRadiusValue] - _thumbInset) + 1.0f;
 }
 
 // -----------------------------------------------
