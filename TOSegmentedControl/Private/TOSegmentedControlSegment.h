@@ -72,7 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Create an array of objects given an array of strings and images
 + (NSArray *)segmentsWithObjects:(NSArray *)objects
-             forSegmentedControl:(TOSegmentedControl *)segmentedControl;;
+             forSegmentedControl:(TOSegmentedControl *)segmentedControl;
 
 /// Create a non-reversible item from this class
 - (nullable instancetype)initWithObject:(id)object
@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
           forSegmentedControl:(TOSegmentedControl *)segmentedControl;
 - (instancetype)initWithImage:(UIImage *)image
                    reversible:(BOOL)reversible
-          forSegmentedControl:(TOSegmentedControl *)segmentedControl ;
+          forSegmentedControl:(TOSegmentedControl *)segmentedControl;
 
 /// If the item is reversible, flip the direction
 - (void)toggleDirection;
