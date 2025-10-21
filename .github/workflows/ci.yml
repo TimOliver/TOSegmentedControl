@@ -6,15 +6,13 @@ jobs:
   iOS:
     name: Run Unit Tests
     runs-on: macos-latest
-    env:
-      PROJECT_NAME: TOSegmentedControlExample.xcodeproj
-      SCHEME_NAME: TOSegmentedControlTests
-      DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro"
     steps:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Run Tests
-        run: |
-          set -o pipefail
-          xcodebuild build build-for-testing -project "${{ env.PROJECT_NAME }}" -scheme "${{ env.SCHEME_NAME }}" -destination "${{ env.DESTINATION }}" -configuration Debug ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES
-          xcodebuild analyze test-without-building -project "${{ env.PROJECT_NAME }}" -scheme "${{ env.SCHEME_NAME }}" -destination "${{ env.DESTINATION }}" -configuration Debug ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES
+        uses: sersoft-gmbh/xcodebuild-action@v3
+        with:
+          project: TOSegmentedControlExample.xcodeproj
+          scheme: TOSegmentedControlTests
+          destination: platform=iOS Simulator,name=iPhone 16 Pro
+          action: test
