@@ -24,10 +24,16 @@
 #import "TOSegmentedControlSegment.h"
 
 // ----------------------------------------------------------------
-// Static Members
+// Global members
 
 // A cache to hold images generated for this view that may be shared.
 static NSMapTable *_imageTable = nil;
+
+// A magic value used to indicate the rounding should be automatically based off height.
+const CGFloat TOSegmentendControlCapsuleCornerRadius = -1.0f;
+
+// ----------------------------------------------------------------
+// Internal Members
 
 // Statically referenced key names for the images stored in the map table.
 static NSString * const kTOSegmentedControlArrowImage = @"arrowIcon";
