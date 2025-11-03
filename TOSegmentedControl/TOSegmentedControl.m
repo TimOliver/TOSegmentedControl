@@ -140,21 +140,12 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
         UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.trackView.layer.masksToBounds = YES;
     self.trackView.userInteractionEnabled = NO;
-#ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-        self.trackView.layer.cornerCurve = kCACornerCurveContinuous;
-    }
-#endif
+
     [self addSubview:self.trackView];
 
     // Create thumb view
     self.thumbView = [[UIView alloc] initWithFrame:CGRectMake(2.0f, 2.0f, 100.0f, 28.0f)];
     self.thumbView.layer.shadowColor = [UIColor blackColor].CGColor;
-#ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-        self.thumbView.layer.cornerCurve = kCACornerCurveContinuous;
-    }
-#endif
     [self.trackView addSubview:self.thumbView];
 
     // Create list for managing each item
@@ -1272,15 +1263,25 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     [self _updateCornerRadius];
 }
 
+- (BOOL)_isCapsuleShape {
+    return _cornerRadius == TOSegmentendControlCapsuleCornerRadius;
+}
+
 - (CGFloat)_cornerRadiusValue {
-    const BOOL isCapsuleShape = _cornerRadius == TOSegmentendControlCapsuleCornerRadius;
-    return isCapsuleShape ? CGRectGetHeight(self.trackView.frame) / 2.0f : _cornerRadius;
+    return [self _isCapsuleShape] ? CGRectGetHeight(self.trackView.frame) / 2.0f : _cornerRadius;
 }
 
 - (void)_updateCornerRadius {
     const CGFloat cornerRadius = [self _cornerRadiusValue];
     self.trackView.layer.cornerRadius = cornerRadius;
-    self.thumbView.layer.cornerRadius = (cornerRadius - _thumbInset) + 1.0f;
+    self.thumbView.layer.cornerRadius = (cornerRadius - _thumbInset);
+
+#ifdef __IPHONE_13_0
+    if (@available(iOS 13.0, *)) {
+        self.thumbView.layer.cornerCurve = kCACornerCurveContinuous;
+        self.trackView.layer.cornerCurve = kCACornerCurveContinuous;
+    }
+#endif
 }
 
 // -----------------------------------------------
