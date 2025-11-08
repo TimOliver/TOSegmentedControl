@@ -65,7 +65,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 @property (nonatomic, assign) NSInteger focusedIndex;
 
 /** The background rounded "track" view */
-@property (nonatomic, strong) UIVisualEffectView *trackView;
+@property (nonatomic, strong) UIView *trackView;
 
 /** The view that shows which view is highlighted */
 @property (nonatomic, strong) UIView *thumbView;
@@ -135,7 +135,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 
 - (void)commonInit {
     // Create content view
-    self.trackView = [[UIVisualEffectView alloc] initWithFrame:self.bounds];
+    self.trackView = [[UIView alloc] initWithFrame:self.bounds];
     self.trackView.autoresizingMask =
         UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.trackView.layer.masksToBounds = YES;
@@ -146,7 +146,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     // Create thumb view
     self.thumbView = [[UIView alloc] initWithFrame:CGRectMake(2.0f, 2.0f, 100.0f, 28.0f)];
     self.thumbView.layer.shadowColor = [UIColor blackColor].CGColor;
-    [self.trackView.contentView addSubview:self.thumbView];
+    [self.trackView addSubview:self.thumbView];
 
     // Create list for managing each item
     self.segments = [NSMutableArray array];
@@ -239,7 +239,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     while (self.separatorViews.count < numberOfSeparators) {
         UIImageView *separator = [[UIImageView alloc] initWithImage:self.separatorImage];
         separator.tintColor = self.separatorColor;
-        [self.trackView.contentView insertSubview:separator atIndex:0];
+        [self.trackView insertSubview:separator atIndex:0];
         [self.separatorViews addObject:separator];
     }
 
@@ -560,7 +560,7 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
     for (TOSegmentedControlSegment *item in self.segments) {
         UIView *itemView = item.itemView;
         [itemView sizeToFit];
-        [self.trackView.contentView addSubview:item.containerView];
+        [self.trackView addSubview:item.containerView];
 
         // Get the container frame that the item will be aligned with
         CGRect thumbFrame = [self frameForSegmentAtIndex:i];
@@ -1361,24 +1361,6 @@ static CGFloat const kTOSegmentedControlDirectionArrowMargin = 2.0f;
 }
 - (UIColor *)backgroundColor {
     return self.trackView.backgroundColor;
-}
-
-// -----------------------------------------------
-
-- (void)setBackgroundEffect:(UIVisualEffect *)effect {
-    _trackView.backgroundColor = nil;
-    _trackView.effect = effect;
-
-    // Exit out if we don't need to reset to defaults
-    if (_trackView.effect != nil) {
-        return;
-    }
-
-    // If we nil out the effect, restore the original background color
-    self.backgroundColor = nil;
-}
-- (UIVisualEffect *)backgroundEffect {
-    return self.trackView.effect;
 }
 
 // -----------------------------------------------

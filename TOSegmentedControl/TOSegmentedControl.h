@@ -63,9 +63,6 @@ IB_DESIGNABLE @interface TOSegmentedControl : UIControl
 /// Set the background color of the track in the segmented control (Default is light grey)
 @property (nonatomic, strong, null_resettable) IBInspectable UIColor *backgroundColor;
 
-/// Alternatively, set a background material that will be used instead of a solid color. (eg Liquid Glass)
-@property (nonatomic, strong, null_resettable) UIVisualEffect *backgroundEffect;
-
 /// Set the color of the thumb view. (Default is white)
 @property (nonatomic, strong, null_resettable) IBInspectable UIColor *thumbColor;
 
