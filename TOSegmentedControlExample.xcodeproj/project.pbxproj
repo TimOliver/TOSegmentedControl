@@ -43,7 +43,7 @@
 		22C93B05232AA79900A281CA /* TOSegmentedControl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = TOSegmentedControl.h; sourceTree = "<group>"; };
 		22C93B07232ADBEA00A281CA /* TOSegmentedControlSegment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOSegmentedControlSegment.h; sourceTree = "<group>"; };
 		22C93B0D232ADFDD00A281CA /* TOSegmentedControlSegment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TOSegmentedControlSegment.m; sourceTree = "<group>"; };
-		22D83E6E279D2F3700CF0D8E /* TOSegmentedControl.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = TOSegmentedControl.podspec; sourceTree = "<group>"; };
+		22D83E6E279D2F3700CF0D8E /* TOSegmentedControl.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = TOSegmentedControl.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		22DF8D8522FF119C0051F319 /* TOSegmentedControlExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TOSegmentedControlExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22DF8D8822FF119C0051F319 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		22DF8D8922FF119C0051F319 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -368,7 +368,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.3.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.TOSegmentedControlFramework;
 				PRODUCT_NAME = TOSegmentedControl;
@@ -400,7 +400,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.3.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				PRODUCT_BUNDLE_IDENTIFIER = dev.tim.TOSegmentedControlFramework;
 				PRODUCT_NAME = TOSegmentedControl;
